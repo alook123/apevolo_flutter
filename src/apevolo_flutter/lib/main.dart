@@ -7,9 +7,10 @@ import 'app/routes/app_pages.dart';
 void main() {
   runApp(
     GetMaterialApp(
-      title: "Application",
-      initialRoute: AppPages.INITIAL,
-      getPages: AppPages.routes,
-    ),
+        title: "Application",
+        initialRoute: AppPages.INITIAL,
+        getPages: AppPages.routes,
+        themeMode: ThemeMode.system,
+        debugShowCheckedModeBanner: false),
   );
 }

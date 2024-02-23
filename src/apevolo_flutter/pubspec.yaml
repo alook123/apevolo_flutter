@@ -2,20 +2,20 @@ name: apevolo_flutter
 version: 1.0.0+1
 publish_to: none
 description: A new Flutter project.
-environment: 
-  sdk: '>=3.2.3 <4.0.0'
+environment:
+    sdk: '>=3.2.3 <4.0.0'
 
-dependencies: 
-  cupertino_icons: ^1.0.2
-  get: 4.6.6
-  flutter: 
-    sdk: flutter
+dependencies:
+    cupertino_icons: ^1.0.2
+    fluentui_system_icons: ^1.1.226
+    get: 4.6.6
+    flutter:
+        sdk: flutter
 
-dev_dependencies: 
-  flutter_lints: ^2.0.0
-  flutter_test: 
-    sdk: flutter
+dev_dependencies:
+    flutter_lints: ^2.0.0
+    flutter_test:
+        sdk: flutter
 
-flutter: 
-  uses-material-design: true
-
+flutter:
+    uses-material-design: true

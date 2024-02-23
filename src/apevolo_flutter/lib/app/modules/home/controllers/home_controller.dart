@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  //TODO: Implement HomeController
+  final RxBool menuOpen = true.obs;
 
-  final count = 0.obs;
+  final RxDouble verticalMenuWidth = 280.0.obs;
+
+  final RxBool resizeMouse = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -18,6 +21,4 @@ class HomeController extends GetxController {
   void onClose() {
     super.onClose();
   }
-
-  void increment() => count.value++;
 }

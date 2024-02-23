@@ -1,5 +1,5 @@
 {
-    // 使用 IntelliSense 了解相关属性。 
+    // 使用 IntelliSense 了解相关属性。
     // 悬停以查看现有属性的描述。
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
@@ -8,6 +8,13 @@
             "name": "apevolo_flutter",
             "request": "launch",
             "type": "dart"
+        },
+        {
+            "name": "apevolo_flutter(Web)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "web-server",
+            "args": ["--web-port=5002"]
         },
         {
             "name": "apevolo_flutter (profile mode)",
