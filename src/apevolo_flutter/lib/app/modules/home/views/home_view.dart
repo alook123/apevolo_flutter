@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:apevolo_flutter/app/modules/home/views/home_horizontal_menu_view.dart';
 import 'package:apevolo_flutter/app/modules/home/views/home_vertical_menu_view.dart';
 import 'package:flutter/material.dart';
@@ -22,12 +24,14 @@ class HomeView extends GetView<HomeController> {
             () => Visibility(
               visible: controller.menuOpen.value,
               child: ConstrainedBox(
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 100.0, // 设置最小高度
                 ),
-                child: Container(
+                child: SizedBox(
                   width: controller.verticalMenuWidth.value,
                   child: HomeVerticalMenuView(
+                    controller.menuList,
+                    hiddenTopMenu: !controller.menuOpen.value,
                     onPressed: () {
                       controller.menuOpen.value = false;
                     },
@@ -73,6 +77,7 @@ class HomeView extends GetView<HomeController> {
                       () => HomeHorizontalMenuView(
                         visible: !controller.menuOpen.value,
                         onPressed: () {
+                          //todo:弹出时候，隐藏抽屉顶部的菜单
                           scaffoldKey.currentState!.openDrawer();
                         },
                       ),
@@ -108,6 +113,8 @@ class HomeView extends GetView<HomeController> {
           child: Card(
             margin: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
             child: HomeVerticalMenuView(
+              controller.menuList,
+              hiddenTopMenu: false,
               onPressed: () {
                 controller.menuOpen.value = true;
                 scaffoldKey.currentState!.closeDrawer();

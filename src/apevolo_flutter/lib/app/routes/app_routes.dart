@@ -4,9 +4,17 @@ part of 'app_pages.dart';
 abstract class Routes {
   Routes._();
   static const HOME = _Paths.HOME;
+  static const LOGIN = _Paths.LOGIN;
+  static const WIDGET = _Paths.WIDGET;
+  static const CAPTCHA = _Paths.WIDGET + _Paths.CAPTCHA;
+  static const THEME_MODE = _Paths.WIDGET + _Paths.THEME_MODE;
 }
 
 abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
+  static const LOGIN = '/login';
+  static const WIDGET = '/widget';
+  static const CAPTCHA = '/captcha';
+  static const THEME_MODE = '/theme-mode';
 }

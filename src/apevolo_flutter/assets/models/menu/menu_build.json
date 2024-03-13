@@ -1,0 +1,317 @@
+[
+    {
+        "meta": {
+            "title": "权限管理",
+            "icon": "permission",
+            "noCache": true
+        },
+        "name": "权限管理",
+        "path": "/permission",
+        "hidden": false,
+        "redirect": "noredirect",
+        "component": "Layout",
+        "alwaysShow": true,
+        "children": [
+            {
+                "meta": {
+                    "title": "用户管理",
+                    "icon": "peoples",
+                    "noCache": true
+                },
+                "name": "User",
+                "path": "user",
+                "hidden": false,
+                "component": "permission/user/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "角色管理",
+                    "icon": "role",
+                    "noCache": true
+                },
+                "name": "Role",
+                "path": "role",
+                "hidden": false,
+                "component": "permission/role/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "菜单管理",
+                    "icon": "menu",
+                    "noCache": true
+                },
+                "name": "Menu",
+                "path": "menu",
+                "hidden": false,
+                "component": "permission/menu/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "部门管理",
+                    "icon": "dept",
+                    "noCache": true
+                },
+                "name": "Dept",
+                "path": "dept",
+                "hidden": false,
+                "component": "permission/dept/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "岗位管理",
+                    "icon": "Steve-Jobs",
+                    "noCache": true
+                },
+                "name": "Job",
+                "path": "job",
+                "hidden": false,
+                "component": "permission/job/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "Api管理",
+                    "icon": "api",
+                    "noCache": true
+                },
+                "name": "Api管理",
+                "path": "interface",
+                "hidden": false,
+                "component": "permission/interface/index",
+                "alwaysShow": false
+            }
+        ]
+    },
+    {
+        "meta": {
+            "title": "系统管理",
+            "icon": "system",
+            "noCache": true
+        },
+        "name": "系统管理",
+        "path": "/system",
+        "hidden": false,
+        "redirect": "noredirect",
+        "component": "Layout",
+        "alwaysShow": true,
+        "children": [
+            {
+                "meta": {
+                    "title": "字典管理",
+                    "icon": "dictionary",
+                    "noCache": true
+                },
+                "name": "Dict",
+                "path": "dict",
+                "hidden": false,
+                "component": "system/dict/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "作业调度",
+                    "icon": "timing",
+                    "noCache": true
+                },
+                "name": "Timing",
+                "path": "tasks",
+                "hidden": false,
+                "component": "system/tasks/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "全局设置",
+                    "icon": "setting",
+                    "noCache": true
+                },
+                "name": "Setting",
+                "path": "setting",
+                "hidden": false,
+                "component": "system/setting/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "应用密钥",
+                    "icon": "appSecret",
+                    "noCache": true
+                },
+                "name": "AppSecret",
+                "path": "appsecret",
+                "hidden": false,
+                "component": "system/appsecret/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "文件存储",
+                    "icon": "file",
+                    "noCache": true
+                },
+                "name": "文件存储",
+                "path": "storage",
+                "hidden": false,
+                "component": "system/storage/index",
+                "alwaysShow": false
+            }
+        ]
+    },
+    {
+        "meta": {
+            "title": "系统监控",
+            "icon": "monitor",
+            "noCache": true
+        },
+        "name": "系统监控",
+        "path": "/monitor",
+        "hidden": false,
+        "redirect": "noredirect",
+        "component": "Layout",
+        "alwaysShow": true,
+        "children": [
+            {
+                "meta": {
+                    "title": "审计日志",
+                    "icon": "log",
+                    "noCache": true
+                },
+                "name": "Audit",
+                "path": "auditing",
+                "hidden": false,
+                "component": "monitor/auditing/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "异常日志",
+                    "icon": "error",
+                    "noCache": true
+                },
+                "name": "Log",
+                "path": "log",
+                "hidden": false,
+                "component": "monitor/log/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "在线用户",
+                    "icon": "Steve-Jobs",
+                    "noCache": true
+                },
+                "name": "OnlineUser",
+                "path": "online",
+                "hidden": false,
+                "component": "monitor/online/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "服务监控",
+                    "icon": "codeConsole",
+                    "noCache": true
+                },
+                "name": "ServerMonitor",
+                "path": "server",
+                "hidden": false,
+                "component": "monitor/server/index",
+                "alwaysShow": false
+            }
+        ]
+    },
+    {
+        "meta": {
+            "title": "消息服务",
+            "icon": "message",
+            "noCache": true
+        },
+        "name": "消息服务",
+        "path": "/message",
+        "hidden": false,
+        "redirect": "noredirect",
+        "component": "Layout",
+        "alwaysShow": true,
+        "children": [
+            {
+                "meta": {
+                    "title": "邮箱账户",
+                    "icon": "email",
+                    "noCache": true
+                },
+                "name": "Email",
+                "path": "email/account",
+                "hidden": false,
+                "component": "message/email/account/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "邮件模板",
+                    "icon": "email",
+                    "noCache": true
+                },
+                "name": "Template",
+                "path": "email/template",
+                "hidden": false,
+                "component": "message/email/template/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "邮件队列",
+                    "icon": "list",
+                    "noCache": true
+                },
+                "name": "Queue",
+                "path": "email/queued",
+                "hidden": false,
+                "component": "queued/index",
+                "alwaysShow": false
+            }
+        ]
+    },
+    {
+        "meta": {
+            "title": "组件管理",
+            "icon": "zujian",
+            "noCache": true
+        },
+        "name": "组件管理",
+        "path": "/components",
+        "hidden": false,
+        "redirect": "noredirect",
+        "component": "Layout",
+        "alwaysShow": true,
+        "children": [
+            {
+                "meta": {
+                    "title": "图标库",
+                    "icon": "Icon",
+                    "noCache": true
+                },
+                "name": "icons",
+                "path": "Icon",
+                "hidden": false,
+                "component": "components/icons/index",
+                "alwaysShow": false
+            },
+            {
+                "meta": {
+                    "title": "图表库",
+                    "icon": "chart",
+                    "noCache": true
+                },
+                "name": "Echarts",
+                "path": "echarts",
+                "hidden": false,
+                "component": "components/Echarts",
+                "alwaysShow": false
+            }
+        ]
+    }
+]
