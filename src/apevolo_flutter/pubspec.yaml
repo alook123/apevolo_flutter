@@ -9,13 +9,15 @@ dependencies:
     cupertino_icons: ^1.0.2
     fluentui_system_icons: ^1.1.226
     get: 4.6.6
-    flutter:
-        sdk: flutter
     crypto: ^3.0.3
     pointycastle: ^3.7.4
     encrypt: ^5.0.3
     dio: ^5.4.1
     get_storage: ^2.1.1
+    darq: 2.0.0
+    flutter:
+        sdk: flutter
+    flutter_localization: ^0.2.0
 
 dev_dependencies:
     flutter_lints: ^2.0.0
@@ -23,7 +25,6 @@ dev_dependencies:
         sdk: flutter
 
 flutter:
-    uses-material-design: true
-
     assets:
         - assets/certificate/
+    uses-material-design: true

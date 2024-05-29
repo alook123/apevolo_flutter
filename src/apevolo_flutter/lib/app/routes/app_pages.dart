@@ -1,10 +1,11 @@
 import 'package:get/get.dart';
 
-import '../middleware/router_auth.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/permission/user/bindings/user_binding.dart';
+import '../modules/permission/user/views/user_view.dart';
 import '../modules/widget/captcha/bindings/captcha_binding.dart';
 import '../modules/widget/captcha/views/captcha_view.dart';
 import '../modules/widget/theme_mode/bindings/theme_mode_binding.dart';
@@ -25,6 +26,7 @@ class AppPages {
       // middlewares: [
       //   RouteAuthMiddleware(priority: 1),
       // ],
+      children: [],
     ),
     GetPage(
       name: _Paths.LOGIN,
@@ -40,6 +42,11 @@ class AppPages {
       name: _Paths.THEME_MODE,
       page: () => const ThemeModeView(),
       binding: ThemeModeBinding(),
+    ),
+    GetPage(
+      name: _Paths.USER,
+      page: () => const UserView(),
+      binding: UserBinding(),
     ),
   ];
 }

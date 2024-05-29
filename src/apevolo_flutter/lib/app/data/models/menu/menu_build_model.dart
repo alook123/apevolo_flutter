@@ -6,7 +6,7 @@ class MenuBuild {
   String? redirect;
   String? component;
   bool? alwaysShow;
-  List<Children>? children;
+  List<ChildrenMenu>? children;
 
   MenuBuild(
       {this.meta,
@@ -27,9 +27,9 @@ class MenuBuild {
     component = json['component'];
     alwaysShow = json['alwaysShow'];
     if (json['children'] != null) {
-      children = <Children>[];
+      children = <ChildrenMenu>[];
       json['children'].forEach((v) {
-        children?.add(Children.fromJson(v));
+        children?.add(ChildrenMenu.fromJson(v));
       });
     }
   }
@@ -74,7 +74,7 @@ class Meta {
   }
 }
 
-class Children {
+class ChildrenMenu {
   Meta? meta;
   String? name;
   String? path;
@@ -82,7 +82,7 @@ class Children {
   String? component;
   bool? alwaysShow;
 
-  Children(
+  ChildrenMenu(
       {this.meta,
       this.name,
       this.path,
@@ -90,7 +90,7 @@ class Children {
       this.component,
       this.alwaysShow});
 
-  Children.fromJson(Map<String, dynamic> json) {
+  ChildrenMenu.fromJson(Map<String, dynamic> json) {
     meta = json['meta'] != null ? Meta?.fromJson(json['meta']) : null;
     name = json['name'];
     path = json['path'];

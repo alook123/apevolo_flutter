@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:apevolo_flutter/app/data/models/auth_login_model.dart';
+import 'package:apevolo_flutter/app/data/models/auth/auth_login_model.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:dio/dio.dart';
@@ -21,7 +21,8 @@ class ApevoloDioService extends GetxService {
       receiveTimeout: const Duration(seconds: 60),
       sendTimeout: const Duration(seconds: 60),
       headers: {
-        'platform': Platform.operatingSystem,
+        'Platform': Platform.operatingSystem,
+        'Accept': 'application/json',
       },
       contentType: 'application/json; charset=utf-8',
       responseType: ResponseType.json,
@@ -31,6 +32,7 @@ class ApevoloDioService extends GetxService {
   @override
   Future<void> onInit() async {
     super.onInit();
+    dio.interceptors.add(LogInterceptor(responseBody: true));
     //拦截器
     dio.interceptors.add(
       InterceptorsWrapper(
@@ -39,8 +41,8 @@ class ApevoloDioService extends GetxService {
         onError: errorInterceptor,
       ),
     );
-
-    dio.interceptors.add(LogInterceptor(responseBody: true));
+    //dio.interceptors.add(QueuedInterceptor());
+    // dio.interceptors.add(BackgroundTransformer());
   }
 
   void requestInterceptor(
@@ -98,12 +100,18 @@ class ApevoloDioService extends GetxService {
         return handler.resolve(await dio.fetch(exception.requestOptions));
       } else {
         Get.offAllNamed(Routes.LOGIN);
+        return handler.next(exception);
       }
     }
 
     int statusCode = exception.response?.statusCode ?? 0;
 
-    if (statusCode == 400) {}
+    if (statusCode == 400) {
+      if (exception.response?.realUri.path == '/auth/refreshToken') {
+        Get.offAllNamed(Routes.LOGIN);
+        return handler.next(exception);
+      }
+    }
 
     handler.reject(exception);
   }

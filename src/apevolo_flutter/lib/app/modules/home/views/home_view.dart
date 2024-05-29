@@ -1,16 +1,13 @@
-import 'dart:math';
-
 import 'package:apevolo_flutter/app/modules/home/views/home_horizontal_menu_view.dart';
 import 'package:apevolo_flutter/app/modules/home/views/home_vertical_menu_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import 'package:get/get.dart';
 
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
-  const HomeView({Key? key}) : super(key: key);
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +26,7 @@ class HomeView extends GetView<HomeController> {
                 ),
                 child: SizedBox(
                   width: controller.verticalMenuWidth.value,
-                  child: HomeVerticalMenuView(
-                    controller.menuList,
-                    hiddenTopMenu: !controller.menuOpen.value,
-                    onPressed: () {
-                      controller.menuOpen.value = false;
-                    },
-                  ),
+                  child: const HomeVerticalMenuView(),
                 ),
               ),
             ),
@@ -67,40 +58,38 @@ class HomeView extends GetView<HomeController> {
           Expanded(
             flex: 3,
             child: Card(
+              //todo: 全屏时，去除card
               margin: const EdgeInsets.fromLTRB(0, 8, 8, 8),
               elevation: 4,
               clipBehavior: Clip.antiAlias,
               child: Scaffold(
-                body: Column(
-                  children: [
-                    Obx(
-                      () => HomeHorizontalMenuView(
+                body: Obx(
+                  () => Column(
+                    children: [
+                      HomeHorizontalMenuView(
                         visible: !controller.menuOpen.value,
                         onPressed: () {
                           //todo:弹出时候，隐藏抽屉顶部的菜单
                           scaffoldKey.currentState!.openDrawer();
                         },
                       ),
-                    ),
-                    Expanded(
-                      child: Center(
-                        child: Column(
+                      TextButton(
+                        onPressed: () {},
+                        child: Row(
                           children: [
-                            const Text(
-                              'HomeView is working',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                scaffoldKey.currentState!.openDrawer();
-                              },
-                              child: Text("open drawer"),
-                            ),
+                            Icon(controller.selectIcon.value),
+                            Text(
+                                '${controller.selectMenu.value?.meta?.title}/${controller.selectMenuChildren.value?.meta?.title}'),
                           ],
                         ),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: Center(
+                          child: controller.page.value,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -108,18 +97,11 @@ class HomeView extends GetView<HomeController> {
         ],
       ),
       drawer: Obx(
-        () => Container(
+        () => SizedBox(
           width: controller.verticalMenuWidth.value,
-          child: Card(
-            margin: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-            child: HomeVerticalMenuView(
-              controller.menuList,
-              hiddenTopMenu: false,
-              onPressed: () {
-                controller.menuOpen.value = true;
-                scaffoldKey.currentState!.closeDrawer();
-              },
-            ),
+          child: const Card(
+            margin: EdgeInsets.only(left: 8, top: 8, bottom: 8),
+            child: HomeVerticalMenuView(),
           ),
         ),
       ),

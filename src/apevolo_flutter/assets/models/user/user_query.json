@@ -1,0 +1,79 @@
+{
+    "content": [
+        {
+            "username": "guest",
+            "nickName": "游客",
+            "email": "guest@gmail.com",
+            "isAdmin": false,
+            "enabled": true,
+            "password": "$2a$11$9BhSJpUSBlfjhemHVho0vej7rOH7PVhu5bqbhRcmwJMEyyVqGLTJe",
+            "deptId": "1306054134645919765",
+            "phone": "13699797575",
+            "avatarPath": "/uploads/file/avatar/20231010143458_1711631391147429888.png",
+            "sex": false,
+            "gender": "男",
+            "roles": [
+                {
+                    "id": "1521439155194695680",
+                    "name": "游客",
+                    "permission": "guest",
+                    "level": 1,
+                    "dataScope": "全部"
+                }
+            ],
+            "dept": {
+                "id": "1306054134645919765",
+                "name": "研发部"
+            },
+            "jobs": [
+                {
+                    "id": "1306054134645919756",
+                    "name": "软件测试"
+                }
+            ],
+            "id": "1306054134645919751",
+            "createBy": "apevolo",
+            "createTime": "2021-01-01 00:00:00"
+        },
+        {
+            "username": "apevolo",
+            "nickName": "系统管理员",
+            "email": "apevolo@gmail.com",
+            "isAdmin": true,
+            "enabled": true,
+            "password": "$2a$11$.WUDiK7CrAPKYJDSH9RtNuxarZ.u1llMs.8tWKbE76FU7G4j55E62",
+            "deptId": "1306054134645919765",
+            "phone": "13699797575",
+            "avatarPath": "/uploads/file/avatar/20231010143458_1711631391147429888.png",
+            "sex": false,
+            "gender": "男",
+            "roles": [
+                {
+                    "id": "1306054134645919752",
+                    "name": "内置管理员",
+                    "permission": "admin",
+                    "level": 1,
+                    "dataScope": "全部"
+                }
+            ],
+            "dept": {
+                "id": "1306054134645919765",
+                "name": "研发部"
+            },
+            "jobs": [
+                {
+                    "id": "1306054134645919755",
+                    "name": "全栈开发"
+                },
+                {
+                    "id": "1306054134645919756",
+                    "name": "软件测试"
+                }
+            ],
+            "id": "1306054134645919750",
+            "createBy": "apevolo",
+            "createTime": "2021-01-01 00:00:00"
+        }
+    ],
+    "totalElements": 2
+}

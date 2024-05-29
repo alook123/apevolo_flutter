@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/data/models/menu_build_model.dart';
+import 'package:apevolo_flutter/app/data/models/menu/menu_build_model.dart';
 import 'package:apevolo_flutter/app/provider/apevolo_com/apevolo_dio_service.dart';
 import 'package:dio/dio.dart';
 

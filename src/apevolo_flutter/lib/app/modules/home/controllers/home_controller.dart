@@ -1,13 +1,14 @@
-import 'package:apevolo_flutter/app/data/models/menu_build_model.dart';
-import 'package:apevolo_flutter/app/provider/apevolo_com/menu_provider.dart';
-import 'package:apevolo_flutter/app/routes/app_pages.dart';
-import 'package:apevolo_flutter/app/service/user_service.dart';
+import 'package:apevolo_flutter/app/data/models/menu/menu_build_model.dart';
+import 'package:apevolo_flutter/app/modules/permission/user/views/user_view.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  final MenuProvider menuProvider = Get.find<MenuProvider>();
+  final Rx<MenuBuild?> selectMenu = Rxn<MenuBuild>();
+  final Rx<ChildrenMenu?> selectMenuChildren = Rxn<ChildrenMenu>();
+  final Rx<IconData?> selectIcon = Rxn<IconData>();
 
-  final RxList<MenuBuild> menuList = <MenuBuild>[].obs;
+  final Rx<Widget> page = Rx(const SizedBox());
 
   final RxBool menuOpen = true.obs;
 
@@ -15,17 +16,22 @@ class HomeController extends GetxController {
 
   final RxBool resizeMouse = false.obs;
 
-  final UserService userService = Get.find();
+  final Map<String, Widget> pages = {
+    "user": const UserView(),
+  };
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    await onLoadMenu();
+    selectMenuChildren.listen((x) {
+      page.value = pages[x?.path] ?? const SizedBox();
+    });
   }
 
   @override
   void onReady() {
     super.onReady();
+
     // Future.delayed(
     //   const Duration(milliseconds: 1000),
     //   () {
@@ -39,16 +45,5 @@ class HomeController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-  }
-
-  Future<void> onLoadMenu() async {
-    await menuProvider.build().then((value) {
-      menuList.value = value;
-      Get.snackbar("title", value.toString());
-    }).catchError((error) {
-      String errorText =
-          error is String ? error : error.response.data['message'].toString();
-      Get.snackbar("title", errorText);
-    });
   }
 }

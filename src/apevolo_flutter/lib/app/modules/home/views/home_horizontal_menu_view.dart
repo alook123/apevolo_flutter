@@ -1,13 +1,15 @@
+import 'package:apevolo_flutter/app/modules/widget/theme_mode/views/theme_mode_view.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
 class HomeHorizontalMenuView extends GetView {
   HomeHorizontalMenuView({
-    Key? key,
+    super.key,
     bool visible = true,
     Function()? onPressed,
-  }) : super(key: key) {
+  }) {
     _visible = visible;
     _onPressed = onPressed;
   }
@@ -25,7 +27,7 @@ class HomeHorizontalMenuView extends GetView {
             children: [
               IconButton(
                 onPressed: _onPressed,
-                icon: const Icon(Icons.menu),
+                icon: const Icon(FluentIcons.panel_left_16_filled),
               ),
             ],
           ),
@@ -43,12 +45,7 @@ class HomeHorizontalMenuView extends GetView {
                 onPressed: () {},
                 icon: const Icon(Icons.settings_outlined),
               ),
-              IconButton(
-                onPressed: () {
-                  Get.changeThemeMode(ThemeMode.dark);
-                },
-                icon: const Icon(Icons.light_mode),
-              ),
+              const ThemeModeView(),
             ],
           ),
         ],

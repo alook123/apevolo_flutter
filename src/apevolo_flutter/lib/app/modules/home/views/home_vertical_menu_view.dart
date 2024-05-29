@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:apevolo_flutter/app/data/models/menu_build_model.dart';
+import 'package:apevolo_flutter/app/modules/home/controllers/home_controller.dart';
+import 'package:apevolo_flutter/app/modules/home/controllers/home_vertical_menu_controller.dart';
 import 'package:apevolo_flutter/app/modules/widget/theme_mode/views/theme_mode_view.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -8,124 +9,124 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeVerticalMenuView extends GetView {
-  HomeVerticalMenuView(List<MenuBuild> menuList,
-      {super.key, bool hiddenTopMenu = false, Function()? onPressed}) {
-    _menuList = menuList;
-    _hiddenTopMenu = hiddenTopMenu;
-    _onPressed = onPressed;
-  }
-  late final List<MenuBuild> _menuList;
-  late final bool _hiddenTopMenu;
-  late final Function()? _onPressed;
+  const HomeVerticalMenuView({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              onPressed: _onPressed,
-              icon: const Icon(Icons.menu_sharp),
-            ),
-            Visibility(
-              visible: !_hiddenTopMenu,
-              child: Row(
+    final HomeController homeController = Get.find();
+    return GetBuilder<HomeVerticalMenuController>(
+      init: HomeVerticalMenuController(),
+      builder: (controller) => Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: () {
+                  homeController.menuOpen.value =
+                      !homeController.menuOpen.value;
+                  Get.back();
+                },
+                icon: Icon(
+                  homeController.menuOpen.value
+                      ? FluentIcons.panel_left_16_regular
+                      : FluentIcons.panel_left_16_filled,
+                ),
+              ),
+              Visibility(
+                visible: homeController.menuOpen.value,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.home),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.message),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.person),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.settings),
+                    ),
+                    const ThemeModeView(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(top: 8, bottom: 8),
+              child: ListView(
+                shrinkWrap: true,
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(FluentIcons.pin_12_filled),
+                  Column(
+                    children: controller.menuList
+                        .map(
+                          (x) => ExpansionTile(
+                            leading: Icon(getRandomIcon()),
+                            title: Text(x.meta?.title ?? ''),
+                            children: x.children == null
+                                ? []
+                                : x.children!.map((y) {
+                                    IconData iconData = getRandomIcon();
+                                    return ListTile(
+                                      leading: Icon(iconData),
+                                      title: Text(y.meta?.title ?? ''),
+                                      onTap: () {
+                                        controller.onChangeMenu(x, y, iconData);
+                                      },
+                                    );
+                                  }).toList(),
+                          ),
+                        )
+                        .toList(),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.message),
+                  const Divider(
+                    height: 2,
+                    color: Colors.black12,
+                    indent: 8,
+                    endIndent: 8,
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.person),
+                  Container(
+                    margin: const EdgeInsets.only(top: 8, bottom: 8),
+                    child: Column(
+                      children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: const Row(
+                            children: [
+                              Icon(Icons.add),
+                              Text('New Tab'),
+                            ],
+                          ),
+                        ),
+                        ListTile(
+                          title: const Text('Item 1'),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          title: const Text('Item 2'),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          title: const Text('Item 3'),
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.settings_outlined),
-                  ),
-                  // IconButton(
-                  //   onPressed: () {
-                  //     Get.changeThemeMode(ThemeMode.dark);
-                  //   },
-                  //   icon: const Icon(Icons.light_mode),
-                  // ),
-                  const ThemeModeView(),
                 ],
               ),
             ),
-          ],
-        ),
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.only(top: 8, bottom: 8),
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Column(
-                  children: _menuList
-                      .map(
-                        (e) => ExpansionTile(
-                          leading: Icon(getRandomIcon()),
-                          title: Text(e.meta?.title ?? ''),
-                          children: e.children == null
-                              ? []
-                              : e.children!
-                                  .map(
-                                    (e) => ListTile(
-                                      leading: Icon(getRandomIcon()),
-                                      title: Text(e.meta?.title ?? ''),
-                                      onTap: () {},
-                                    ),
-                                  )
-                                  .toList(),
-                        ),
-                      )
-                      .toList(),
-                ),
-                const Divider(
-                  height: 2,
-                  color: Colors.black12,
-                  indent: 8,
-                  endIndent: 8,
-                ),
-                Container(
-                  margin: const EdgeInsets.only(top: 8, bottom: 8),
-                  child: Column(
-                    children: [
-                      TextButton(
-                        onPressed: () {},
-                        child: const Row(
-                          children: [
-                            Icon(Icons.add),
-                            Text('New Tab'),
-                          ],
-                        ),
-                      ),
-                      ListTile(
-                        title: const Text('Item 1'),
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        title: const Text('Item 2'),
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        title: const Text('Item 3'),
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

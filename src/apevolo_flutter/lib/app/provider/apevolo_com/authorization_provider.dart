@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import 'package:apevolo_flutter/app/data/models/auth_login_model.dart';
+import 'package:apevolo_flutter/app/data/models/auth/auth_login_model.dart';
 import 'package:apevolo_flutter/app/provider/apevolo_com/apevolo_dio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
@@ -33,11 +31,6 @@ class AuthorizationProvider extends ApevoloDioService {
     AuthLogin data = AuthLogin.fromJson(response.data);
     return data;
   }
-
-  // Future<Response> refreshToken(String token) => dio.post(
-  //       '${prefix}refreshToken',
-  //       queryParameters: {'token': token},
-  //     );
 
   Future<Response> info() => dio.get('${prefix}info');
 
