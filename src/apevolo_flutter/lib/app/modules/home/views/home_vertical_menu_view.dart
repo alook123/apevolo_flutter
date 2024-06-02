@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:apevolo_flutter/app/modules/home/controllers/home_controller.dart';
 import 'package:apevolo_flutter/app/modules/home/controllers/home_vertical_menu_controller.dart';
-import 'package:apevolo_flutter/app/modules/widget/theme_mode/views/theme_mode_view.dart';
+import 'package:apevolo_flutter/app/modules/home/views/home_menu_buttons_view.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +14,7 @@ class HomeVerticalMenuView extends GetView {
   @override
   Widget build(BuildContext context) {
     final HomeController homeController = Get.find();
+    final GlobalKey personMenuKey = GlobalKey();
     return GetBuilder<HomeVerticalMenuController>(
       init: HomeVerticalMenuController(),
       builder: (controller) => Column(
@@ -33,29 +34,8 @@ class HomeVerticalMenuView extends GetView {
                       : FluentIcons.panel_left_16_filled,
                 ),
               ),
-              Visibility(
+              HomeMenuButtonsView(
                 visible: homeController.menuOpen.value,
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.home),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.message),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.person),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.settings),
-                    ),
-                    const ThemeModeView(),
-                  ],
-                ),
               ),
             ],
           ),

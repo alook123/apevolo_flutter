@@ -67,20 +67,38 @@ class HomeView extends GetView<HomeController> {
                   () => Column(
                     children: [
                       HomeHorizontalMenuView(
+                        title: controller.selectMenu.value?.meta?.title,
+                        subTitle:
+                            controller.selectMenuChildren.value?.meta?.title,
+                        icon: controller.selectIcon.value,
                         visible: !controller.menuOpen.value,
                         onPressed: () {
                           //todo:弹出时候，隐藏抽屉顶部的菜单
                           scaffoldKey.currentState!.openDrawer();
                         },
                       ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Row(
-                          children: [
-                            Icon(controller.selectIcon.value),
-                            Text(
-                                '${controller.selectMenu.value?.meta?.title}/${controller.selectMenuChildren.value?.meta?.title}'),
-                          ],
+                      Visibility(
+                        visible: controller.menuOpen.value,
+                        child: TextButton(
+                          onPressed: () {},
+                          child: Row(
+                            children: [
+                              Image.asset('assets/image/logo.png', width: 20),
+                              const SizedBox(width: 16),
+                              Icon(controller.selectIcon.value, size: 20),
+                              const SizedBox(width: 8),
+                              Visibility(
+                                visible:
+                                    controller.selectMenu.value?.meta?.title !=
+                                            null &&
+                                        controller.selectMenuChildren.value
+                                                ?.meta?.title !=
+                                            null,
+                                child: Text(
+                                    '${controller.selectMenu.value?.meta?.title ?? ''} / ${controller.selectMenuChildren.value?.meta?.title ?? ''}'),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Expanded(

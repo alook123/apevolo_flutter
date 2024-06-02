@@ -26,12 +26,19 @@ class LoginView extends GetView<LoginController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    'ApeVolo 后台管理系统',
-                    style: TextStyle(
-                      fontSize: 26,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Image.asset('assets/image/logo.png', width: 30),
+                      const Text(
+                        'ApeVolo 后台管理系统',
+                        style: TextStyle(
+                          fontSize: 26,
+                        ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 32.0),
                   TextFormField(
                     controller: controller.usernameTextController,
                     decoration: const InputDecoration(
@@ -81,15 +88,15 @@ class LoginView extends GetView<LoginController> {
                       const SizedBox(width: 8.0),
                       Row(
                         children: [
-                          IconButton.outlined(
+                          const CaptchaView(),
+                          const SizedBox(width: 16.0),
+                          IconButton.filled(
                             onPressed: () {
                               controller.onRefresh();
                             },
                             color: Theme.of(context).primaryColor,
                             icon: const Icon(Icons.refresh),
                           ),
-                          const SizedBox(width: 16.0),
-                          const CaptchaView(),
                         ],
                       ),
                     ],

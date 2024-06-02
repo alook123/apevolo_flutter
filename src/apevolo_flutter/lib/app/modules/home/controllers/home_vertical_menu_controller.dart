@@ -1,11 +1,14 @@
 import 'package:apevolo_flutter/app/data/models/menu/menu_build_model.dart';
 import 'package:apevolo_flutter/app/modules/home/controllers/home_controller.dart';
-import 'package:apevolo_flutter/app/provider/apevolo_com/menu_provider.dart';
+import 'package:apevolo_flutter/app/provider/apevolo_com/auth/authorization_provider.dart';
+import 'package:apevolo_flutter/app/provider/apevolo_com/api/menu/menu_provider.dart';
+import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:apevolo_flutter/app/service/system_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeVerticalMenuController extends GetxController {
+  final AuthorizationProvider _provider2 = Get.find<AuthorizationProvider>();
   final MenuProvider menuProvider = Get.find<MenuProvider>();
   final HomeController _homeController = Get.find();
 
@@ -24,6 +27,11 @@ class HomeVerticalMenuController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  Future<void> onLogout() async {
+    await _provider2.logout();
+    Get.offAndToNamed(Routes.LOGIN);
   }
 
   Future<void> onChangeMenu(

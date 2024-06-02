@@ -1,11 +1,13 @@
 import 'package:apevolo_flutter/app/data/models/user/user_query_model.dart';
 import 'package:apevolo_flutter/app/data/models/user/user_query_request_model.dart';
-import 'package:apevolo_flutter/app/provider/apevolo_com/user_provider.dart';
+import 'package:apevolo_flutter/app/provider/apevolo_com/apevolo_dio_service.dart';
+import 'package:apevolo_flutter/app/provider/apevolo_com/api/user/user_provider.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class UserController extends GetxController {
-  final UserProvider userProvider = Get.put<UserProvider>(UserProvider());
+  final UserProvider userProvider =
+      Get.put<UserProvider>(UserProvider(Get.find<ApevoloDioService>().dio));
 
   final TextEditingController departmentTextController =
       TextEditingController();
