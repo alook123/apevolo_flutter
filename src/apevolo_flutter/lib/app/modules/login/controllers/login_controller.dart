@@ -24,19 +24,23 @@ class LoginController extends GetxController
   @override
   Future<void> onInit() async {
     super.onInit();
-    if (kDebugMode) {
-      usernameTextController.text = "apevolo";
-      passwordTextController.text = "123456";
-    }
     final publicPem =
         await rootBundle.loadString('assets/certificate/public_apevolo.pem');
     dynamic publicKey = RSAKeyParser().parse(publicPem);
     encrypter = Encrypter(RSA(publicKey: publicKey));
+    if (kDebugMode) {
+      usernameTextController.text = "apevolo";
+      passwordTextController.text = "123456";
+    }
   }
 
   @override
-  void onReady() {
+  Future<void> onReady() async {
     super.onReady();
+    await userService.loadUserInfo();
+    if (userService.loginInfo.value != null) {
+      Get.offAllNamed(Routes.SHELL);
+    }
   }
 
   @override
@@ -63,7 +67,7 @@ class LoginController extends GetxController
       (value) async {
         loginFailedText.value = null;
         userService.loginInfo.value = value;
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.SHELL);
       },
     ).catchError(
       (error) {

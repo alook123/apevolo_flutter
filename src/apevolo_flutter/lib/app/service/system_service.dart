@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/data/models/menu/menu_build_model.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
