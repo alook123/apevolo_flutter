@@ -1,13 +1,18 @@
-import 'package:apevolo_flutter/app/data/models/user/user_query_model.dart';
-import 'package:apevolo_flutter/app/data/models/user/user_query_request_model.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/user/user_query_model.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/user/user_query_request_model.dart';
+import 'package:apevolo_flutter/app/modules/permission/user/controllers/user_search_controller.dart';
 import 'package:apevolo_flutter/app/provider/apevolo_com/apevolo_dio_service.dart';
 import 'package:apevolo_flutter/app/provider/apevolo_com/api/user/user_provider.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:retrofit/retrofit.dart';
 
 class UserController extends GetxController {
   final UserProvider userProvider =
       Get.put<UserProvider>(UserProvider(Get.find<ApevoloDioService>().dio));
+
+  final UserSearchController userSearchController =
+      Get.put(UserSearchController());
 
   final TextEditingController departmentTextController =
       TextEditingController();
@@ -15,6 +20,7 @@ class UserController extends GetxController {
   final TextEditingController createFromTextController =
       TextEditingController();
   final TextEditingController createToTextController = TextEditingController();
+
   final Rx<bool?> enabled = Rx<bool?>(null);
   final Rx<bool?> isQuery = Rx<bool?>(null);
 
@@ -23,6 +29,9 @@ class UserController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    Get.lazyPut<UserSearchController>(() => UserSearchController());
+    Get.lazyPut<UserProvider>(
+        () => UserProvider(Get.find<ApevoloDioService>().dio));
     await onQuery();
   }
 
@@ -37,12 +46,19 @@ class UserController extends GetxController {
   }
 
   Future<void> onReset() async {
-    query.value = null;
+    // query.value = null;
     departmentTextController.text = "";
     keyWordTextController.text = "";
     createFromTextController.text = "";
     createFromTextController.text = "";
     update();
+    Get.rawSnackbar(
+      title: '提示',
+      message: '重置成功',
+      duration: const Duration(seconds: 2),
+      snackPosition: SnackPosition.TOP,
+      maxWidth: 500,
+    );
   }
 
   Future<void> onQuery() async {

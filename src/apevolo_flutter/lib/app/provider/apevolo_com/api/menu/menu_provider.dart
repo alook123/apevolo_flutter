@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/data/models/menu/menu_build_model.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 

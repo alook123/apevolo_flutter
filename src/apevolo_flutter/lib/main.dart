@@ -12,7 +12,9 @@ import 'package:get_storage/get_storage.dart';
 
 import 'app/routes/app_pages.dart';
 
-void main() {
+Future<void> main() async {
+  await GetStorage.init();
+  await GetStorage.init('userData');
   runApp(
     GetMaterialApp(
       title: "Application",
@@ -25,14 +27,13 @@ void main() {
       logWriterCallback: Logger.write,
       theme: lightTheme,
       darkTheme: darkTheme,
+
       // scrollBehavior: MyCustomScrollBehavior(),
     ),
   );
 }
 
 Future<void> onInitialize() async {
-  // GetStorage.init();
-  // GetStorage.init('userData');
   Get.put(SystemService(), permanent: true);
   Get.put(UserService(), permanent: true);
   Get.put(ApevoloDioService(), permanent: true);

@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/data/models/model_base.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/model_base.dart';
 
 class QueryBase<T extends ModelBase> {
   List<T>? content;

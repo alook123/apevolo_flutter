@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/data/models/auth/auth_login_model.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login_model.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 

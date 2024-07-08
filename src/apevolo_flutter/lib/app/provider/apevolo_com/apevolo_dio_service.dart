@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:apevolo_flutter/app/data/models/auth/auth_login_model.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login_model.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:dio/dio.dart';

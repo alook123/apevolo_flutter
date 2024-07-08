@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/data/models/query_request_base_model.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/query_request_base_model.dart';
 
 class UserQueryRequest extends QueryRequestBase {
   int? id;
