@@ -13,7 +13,6 @@ class ShellView extends GetView<ShellController> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
     return Scaffold(
       key: scaffoldKey,
       body: Flex(
@@ -107,7 +106,6 @@ class ShellView extends GetView<ShellController> {
                       Expanded(
                         child: Scaffold(
                           body: Navigator(
-                            //todo:修改页面进入的动画
                             key: Get.nestedKey(1),
                             initialRoute: Routes.HOME,
                             onGenerateRoute: (settings) {
@@ -124,6 +122,8 @@ class ShellView extends GetView<ShellController> {
                                 page: getPage.page,
                                 settings: settings,
                                 binding: getPage.binding,
+                                transition:
+                                    Transition.leftToRightWithFade, //过渡动画
                               );
                             },
                           ),
