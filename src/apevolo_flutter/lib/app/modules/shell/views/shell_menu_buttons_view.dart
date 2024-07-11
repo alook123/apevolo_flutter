@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/modules/widget/theme_mode/views/theme_mode_view.dart';
+import 'package:apevolo_flutter/app/modules/components/theme_mode/views/theme_mode_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 

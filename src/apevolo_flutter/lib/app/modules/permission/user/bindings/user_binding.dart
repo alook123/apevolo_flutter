@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/modules/widget/search_filter/controllers/search_filter_controller.dart';
+import 'package:apevolo_flutter/app/modules/components/search_filter/controllers/search_filter_controller.dart';
 import 'package:get/get.dart';
 
 import '../controllers/user_controller.dart';

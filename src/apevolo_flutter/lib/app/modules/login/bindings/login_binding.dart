@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/modules/widget/captcha/controllers/captcha_controller.dart';
+import 'package:apevolo_flutter/app/modules/components/captcha/controllers/captcha_controller.dart';
 import 'package:apevolo_flutter/app/provider/apevolo_com/apevolo_dio_service.dart';
 import 'package:apevolo_flutter/app/provider/apevolo_com/auth/authorization_provider.dart';
 import 'package:get/get.dart';

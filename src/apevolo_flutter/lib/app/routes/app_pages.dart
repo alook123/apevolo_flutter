@@ -8,14 +8,14 @@ import '../modules/permission/user/bindings/user_binding.dart';
 import '../modules/permission/user/views/user_view.dart';
 import '../modules/shell/bindings/shell_binding.dart';
 import '../modules/shell/views/shell_view.dart';
-import '../modules/widget/captcha/bindings/captcha_binding.dart';
-import '../modules/widget/captcha/views/captcha_view.dart';
-import '../modules/widget/not_found/bindings/not_found_binding.dart';
-import '../modules/widget/not_found/views/not_found_view.dart';
-import '../modules/widget/search_filter/bindings/search_filter_binding.dart';
-import '../modules/widget/search_filter/views/search_filter_view.dart';
-import '../modules/widget/theme_mode/bindings/theme_mode_binding.dart';
-import '../modules/widget/theme_mode/views/theme_mode_view.dart';
+import '../modules/components/captcha/bindings/captcha_binding.dart';
+import '../modules/components/captcha/views/captcha_view.dart';
+import '../modules/components/not_found/bindings/not_found_binding.dart';
+import '../modules/components/not_found/views/not_found_view.dart';
+import '../modules/components/search_filter/bindings/search_filter_binding.dart';
+import '../modules/components/search_filter/views/search_filter_view.dart';
+import '../modules/components/theme_mode/bindings/theme_mode_binding.dart';
+import '../modules/components/theme_mode/views/theme_mode_view.dart';
 
 part 'app_routes.dart';
 
@@ -65,7 +65,7 @@ class AppPages {
       binding: UserBinding(),
     ),
     GetPage(
-      name: _Paths.WIDGET + _Paths.NOT_FOUND,
+      name: _Paths.COMPONENTS + _Paths.NOT_FOUND,
       page: () => const NotFoundView(),
       binding: NotFoundBinding(),
     ),
