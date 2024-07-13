@@ -6,6 +6,7 @@ class SearchFilterController extends GetxController {
   final RxMap<SearchFilterModel, Function?> searchFilter =
       <SearchFilterModel, Function?>{}.obs;
 
+  Function()? onDeleteAllCallback;
   final RxBool leftMost = true.obs;
   final RxBool rightMost = false.obs;
 
@@ -40,6 +41,16 @@ class SearchFilterController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void onDeleteAll() {
+    if (searchFilter.isNotEmpty) {
+      if (onDeleteAllCallback != null) {
+        onDeleteAllCallback!();
+      }
+      searchFilter.clear();
+      update();
+    }
   }
 
   /// 判断在最左或最右

@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
 import '../controllers/search_filter_controller.dart';
 
 class SearchFilterView extends GetView<SearchFilterController> {
   SearchFilterView({super.key});
-  final scrollController = ScrollController();
-  void scrollLeft() {
-    scrollController.animateTo(
-      scrollController.offset - 100,
+  final _scrollController = ScrollController();
+  void _scrollLeft() {
+    _scrollController.animateTo(
+      _scrollController.offset - 100,
       duration: const Duration(milliseconds: 300),
       curve: Curves.ease,
     );
   }
 
-  void scrollRight() {
-    scrollController.animateTo(
-      scrollController.offset + 100,
+  void _scrollRight() {
+    _scrollController.animateTo(
+      _scrollController.offset + 100,
       duration: const Duration(milliseconds: 300),
       curve: Curves.ease,
     );
@@ -26,39 +24,62 @@ class SearchFilterView extends GetView<SearchFilterController> {
   @override
   Widget build(BuildContext context) {
     bool isFirstTime = true;
-    scrollController.addListener(
+    bool hasScrollBar = false;
+    _scrollController.addListener(
       () {
         if (isFirstTime) {
           controller.updateScrollPosition(
-              scrollController.position.pixels,
-              scrollController.position.minScrollExtent,
-              scrollController.position.maxScrollExtent);
+              _scrollController.position.pixels,
+              _scrollController.position.minScrollExtent,
+              _scrollController.position.maxScrollExtent);
           isFirstTime = false;
         }
-        if (scrollController.position.pixels ==
-                scrollController.position.minScrollExtent ||
-            scrollController.position.pixels ==
-                scrollController.position.maxScrollExtent) {
+        if (_scrollController.position.pixels ==
+                _scrollController.position.minScrollExtent ||
+            _scrollController.position.pixels ==
+                _scrollController.position.maxScrollExtent) {
           isFirstTime = true;
           controller.updateScrollPosition(
-              scrollController.position.pixels,
-              scrollController.position.minScrollExtent,
-              scrollController.position.maxScrollExtent);
+              _scrollController.position.pixels,
+              _scrollController.position.minScrollExtent,
+              _scrollController.position.maxScrollExtent);
         }
       },
     );
+
+    void checkScroll() {
+      bool temp = _scrollController.hasClients &&
+          (_scrollController.offset > 0 ||
+              _scrollController.offset <
+                  _scrollController.position.maxScrollExtent);
+      if (hasScrollBar != temp) {
+        hasScrollBar = temp;
+        controller.update();
+      }
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkScroll();
+    });
 
     return GetBuilder<SearchFilterController>(
       builder: (controller) => Row(
         children: [
           const Icon(Icons.filter_alt),
           const SizedBox(width: 8),
+          Visibility(
+            visible: controller.searchFilter.isNotEmpty,
+            child: IconButton(
+              onPressed: controller.onDeleteAll,
+              icon: const Icon(Icons.close),
+            ),
+          ),
           Expanded(
             child: Stack(
               children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  controller: scrollController,
+                  controller: _scrollController,
                   child: Row(
                     children: List.generate(
                       controller.searchFilter.length,
@@ -72,6 +93,7 @@ class SearchFilterView extends GetView<SearchFilterController> {
                             label: Text('${e.key.name}:${e.key.value}'),
                             onDeleted: () {
                               controller.removeFilter(e.key);
+                              checkScroll();
                             },
                           ),
                         );
@@ -80,7 +102,9 @@ class SearchFilterView extends GetView<SearchFilterController> {
                   ),
                 ),
                 Visibility(
-                  visible: !controller.leftMost.value,
+                  visible: hasScrollBar &&
+                      controller.searchFilter.isNotEmpty &&
+                      !controller.leftMost.value,
                   child: Positioned(
                     left: 0, // 调整按钮大小和间距
                     top: 0,
@@ -108,7 +132,9 @@ class SearchFilterView extends GetView<SearchFilterController> {
                   ),
                 ),
                 Visibility(
-                  visible: !controller.leftMost.value,
+                  visible: hasScrollBar &&
+                      controller.searchFilter.isNotEmpty &&
+                      !controller.leftMost.value,
                   child: Positioned(
                     left: 0, // 调整按钮大小和间距
                     top: 0,
@@ -120,13 +146,15 @@ class SearchFilterView extends GetView<SearchFilterController> {
                         padding: EdgeInsets.zero,
                         minimumSize: const Size(40, 40),
                       ),
-                      onPressed: scrollLeft,
+                      onPressed: _scrollLeft,
                       child: const Icon(Icons.chevron_left), // 设置图标大小
                     ),
                   ),
                 ),
                 Visibility(
-                  visible: !controller.rightMost.value,
+                  visible: hasScrollBar &&
+                      controller.searchFilter.isNotEmpty &&
+                      !controller.rightMost.value,
                   child: Positioned(
                     right: 0, // 调整按钮大小和间距
                     top: 0,
@@ -154,7 +182,9 @@ class SearchFilterView extends GetView<SearchFilterController> {
                   ),
                 ),
                 Visibility(
-                  visible: !controller.rightMost.value,
+                  visible: hasScrollBar &&
+                      controller.searchFilter.isNotEmpty &&
+                      !controller.rightMost.value,
                   child: Positioned(
                     right: 0, // 调整按钮大小和间距
                     top: 0,
@@ -166,7 +196,7 @@ class SearchFilterView extends GetView<SearchFilterController> {
                         padding: EdgeInsets.zero,
                         minimumSize: const Size(40, 40),
                       ),
-                      onPressed: scrollRight,
+                      onPressed: _scrollRight,
                       child: const Icon(Icons.chevron_right), // 设置图标大小
                     ),
                   ),
