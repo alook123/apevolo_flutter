@@ -25,12 +25,10 @@ class UserView extends GetView<UserController> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.filter_alt),
-                            const SizedBox(width: 8),
                             Expanded(
                               child: SearchFilterView(),
                             ),
-                            const SizedBox(width: 32),
+                            const SizedBox(width: 48),
                             Row(
                               children: [
                                 IconButton(
