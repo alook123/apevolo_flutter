@@ -113,6 +113,14 @@ class ApevoloDioService extends GetxService {
       }
     }
 
+    if (statusCode == 429) {
+      Get.snackbar(
+        '提示',
+        exception.response?.data['message'],
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+
     handler.reject(exception);
   }
 
