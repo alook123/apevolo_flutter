@@ -8,6 +8,7 @@ environment:
 dependencies:
     cupertino_icons: ^1.0.2
     fluentui_system_icons: ^1.1.226
+    uuid: ^3.0.6
     get: 4.6.6
     crypto: ^3.0.3
     pointycastle: ^3.7.4

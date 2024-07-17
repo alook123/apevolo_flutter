@@ -16,6 +16,7 @@ class UserQuery extends ModelBase {
     totalElements = json['totalElements'];
   }
 
+  @override
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     if (content != null) {

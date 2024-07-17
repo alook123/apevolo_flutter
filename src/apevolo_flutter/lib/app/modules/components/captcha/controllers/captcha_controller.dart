@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class CaptchaController extends GetxController with StateMixin {
-  final AuthorizationProvider _provider2 = Get.find<AuthorizationProvider>();
+  final AuthorizationProvider _provider = Get.find<AuthorizationProvider>();
 
   late String captchaId;
 
@@ -27,7 +27,7 @@ class CaptchaController extends GetxController with StateMixin {
   }
 
   Future<void> onRefresh() async {
-    _provider2.captcha().then((value) {
+    _provider.captcha().then((value) {
       captchaId = value["captchaId"]!;
       String imgBase64 = value["img"]!;
       Uint8List captchaImage = base64.decode(imgBase64.split(',')[1]);

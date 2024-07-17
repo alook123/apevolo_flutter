@@ -1,6 +1,7 @@
 import 'package:apevolo_flutter/app/modules/components/theme_mode/views/theme_mode_view.dart';
+import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
+import 'package:get/get.dart';
 
 class ShellMenuButtonsView extends GetView {
   ShellMenuButtonsView({
@@ -19,7 +20,7 @@ class ShellMenuButtonsView extends GetView {
       child: Row(
         children: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => Get.toNamed(Routes.HOME), //todo:修改成嵌套切换
             icon: const Icon(Icons.home),
           ),
           IconButton(

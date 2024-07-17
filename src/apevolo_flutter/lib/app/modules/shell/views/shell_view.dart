@@ -103,32 +103,16 @@ class ShellView extends GetView<ShellController> {
                           ),
                         ),
                       ),
+
                       Expanded(
                         child: Scaffold(
                           body: Navigator(
                             key: Get.nestedKey(1),
                             initialRoute: Routes.HOME,
-                            onGenerateRoute: (settings) {
-                              GetPage<dynamic> getPage =
-                                  AppPages.routes.firstWhere(
-                                (element) =>
-                                    (settings.name == '/' &&
-                                        element.name == Routes.HOME) ||
-                                    (settings.name != '/' &&
-                                        element.name == settings.name) ||
-                                    element.name == Routes.NOT_FOUND,
-                              );
-                              return GetPageRoute(
-                                page: getPage.page,
-                                settings: settings,
-                                binding: getPage.binding,
-                                transition:
-                                    Transition.leftToRightWithFade, //过渡动画
-                              );
-                            },
+                            onGenerateRoute: controller.onGenerateRoute,
                           ),
                         ),
-                      ),
+                      ), //主要显示的内容
                     ],
                   ),
                 ),

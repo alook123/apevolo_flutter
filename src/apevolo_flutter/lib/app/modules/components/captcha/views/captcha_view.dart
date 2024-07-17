@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -6,7 +5,7 @@ import 'package:get/get.dart';
 import '../controllers/captcha_controller.dart';
 
 class CaptchaView extends GetView<CaptchaController> {
-  const CaptchaView({Key? key}) : super(key: key);
+  const CaptchaView({super.key});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -19,7 +18,7 @@ class CaptchaView extends GetView<CaptchaController> {
         onError: (error) {
           return const Text(
             '获取失败！',
-            style: const TextStyle(color: Colors.red),
+            style: TextStyle(color: Colors.red),
           );
         },
         onLoading: const CircularProgressIndicator(),

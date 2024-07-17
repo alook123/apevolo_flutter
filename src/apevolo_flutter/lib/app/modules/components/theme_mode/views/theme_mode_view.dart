@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import '../controllers/theme_mode_controller.dart';
 
 class ThemeModeView extends GetView<ThemeModeController> {
-  const ThemeModeView({Key? key}) : super(key: key);
+  const ThemeModeView({super.key});
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ThemeModeController>(

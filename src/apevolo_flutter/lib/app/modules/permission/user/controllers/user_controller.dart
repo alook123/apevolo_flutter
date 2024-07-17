@@ -5,7 +5,6 @@ import 'package:apevolo_flutter/app/provider/apevolo_com/apevolo_dio_service.dar
 import 'package:apevolo_flutter/app/provider/apevolo_com/api/user/user_provider.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:retrofit/retrofit.dart';
 
 class UserController extends GetxController {
   final UserProvider userProvider =

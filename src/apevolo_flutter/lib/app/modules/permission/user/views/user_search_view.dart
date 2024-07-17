@@ -1,7 +1,5 @@
 import 'package:apevolo_flutter/app/modules/permission/user/controllers/user_search_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:get/route_manager.dart';
 

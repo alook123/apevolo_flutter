@@ -42,13 +42,13 @@ class UserView extends GetView<UserController> {
                                               onPressed: () {
                                                 Get.back();
                                               },
-                                              icon: Icon(Icons.close),
+                                              icon: const Icon(Icons.close),
                                             ),
                                             TextButton(
                                               onPressed: () {
                                                 Get.back();
                                               },
-                                              child: Icon(Icons.search),
+                                              child: const Icon(Icons.search),
                                             ),
                                           ],
                                         ),

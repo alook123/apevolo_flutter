@@ -3,19 +3,29 @@ import 'dart:math';
 import 'package:apevolo_flutter/app/modules/shell/controllers/shell_controller.dart';
 import 'package:apevolo_flutter/app/modules/shell/controllers/shell_vertical_menu_controller.dart';
 import 'package:apevolo_flutter/app/modules/shell/views/shell_menu_buttons_view.dart';
-import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-class ShellVerticalMenuView extends GetView {
+class ShellVerticalMenuView extends GetView<ShellVerticalMenuController> {
   const ShellVerticalMenuView({super.key});
+
+  IconData getRandomIcon() {
+    // MaterialIcons 字体库的第一个图标代码点
+    int firstCodePoint = 0xE000;
+    // MaterialIcons 字体库的最后一个图标代码点
+    int lastCodePoint = 0xEB4B;
+    // 随机生成一个代码点
+    int randomCodePoint =
+        firstCodePoint + Random().nextInt(lastCodePoint - firstCodePoint + 1);
+    // 根据代码点创建一个图标
+    return IconData(randomCodePoint, fontFamily: 'MaterialIcons');
+  }
 
   @override
   Widget build(BuildContext context) {
     final ShellController shellController = Get.find();
-    final GlobalKey personMenuKey = GlobalKey();
     return GetBuilder<ShellVerticalMenuController>(
       init: ShellVerticalMenuController(),
       builder: (controller) => Column(
@@ -47,30 +57,21 @@ class ShellVerticalMenuView extends GetView {
                 shrinkWrap: true,
                 children: [
                   Column(
-                    children: controller.menuList
-                        .map(
-                          (x) => ExpansionTile(
-                            leading: Icon(getRandomIcon()),
-                            title: Text(x.meta?.title ?? ''),
-                            children: x.children == null
-                                ? []
-                                : x.children!.map((y) {
+                    children: controller.menus
+                        .map((x) => ExpansionTile(
+                              leading: Icon(getRandomIcon()),
+                              title: Text(x.meta?.title ?? ''),
+                              children: x.children?.map((y) {
                                     IconData iconData = getRandomIcon();
                                     return ListTile(
                                       leading: Icon(iconData),
                                       title: Text(y.meta?.title ?? ''),
-                                      onTap: () {
-                                        if (y.path != null) {
-                                          Get.toNamed('${x.path}/${y.path!}',
-                                              id: 1);
-                                        }
-                                        //Get.toNamed(Routes.USER, id: 1);
-                                        //controller.onChangeMenu(x, y, iconData);
-                                      },
+                                      onTap: () => controller.onTapMenu(y,
+                                          menu: x, newTab: true),
                                     );
-                                  }).toList(),
-                          ),
-                        )
+                                  }).toList() ??
+                                  [],
+                            ))
                         .toList(),
                   ),
                   const Divider(
@@ -79,33 +80,37 @@ class ShellVerticalMenuView extends GetView {
                     indent: 8,
                     endIndent: 8,
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(top: 8, bottom: 8),
-                    child: Column(
+                  TextButton(
+                    onPressed: () {},
+                    child: const Row(
                       children: [
-                        TextButton(
-                          onPressed: () {},
-                          child: const Row(
-                            children: [
-                              Icon(Icons.add),
-                              Text('New Tab'),
-                            ],
-                          ),
-                        ),
-                        ListTile(
-                          title: const Text('Item 1'),
-                          onTap: () {},
-                        ),
-                        ListTile(
-                          title: const Text('Item 2'),
-                          onTap: () {},
-                        ),
-                        ListTile(
-                          title: const Text('Item 3'),
-                          onTap: () {},
-                        ),
+                        Icon(Icons.add),
+                        Text('New Tab'),
                       ],
                     ),
+                  ),
+                  Column(
+                    children: controller.openMenu.entries
+                        .map((entry) {
+                          return MapEntry(
+                            key,
+                            ListTile(
+                              leading: const Icon(Icons.tab),
+                              title: Text(entry.value.$1.meta?.title ?? ''),
+                              onTap: () => controller.onTapMenu(
+                                entry.value.$1,
+                                tag: entry.key,
+                                newTab: false,
+                              ),
+                              selectedColor:
+                                  Theme.of(context).colorScheme.primary,
+                              selected: entry.value.$2,
+                              enabled: true,
+                            ),
+                          );
+                        })
+                        .map((e) => e.value)
+                        .toList(),
                   ),
                 ],
               ),
@@ -114,20 +119,5 @@ class ShellVerticalMenuView extends GetView {
         ],
       ),
     );
-  }
-
-  IconData getRandomIcon() {
-    // MaterialIcons 字体库的第一个图标代码点
-    int firstCodePoint = 0xE000;
-
-    // MaterialIcons 字体库的最后一个图标代码点
-    int lastCodePoint = 0xEB4B;
-
-    // 随机生成一个代码点
-    int randomCodePoint =
-        firstCodePoint + Random().nextInt(lastCodePoint - firstCodePoint + 1);
-
-    // 根据代码点创建一个图标
-    return IconData(randomCodePoint, fontFamily: 'MaterialIcons');
   }
 }

@@ -32,7 +32,7 @@ class AppPages {
       // middlewares: [
       //   RouteAuthMiddleware(priority: 1),
       // ],
-      children: [],
+      children: const [],
     ),
     GetPage(
       name: _Paths.LOGIN,

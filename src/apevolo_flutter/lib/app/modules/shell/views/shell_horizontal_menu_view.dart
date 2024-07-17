@@ -23,11 +23,12 @@ class ShellHorizontalMenuView extends GetView {
   late final String _title, _subTitle;
   late final IconData? _icon;
   late final bool _visible;
+
+  /// 点击汉堡菜单按钮事件
   late final Function()? _onPressed;
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      // TODO: 关联左侧抽屉
       visible: _visible,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,7 +44,7 @@ class ShellHorizontalMenuView extends GetView {
                 onPressed: () {},
                 child: Row(
                   children: [
-                    Image.asset('assets/image/logo.png', width: 20),
+                    // Image.asset('assets/image/logo.png', width: 20),
                     const SizedBox(width: 16),
                     Icon(_icon, size: 20),
                     const SizedBox(width: 8),

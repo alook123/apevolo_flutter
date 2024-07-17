@@ -117,6 +117,7 @@ class SearchFilterView extends GetView<SearchFilterController> {
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                             colors: [
+                              //todo : 获取主题card颜色
                               Get.isDarkMode
                                   ? const Color.fromRGBO(29, 27, 32, 1)
                                   : const Color.fromRGBO(246, 242, 249, 1),
