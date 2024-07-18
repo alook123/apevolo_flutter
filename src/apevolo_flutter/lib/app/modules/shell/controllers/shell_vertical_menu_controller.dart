@@ -72,6 +72,7 @@ class ShellVerticalMenuController extends GetxController {
     await Get.toNamed(
       '${menu.path}/${children.path}',
       id: 1,
+      arguments: tag,
       parameters: {'tag': tag},
     );
   }

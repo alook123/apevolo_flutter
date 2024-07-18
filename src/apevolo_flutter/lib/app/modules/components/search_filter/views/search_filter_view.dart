@@ -22,6 +22,10 @@ class SearchFilterView extends GetView<SearchFilterController> {
   }
 
   @override
+  SearchFilterController get controller =>
+      Get.find<SearchFilterController>(tag: Get.arguments);
+
+  @override
   Widget build(BuildContext context) {
     bool isFirstTime = true;
     bool hasScrollBar = false;
@@ -63,6 +67,7 @@ class SearchFilterView extends GetView<SearchFilterController> {
     });
 
     return GetBuilder<SearchFilterController>(
+      init: controller,
       builder: (controller) => Row(
         children: [
           const Icon(Icons.filter_alt),

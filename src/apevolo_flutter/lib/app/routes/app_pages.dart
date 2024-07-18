@@ -23,6 +23,7 @@ class AppPages {
   AppPages._();
 
   static const INITIAL = Routes.LOGIN;
+  static const NOT_FOUND = _Paths.COMPONENTS + _Paths.NOT_FOUND;
 
   static final routes = [
     GetPage(

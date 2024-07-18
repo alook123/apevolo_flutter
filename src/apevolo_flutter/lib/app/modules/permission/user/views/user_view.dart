@@ -10,14 +10,18 @@ class UserView extends GetView<UserController> {
   UserView({super.key});
   final scrollController = ScrollController();
   @override
+  UserController get controller => Get.find<UserController>(tag: Get.arguments);
+  @override
   Widget build(BuildContext context) {
     return GetBuilder<UserController>(
+      init: controller,
       builder: (controller) => Scaffold(
         body: Center(
           child: Container(
             padding: const EdgeInsets.all(8),
             child: ListView(
               children: [
+                Text("arguments" + Get.arguments),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),

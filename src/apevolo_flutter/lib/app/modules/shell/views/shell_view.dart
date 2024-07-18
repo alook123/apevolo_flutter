@@ -10,6 +10,10 @@ import '../controllers/shell_controller.dart';
 class ShellView extends GetView<ShellController> {
   const ShellView({super.key});
 
+  // @override
+  // ShellController get controller =>
+  //     Get.find<ShellController>(tag: 'myUniqueTag');
+
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -106,12 +110,11 @@ class ShellView extends GetView<ShellController> {
 
                       Expanded(
                         child: Scaffold(
-                          body: Navigator(
-                            key: Get.nestedKey(1),
-                            initialRoute: Routes.HOME,
-                            onGenerateRoute: controller.onGenerateRoute,
-                          ),
-                        ),
+                            body: Navigator(
+                          key: Get.nestedKey(1),
+                          initialRoute: Routes.HOME,
+                          onGenerateRoute: controller.onGenerateRoute,
+                        )),
                       ), //主要显示的内容
                     ],
                   ),
