@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ShellVerticalMenuView extends GetView<ShellVerticalMenuController> {
-  const ShellVerticalMenuView({super.key});
-
+  ShellVerticalMenuView({super.key});
+  final ShellController shellController = Get.find();
   IconData getRandomIcon() {
     // MaterialIcons 字体库的第一个图标代码点
     int firstCodePoint = 0xE000;
@@ -25,9 +25,8 @@ class ShellVerticalMenuView extends GetView<ShellVerticalMenuController> {
 
   @override
   Widget build(BuildContext context) {
-    final ShellController shellController = Get.find();
     return GetBuilder<ShellVerticalMenuController>(
-      init: ShellVerticalMenuController(),
+      init: controller,
       builder: (controller) => Column(
         children: [
           Row(

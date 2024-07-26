@@ -10,10 +10,6 @@ import '../controllers/shell_controller.dart';
 class ShellView extends GetView<ShellController> {
   const ShellView({super.key});
 
-  // @override
-  // ShellController get controller =>
-  //     Get.find<ShellController>(tag: 'myUniqueTag');
-
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -31,7 +27,7 @@ class ShellView extends GetView<ShellController> {
                 ),
                 child: SizedBox(
                   width: controller.verticalMenuWidth.value,
-                  child: const ShellVerticalMenuView(),
+                  child: ShellVerticalMenuView(),
                 ),
               ),
             ),
@@ -127,8 +123,8 @@ class ShellView extends GetView<ShellController> {
       drawer: Obx(
         () => SizedBox(
           width: controller.verticalMenuWidth.value,
-          child: const Card(
-            margin: EdgeInsets.only(left: 8, top: 8, bottom: 8),
+          child: Card(
+            margin: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
             child: ShellVerticalMenuView(),
           ),
         ),
