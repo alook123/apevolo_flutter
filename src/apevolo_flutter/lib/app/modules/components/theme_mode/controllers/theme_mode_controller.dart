@@ -7,7 +7,7 @@ class ThemeModeController extends GetxController {
   final SystemService _systemService = Get.find<SystemService>();
 
   ///主题
-  final RxString theme = 'light'.obs;
+  final RxString theme = 'system'.obs;
 
   final GetStorage storage = GetStorage();
   @override
@@ -44,7 +44,7 @@ class ThemeModeController extends GetxController {
       Get.changeThemeMode(ThemeMode.dark);
     }
 
-    String value = Get.isDarkMode ? 'dark' : 'light';
+    String value = Get.isDarkMode ? 'light' : 'dark';
 
     theme.value = value;
     _systemService.themeMode.val = value;

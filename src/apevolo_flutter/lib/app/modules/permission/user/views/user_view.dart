@@ -24,7 +24,6 @@ class UserView extends GetView<UserController> {
             padding: const EdgeInsets.all(8),
             child: ListView(
               children: [
-                Text("arguments" + Get.arguments),
                 Card(
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),

@@ -86,7 +86,6 @@ class SearchFilterView extends GetView<SearchFilterController> {
                 ? const Icon(Icons.filter_alt_off)
                 : const Icon(Icons.filter_alt),
           ),
-          Text("arguments" + Get.arguments),
           Expanded(
             child: Stack(
               children: [
