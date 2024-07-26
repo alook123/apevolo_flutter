@@ -13,6 +13,11 @@ class SearchFilterController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
     if (kDebugMode) {
       searchFilter.addAll({
         SearchFilterModel<String>(key: "keywork", name: '关键字', value: 'abc'):
@@ -31,11 +36,6 @@ class SearchFilterController extends GetxController {
         SearchFilterModel<String>(key: "1", name: '关键字', value: '1'): () => {},
       });
     }
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
   }
 
   @override

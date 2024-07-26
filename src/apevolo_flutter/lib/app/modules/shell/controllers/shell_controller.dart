@@ -32,11 +32,12 @@ class ShellController extends GetxController {
 
   GetPageRoute<dynamic> onGenerateRoute(RouteSettings settings) {
     Uri uri = Uri.parse(settings.name!);
-    GetPage<dynamic> getPage = AppPages.routes.firstWhere(
+    GetPage<dynamic> getPage = AppPages.routes.singleWhereOrDefault(
       (x) =>
           (settings.name == '/' && x.name == Routes.HOME) ||
-          (settings.name != '/' && x.name == uri.path) ||
-          x.name == Routes.NOT_FOUND,
+          (settings.name != '/' && x.name == uri.path),
+      defaultValue:
+          AppPages.routes.singleWhere((x) => x.name == Routes.NOT_FOUND),
     );
 
     Get.routing.args = settings.arguments;

@@ -15,6 +15,7 @@ class ShellVerticalMenuController extends GetxController {
   final RxMap<String, (ChildrenMenu children, bool selected)> openMenu =
       <String, (ChildrenMenu, bool)>{}.obs;
   final Rxn<String> tag = Rxn<String>();
+
   @override
   Future<void> onInit() async {
     super.onInit();

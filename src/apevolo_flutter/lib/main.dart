@@ -4,8 +4,10 @@ import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:apevolo_flutter/app/theme/dart_theme.dart';
 import 'package:apevolo_flutter/app/theme/light_theme.dart';
 import 'package:apevolo_flutter/app/utilities/logger_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -27,7 +29,10 @@ Future<void> main() async {
       logWriterCallback: Logger.write,
       theme: lightTheme,
       darkTheme: darkTheme,
-
+      supportedLocales: const [
+        Locale('zh', 'CN'), // 添加中文支持
+      ],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       // scrollBehavior: MyCustomScrollBehavior(),
     ),
   );

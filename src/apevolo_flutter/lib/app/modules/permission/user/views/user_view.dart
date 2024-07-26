@@ -9,12 +9,15 @@ import '../controllers/user_controller.dart';
 class UserView extends GetView<UserController> {
   UserView({super.key});
   final scrollController = ScrollController();
+
   @override
   UserController get controller => Get.find<UserController>(tag: Get.arguments);
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<UserController>(
       init: controller,
+      tag: Get.arguments,
       builder: (controller) => Scaffold(
         body: Center(
           child: Container(

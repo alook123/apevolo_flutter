@@ -5,6 +5,7 @@ import '../controllers/search_filter_controller.dart';
 class SearchFilterView extends GetView<SearchFilterController> {
   SearchFilterView({super.key});
   final _scrollController = ScrollController();
+
   void _scrollLeft() {
     _scrollController.animateTo(
       _scrollController.offset - 100,
@@ -29,6 +30,7 @@ class SearchFilterView extends GetView<SearchFilterController> {
   Widget build(BuildContext context) {
     bool isFirstTime = true;
     bool hasScrollBar = false;
+
     _scrollController.addListener(
       () {
         if (isFirstTime) {
@@ -66,19 +68,25 @@ class SearchFilterView extends GetView<SearchFilterController> {
       checkScroll();
     });
 
+    debugPrint("arguments:${Get.arguments}");
+    debugPrint("hasScrollBar:$hasScrollBar");
+    debugPrint("controller.searchFilter:${controller.searchFilter.isNotEmpty}");
+    debugPrint("controller.leftMost:${controller.leftMost.value}");
+    debugPrint("controller.rightMost:${controller.rightMost.value}");
+
     return GetBuilder<SearchFilterController>(
       init: controller,
+      tag: Get.arguments,
       builder: (controller) => Row(
         children: [
-          const Icon(Icons.filter_alt),
-          const SizedBox(width: 8),
-          Visibility(
-            visible: controller.searchFilter.isNotEmpty,
-            child: IconButton(
-              onPressed: controller.onDeleteAll,
-              icon: const Icon(Icons.close),
-            ),
+          IconButton(
+            onPressed: controller.onDeleteAll,
+            tooltip: "过滤/清除",
+            icon: controller.searchFilter.isNotEmpty
+                ? const Icon(Icons.filter_alt_off)
+                : const Icon(Icons.filter_alt),
           ),
+          Text("arguments" + Get.arguments),
           Expanded(
             child: Stack(
               children: [
