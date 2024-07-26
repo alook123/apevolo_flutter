@@ -1,13 +1,5 @@
 import 'package:get/get.dart';
 
-import '../modules/home/bindings/home_binding.dart';
-import '../modules/home/views/home_view.dart';
-import '../modules/login/bindings/login_binding.dart';
-import '../modules/login/views/login_view.dart';
-import '../modules/permission/user/bindings/user_binding.dart';
-import '../modules/permission/user/views/user_view.dart';
-import '../modules/shell/bindings/shell_binding.dart';
-import '../modules/shell/views/shell_view.dart';
 import '../modules/components/captcha/bindings/captcha_binding.dart';
 import '../modules/components/captcha/views/captcha_view.dart';
 import '../modules/components/not_found/bindings/not_found_binding.dart';
@@ -16,6 +8,16 @@ import '../modules/components/search_filter/bindings/search_filter_binding.dart'
 import '../modules/components/search_filter/views/search_filter_view.dart';
 import '../modules/components/theme_mode/bindings/theme_mode_binding.dart';
 import '../modules/components/theme_mode/views/theme_mode_view.dart';
+import '../modules/home/bindings/home_binding.dart';
+import '../modules/home/views/home_view.dart';
+import '../modules/login/bindings/login_binding.dart';
+import '../modules/login/views/login_view.dart';
+import '../modules/permission/user/bindings/user_binding.dart';
+import '../modules/permission/user/views/user_view.dart';
+import '../modules/setting/bindings/setting_binding.dart';
+import '../modules/setting/views/setting_view.dart';
+import '../modules/shell/bindings/shell_binding.dart';
+import '../modules/shell/views/shell_view.dart';
 
 part 'app_routes.dart';
 
@@ -74,6 +76,11 @@ class AppPages {
       name: _Paths.SEARCH_FILTER,
       page: () => SearchFilterView(),
       binding: SearchFilterBinding(),
+    ),
+    GetPage(
+      name: _Paths.SETTING,
+      page: () => const SettingView(),
+      binding: SettingBinding(),
     ),
   ];
 }

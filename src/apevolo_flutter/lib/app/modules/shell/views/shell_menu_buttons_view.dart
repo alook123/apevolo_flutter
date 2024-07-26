@@ -23,7 +23,7 @@ class ShellMenuButtonsView extends GetView {
         overflowButtonSpacing: 0,
         children: [
           IconButton(
-            onPressed: () => Get.toNamed(Routes.HOME), //todo:修改成嵌套切换
+            onPressed: () => Get.toNamed(Routes.HOME, id: 1),
             icon: const Icon(Icons.home),
           ),
           IconButton(
@@ -96,7 +96,7 @@ class ShellMenuButtonsView extends GetView {
             ],
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () => Get.toNamed(Routes.SETTING, id: 1),
             icon: const Icon(Icons.settings),
           ),
           const ThemeModeView(),

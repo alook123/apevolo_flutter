@@ -13,6 +13,7 @@ abstract class Routes {
   static const HOME = _Paths.HOME;
   static const NOT_FOUND = _Paths.COMPONENTS + _Paths.NOT_FOUND;
   static const SEARCH_FILTER = _Paths.COMPONENTS + _Paths.SEARCH_FILTER;
+  static const SETTING = _Paths.SETTING;
 }
 
 abstract class _Paths {
@@ -28,4 +29,5 @@ abstract class _Paths {
   static const HOME = '/home';
   static const NOT_FOUND = '/not-found';
   static const SEARCH_FILTER = '/search-filter';
+  static const SETTING = '/setting';
 }
