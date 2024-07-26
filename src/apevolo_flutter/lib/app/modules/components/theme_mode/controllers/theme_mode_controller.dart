@@ -26,18 +26,6 @@ class ThemeModeController extends GetxController {
   }
 
   Future<void> changeThemeMode() async {
-    // switch (value) {
-    //   case 'light':
-    //     Get.changeThemeMode(ThemeMode.light);
-    //     break;
-    //   case 'dark':
-    //     Get.changeThemeMode(ThemeMode.dark);
-    //     break;
-    //   case 'system':
-    //   default:
-    //     Get.changeThemeMode(ThemeMode.system);
-    //     break;
-    // }
     if (Get.isDarkMode) {
       Get.changeThemeMode(ThemeMode.light);
     } else {
