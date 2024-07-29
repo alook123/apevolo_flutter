@@ -90,11 +90,10 @@ class LoginView extends GetView<LoginController> {
                         children: [
                           const CaptchaView(),
                           const SizedBox(width: 16.0),
-                          IconButton.filled(
+                          IconButton.outlined(
                             onPressed: () {
                               controller.onRefresh();
                             },
-                            color: Theme.of(context).primaryColor,
                             icon: const Icon(Icons.refresh),
                           ),
                         ],
@@ -128,7 +127,7 @@ class LoginView extends GetView<LoginController> {
                       Icons.login,
                     ),
                     label: const Text(
-                      "login",
+                      "登录",
                     ),
                   ),
                 ],

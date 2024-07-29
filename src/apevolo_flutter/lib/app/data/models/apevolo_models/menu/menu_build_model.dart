@@ -7,6 +7,7 @@ class MenuBuild {
   String? component;
   bool? alwaysShow;
   List<ChildrenMenu>? children;
+  bool? expanded;
 
   MenuBuild(
       {this.meta,
@@ -16,7 +17,8 @@ class MenuBuild {
       this.redirect,
       this.component,
       this.alwaysShow,
-      this.children});
+      this.children,
+      this.expanded});
 
   MenuBuild.fromJson(Map<String, dynamic> json) {
     meta = json['meta'] != null ? Meta?.fromJson(json['meta']) : null;
@@ -32,6 +34,7 @@ class MenuBuild {
         children?.add(ChildrenMenu.fromJson(v));
       });
     }
+    expanded = json['expanded'];
   }
 
   Map<String, dynamic> toJson() {
@@ -48,6 +51,7 @@ class MenuBuild {
     if (children != null) {
       data['children'] = children?.map((v) => v.toJson()).toList();
     }
+    data['expanded'] = expanded;
     return data;
   }
 }
@@ -81,6 +85,8 @@ class ChildrenMenu {
   bool? hidden;
   String? component;
   bool? alwaysShow;
+  bool? selected;
+  String? tag;
 
   ChildrenMenu(
       {this.meta,
@@ -88,7 +94,9 @@ class ChildrenMenu {
       this.path,
       this.hidden,
       this.component,
-      this.alwaysShow});
+      this.alwaysShow,
+      this.selected,
+      this.tag});
 
   ChildrenMenu.fromJson(Map<String, dynamic> json) {
     meta = json['meta'] != null ? Meta?.fromJson(json['meta']) : null;
@@ -97,6 +105,8 @@ class ChildrenMenu {
     hidden = json['hidden'];
     component = json['component'];
     alwaysShow = json['alwaysShow'];
+    selected = json['selected'];
+    tag = json['tag'];
   }
 
   Map<String, dynamic> toJson() {
@@ -109,6 +119,8 @@ class ChildrenMenu {
     data['hidden'] = hidden;
     data['component'] = component;
     data['alwaysShow'] = alwaysShow;
+    data['selected'] = selected;
+    data['tag'] = tag;
     return data;
   }
 }

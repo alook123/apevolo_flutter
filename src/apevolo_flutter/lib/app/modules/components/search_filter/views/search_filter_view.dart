@@ -68,12 +68,6 @@ class SearchFilterView extends GetView<SearchFilterController> {
       checkScroll();
     });
 
-    debugPrint("arguments:${Get.arguments}");
-    debugPrint("hasScrollBar:$hasScrollBar");
-    debugPrint("controller.searchFilter:${controller.searchFilter.isNotEmpty}");
-    debugPrint("controller.leftMost:${controller.leftMost.value}");
-    debugPrint("controller.rightMost:${controller.rightMost.value}");
-
     return GetBuilder<SearchFilterController>(
       init: controller,
       tag: Get.arguments,

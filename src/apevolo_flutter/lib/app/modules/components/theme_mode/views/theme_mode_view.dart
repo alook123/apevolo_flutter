@@ -9,7 +9,7 @@ class ThemeModeView extends GetView<ThemeModeController> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ThemeModeController>(
-      init: ThemeModeController(),
+      init: controller,
       builder: (controller) => IconButton(
         onPressed: () {
           controller.changeThemeMode();

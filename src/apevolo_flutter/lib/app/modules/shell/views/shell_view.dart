@@ -22,12 +22,12 @@ class ShellView extends GetView<ShellController> {
             () => Visibility(
               visible: controller.menuOpen.value,
               child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minWidth: 100.0, // 设置最小高度
-                ),
+                constraints: const BoxConstraints(minWidth: 100.0),
                 child: SizedBox(
                   width: controller.verticalMenuWidth.value,
-                  child: ShellVerticalMenuView(),
+                  child: ShellVerticalMenuView(
+                    getIconData: controller.userService.getIconData,
+                  ),
                 ),
               ),
             ),
@@ -73,10 +73,7 @@ class ShellView extends GetView<ShellController> {
                             controller.selectMenuChildren.value?.meta?.title,
                         icon: controller.selectIcon.value,
                         visible: !controller.menuOpen.value,
-                        onPressed: () {
-                          //todo:弹出时候，隐藏抽屉顶部的菜单
-                          scaffoldKey.currentState!.openDrawer();
-                        },
+                        onPressed: () => scaffoldKey.currentState!.openDrawer(),
                       ),
                       Visibility(
                         visible: controller.menuOpen.value,
@@ -125,7 +122,9 @@ class ShellView extends GetView<ShellController> {
           width: controller.verticalMenuWidth.value,
           child: Card(
             margin: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
-            child: ShellVerticalMenuView(),
+            child: ShellVerticalMenuView(
+              getIconData: controller.userService.getIconData,
+            ),
           ),
         ),
       ),

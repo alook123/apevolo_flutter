@@ -1,14 +1,19 @@
+import 'dart:math';
+
 import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
+import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:darq/darq.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class ShellController extends GetxController {
+  final UserService userService = Get.find<UserService>();
   final Rx<MenuBuild?> selectMenu = Rxn<MenuBuild>();
   final Rx<ChildrenMenu?> selectMenuChildren = Rxn<ChildrenMenu>();
   final Rx<IconData?> selectIcon = Rxn<IconData>();
 
+  //todo: 改成构造函数传递
   final RxBool menuOpen = true.obs;
 
   final RxDouble verticalMenuWidth = 280.0.obs;

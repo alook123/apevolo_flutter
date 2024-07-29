@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 class LoginController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final UserService userService = Get.find<UserService>();
-  final AuthorizationProvider _provider2 = Get.find<AuthorizationProvider>();
+  final AuthorizationProvider authProvider = Get.find<AuthorizationProvider>();
   final CaptchaController captchaController = Get.find<CaptchaController>();
 
   final TextEditingController usernameTextController = TextEditingController();
@@ -56,7 +56,7 @@ class LoginController extends GetxController
     String passwordBase64 =
         encrypter!.encrypt(passwordTextController.text).base64;
 
-    _provider2
+    authProvider
         .login(
       usernameTextController.text,
       passwordBase64,

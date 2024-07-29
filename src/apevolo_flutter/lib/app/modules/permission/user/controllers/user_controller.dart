@@ -11,7 +11,7 @@ class UserController extends GetxController {
       Get.put<UserProvider>(UserProvider(Get.find<ApevoloDioService>().dio));
 
   final UserSearchController userSearchController =
-      Get.put(UserSearchController());
+      Get.put(UserSearchController(), tag: Get.arguments);
 
   final TextEditingController departmentTextController =
       TextEditingController();
@@ -28,15 +28,15 @@ class UserController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    Get.lazyPut<UserSearchController>(() => UserSearchController());
-    Get.lazyPut<UserProvider>(
-        () => UserProvider(Get.find<ApevoloDioService>().dio));
-    await onQuery();
+    // Get.lazyPut<UserSearchController>(() => UserSearchController());
+    // Get.lazyPut<UserProvider>(
+    //     () => UserProvider(Get.find<ApevoloDioService>().dio));
   }
 
   @override
-  void onReady() {
+  Future<void> onReady() async {
     super.onReady();
+    await onQuery();
   }
 
   @override
