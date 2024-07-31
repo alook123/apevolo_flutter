@@ -34,14 +34,14 @@ class ShellTagController extends GetxController {
       element.selected = false;
     }
     children.selected = true;
-    menu = shellMenuController.menus.firstWhere(
+    menu ??= shellMenuController.menus.singleWhere(
       (element) => element.children!
           .any((child) => child.component == children.component),
     );
 
     update();
     Get.toNamed(
-      '${menu!.path}/${children.path}',
+      '${menu.path}/${children.path}',
       id: 1,
       arguments: children.tag,
       parameters: {'tag': children.tag!},
