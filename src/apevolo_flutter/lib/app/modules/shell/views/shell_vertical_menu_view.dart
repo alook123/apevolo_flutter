@@ -11,9 +11,18 @@ class ShellVerticalMenuView extends GetView<ShellVerticalMenuController> {
   const ShellVerticalMenuView({
     super.key,
     required this.getIconData,
+    this.onExpandMenu,
+    this.expandOpen = false,
   });
 
+  /// 获取图标数据
   final IconData Function(String path) getIconData;
+
+  /// 是否展开菜单
+  final bool expandOpen;
+
+  /// 点击菜单展开回调
+  final Function()? onExpandMenu;
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +35,18 @@ class ShellVerticalMenuView extends GetView<ShellVerticalMenuController> {
             children: [
               IconButton(
                 onPressed: () {
-                  controller.shellController.menuOpen.value =
-                      !controller.shellController.menuOpen.value;
+                  onExpandMenu?.call();
+                  //menuOpen = !menuOpen;
                   Get.back();
                 },
                 icon: Icon(
-                  controller.shellController.menuOpen.value
+                  expandOpen
                       ? FluentIcons.panel_left_16_regular
                       : FluentIcons.panel_left_16_filled,
                 ),
               ),
               ShellMenuButtonsView(
-                visible: controller.shellController.menuOpen.value,
+                visible: expandOpen,
               ),
             ],
           ),
@@ -48,17 +57,12 @@ class ShellVerticalMenuView extends GetView<ShellVerticalMenuController> {
                 shrinkWrap: true,
                 children: [
                   ShellMenuView(
-                    onMenuTap: (menu) => controller.onTapMenu(menu),
+                    onTapMenuCallback: (menu) => controller.onTapMenu(menu),
                     getIconData: (path) => getIconData(path),
-                  ),
-                  const Divider(
-                    height: 2,
-                    color: Colors.black12,
-                    indent: 8,
-                    endIndent: 8,
                   ),
                   ShellTagView(
                     getIconData: getIconData,
+                    onTapMenuCallback: (menu) => controller.onTapMenu(menu),
                   ),
                 ],
               ),

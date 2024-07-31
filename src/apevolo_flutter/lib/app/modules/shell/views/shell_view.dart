@@ -27,6 +27,9 @@ class ShellView extends GetView<ShellController> {
                   width: controller.verticalMenuWidth.value,
                   child: ShellVerticalMenuView(
                     getIconData: controller.userService.getIconData,
+                    expandOpen: controller.menuOpen.value,
+                    onExpandMenu: () =>
+                        controller.menuOpen.value = !controller.menuOpen.value,
                   ),
                 ),
               ),
@@ -124,6 +127,9 @@ class ShellView extends GetView<ShellController> {
             margin: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
             child: ShellVerticalMenuView(
               getIconData: controller.userService.getIconData,
+              expandOpen: controller.menuOpen.value,
+              onExpandMenu: () =>
+                  controller.menuOpen.value = !controller.menuOpen.value,
             ),
           ),
         ),

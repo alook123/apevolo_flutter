@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
 import 'package:apevolo_flutter/app/provider/apevolo_com/api/menu/menu_provider.dart';
+import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:apevolo_flutter/app/utilities/logger_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -7,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
 class ShellMenuController extends GetxController with StateMixin {
+  final UserService userService = Get.find<UserService>();
   final MenuProvider menuProvider = Get.find<MenuProvider>();
 
   ///菜单
@@ -14,9 +18,6 @@ class ShellMenuController extends GetxController with StateMixin {
 
   /// 菜单图标数据
   final RxMap<String, IconData> menuIconDatas = <String, IconData>{}.obs;
-
-  ///当前tag
-  final Rxn<String> tag = Rxn<String>();
 
   @override
   Future<void> onInit() async {
@@ -34,6 +35,7 @@ class ShellMenuController extends GetxController with StateMixin {
     super.onClose();
   }
 
+  ///加载菜单
   Future<void> onLoadMenu() async {
     menuProvider.build().then((value) {
       menus.value = value;
@@ -47,22 +49,34 @@ class ShellMenuController extends GetxController with StateMixin {
     });
   }
 
+  /// 切换菜单展开状态
   Future<void> onExpansionChanged(bool value, MenuBuild menu) async {
     menus.firstWhere((x) => x == menu).expanded = value;
   }
 
+  /// 点击菜单事件
   Future<void> onTapMenu({
     required ChildrenMenu children,
     MenuBuild? menu,
   }) async {
     if (children.path == null) return;
-    tag.value = const Uuid().v4();
+    String tag = const Uuid().v4();
     menu ??= menus.firstWhere((x) => x.children!.contains(children));
+    for (var element in userService.openMenus.values) {
+      element.selected = false;
+    }
+    if (userService.openMenus.values.contains(children)) {
+      String newObjectStr = jsonEncode(children);
+      children = ChildrenMenu.fromJson(jsonDecode(newObjectStr));
+    }
+    children.tag = tag;
+    children.selected = true;
+    userService.openMenus[tag] = children;
     await Get.toNamed(
       '${menu.path}/${children.path}',
       id: 1,
-      arguments: tag.value,
-      parameters: {'tag': tag.value!},
+      arguments: tag,
+      parameters: {'tag': tag},
     );
   }
 }

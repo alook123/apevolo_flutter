@@ -7,10 +7,14 @@ import 'package:get/get.dart';
 class ShellMenuView extends GetView<ShellMenuController> {
   const ShellMenuView({
     super.key,
-    required this.onMenuTap,
+    required this.onTapMenuCallback,
     required this.getIconData,
   });
-  final void Function(ChildrenMenu menu) onMenuTap;
+
+  /// 点击菜单事件
+  final void Function(ChildrenMenu menu) onTapMenuCallback;
+
+  /// 获取图标数据
   final IconData Function(String path) getIconData;
 
   @override
@@ -35,8 +39,8 @@ class ShellMenuView extends GetView<ShellMenuController> {
                                   : Icon(getIconData(y.path!)),
                               title: Text(y.meta?.title ?? ''),
                               onTap: () {
-                                onMenuTap(y);
                                 controller.onTapMenu(children: y, menu: x);
+                                onTapMenuCallback(y);
                               },
                             );
                           },

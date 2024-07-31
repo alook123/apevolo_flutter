@@ -13,7 +13,6 @@ class ShellController extends GetxController {
   final Rx<ChildrenMenu?> selectMenuChildren = Rxn<ChildrenMenu>();
   final Rx<IconData?> selectIcon = Rxn<IconData>();
 
-  //todo: 改成构造函数传递
   final RxBool menuOpen = true.obs;
 
   final RxDouble verticalMenuWidth = 280.0.obs;

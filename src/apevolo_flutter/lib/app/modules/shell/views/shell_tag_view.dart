@@ -1,3 +1,4 @@
+import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
 import 'package:apevolo_flutter/app/modules/shell/controllers/shell_tag_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -6,10 +7,15 @@ import 'package:get/get.dart';
 class ShellTagView extends GetView<ShellTagController> {
   const ShellTagView({
     super.key,
+    required this.onTapMenuCallback,
     required this.getIconData,
   });
-  final IconData Function(String path) getIconData;
 
+  /// 点击菜单事件
+  final void Function(ChildrenMenu menu) onTapMenuCallback;
+
+  /// 获取图标数据
+  final IconData Function(String path) getIconData;
   @override
   Widget build(BuildContext context) {
     return GetBuilder(
@@ -17,12 +23,46 @@ class ShellTagView extends GetView<ShellTagController> {
       builder: (controller) {
         return Column(
           children: [
-            //todo: 放到菜单栏后，显示清楚全部标签的按钮
-            const Divider(
-              height: 2,
-              color: Colors.black12,
-              indent: 8,
-              endIndent: 8,
+            MouseRegion(
+              onEnter: (_) => controller.onHoveredLine(true),
+              onExit: (_) => controller.onHoveredLine(false),
+              child: Stack(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 18,
+                    ),
+                    child: const Divider(
+                      height: 2,
+                      color: Colors.black12,
+                      indent: 8,
+                      endIndent: 8,
+                    ),
+                  ),
+                  if (controller.hoveredLine.value)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Row(
+                        children: [
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text('整理'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              // 触发清除效果
+                              print('Clear action triggered');
+                              controller.onClearMenus();
+                            },
+                            child: const Text('清除'),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
             ),
             Column(
               children: [
@@ -38,7 +78,7 @@ class ShellTagView extends GetView<ShellTagController> {
               ],
             ),
             Column(
-              children: controller.openMenus
+              children: controller.userService.openMenus.values
                   .map((entry) {
                     return MapEntry(
                       key,
@@ -47,13 +87,14 @@ class ShellTagView extends GetView<ShellTagController> {
                             ? const Icon(Icons.error)
                             : Icon(getIconData(entry.path!)),
                         title: Text(entry.meta?.title ?? ''),
-                        onTap: () => controller.onTapMenu(
-                          children: entry,
-                          tag: entry.tag,
-                        ),
-                        selectedColor: Theme.of(context).colorScheme.primary,
+                        onTap: () {
+                          onTapMenuCallback(entry);
+                          controller.onTapMenu(
+                            children: entry,
+                          );
+                        },
+                        // selectedColor: Theme.of(context).colorScheme.primary,
                         selected: entry.selected == true,
-                        enabled: true,
                       ),
                     );
                   })
