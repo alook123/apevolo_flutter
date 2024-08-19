@@ -13,9 +13,6 @@ class ShellMenuController extends GetxController with StateMixin {
   final UserService userService = Get.find<UserService>();
   final MenuProvider menuProvider = Get.find<MenuProvider>();
 
-  ///菜单
-  final RxList<MenuBuild> menus = <MenuBuild>[].obs;
-
   /// 菜单图标数据
   final RxMap<String, IconData> menuIconDatas = <String, IconData>{}.obs;
 
@@ -38,8 +35,14 @@ class ShellMenuController extends GetxController with StateMixin {
   ///加载菜单
   Future<void> onLoadMenu() async {
     menuProvider.build().then((value) {
-      menus.value = value;
-      change(menus, status: RxStatus.success());
+      userService.menus.value = value;
+      for (var element in userService.menus) {
+        userService.getIconData(element.path ?? '');
+        for (var element2 in element.children ?? []) {
+          userService.getIconData(element2.path ?? '');
+        }
+      }
+      change(userService.menus, status: RxStatus.success());
     }).onError((error, stackTrace) {
       Logger.write('error:$error');
       change(null, status: RxStatus.error(error.toString()));
@@ -51,7 +54,7 @@ class ShellMenuController extends GetxController with StateMixin {
 
   /// 切换菜单展开状态
   Future<void> onExpansionChanged(bool value, MenuBuild menu) async {
-    menus.firstWhere((x) => x == menu).expanded = value;
+    userService.menus.firstWhere((x) => x == menu).expanded = value;
   }
 
   /// 点击菜单事件
@@ -61,7 +64,8 @@ class ShellMenuController extends GetxController with StateMixin {
   }) async {
     if (children.path == null) return;
     String tag = const Uuid().v4();
-    menu ??= menus.firstWhere((x) => x.children!.contains(children));
+    menu ??=
+        userService.menus.firstWhere((x) => x.children!.contains(children));
     for (var element in userService.openMenus.values) {
       element.selected = false;
     }

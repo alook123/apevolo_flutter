@@ -4,102 +4,93 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ShellMenuButtonsView extends GetView {
-  ShellMenuButtonsView({
-    super.key,
-    bool visible = true,
-  }) {
-    _visible = visible;
-  }
+  const ShellMenuButtonsView({super.key, this.visible = false});
 
-  late final bool _visible;
+  final bool visible;
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: _visible,
+      visible: visible,
       child: ButtonBar(
-        alignment: MainAxisAlignment.end,
+        alignment: MainAxisAlignment.center,
         buttonPadding: const EdgeInsets.all(0),
         // buttonTextTheme: ButtonTextTheme.primary,
         overflowButtonSpacing: 0,
         children: [
+          AnimatedContainer(
+            duration: const Duration(seconds: 5),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10), // Add border radius
+              gradient: const LinearGradient(
+                colors: [
+                  Colors.red,
+                  Colors.orange,
+                  Colors.yellow,
+                  Colors.green,
+                  Colors.blue,
+                  Colors.indigo,
+                  Colors.purple,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            padding: const EdgeInsets.only(left: 8, right: 8),
+            child: const Text(
+              'APEVOlO',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
           IconButton(
-            onPressed: () => Get.toNamed(Routes.HOME, id: 1),
-            icon: const Icon(Icons.home),
+            onPressed: () {
+              print('Selected:');
+            },
+            tooltip: '个人中心',
+            padding: EdgeInsets.zero,
+            icon: PopupMenuButton(
+              padding: EdgeInsets.zero,
+              tooltip: '个人中心',
+              icon: const Icon(Icons.person),
+              onSelected: (value) {
+                print('Selected: $value');
+              },
+              offset: const Offset(0, 40),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  child: ListTile(
+                    leading: const Icon(Icons.account_box),
+                    title: const Text('个人资料'),
+                    onTap: () {},
+                  ),
+                ),
+                PopupMenuItem(
+                  child: ListTile(
+                    leading: const Icon(Icons.logout),
+                    title: const Text('注销'),
+                    onTap: () {
+                      controller.onLogout();
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.message),
           ),
-          // IconButton(
-          //   key: personMenuKey,
-          //   onPressed: () {
-          //     final RenderBox box =
-          //         personMenuKey.currentContext!.findRenderObject() as RenderBox;
-          //     Offset position = box.localToGlobal(Offset.zero);
-          //     Size size = box.size;
-          //     showMenu(
-          //       context: context,
-          //       position: RelativeRect.fromLTRB(
-          //         position.dx,
-          //         position.dy + size.height,
-          //         position.dx + size.width,
-          //         position.dy,
-          //       ),
-          //       items: [
-          //         PopupMenuItem(
-          //           child: ListTile(
-          //             leading: const Icon(Icons.account_box),
-          //             title: const Text('个人资料'),
-          //             onTap: () {},
-          //           ),
-          //         ),
-          //         PopupMenuItem(
-          //           child: ListTile(
-          //             leading: const Icon(Icons.logout),
-          //             title: const Text('注销'),
-          //             onTap: () {
-          //               controller.onLogout();
-          //             },
-          //           ),
-          //         ),
-          //       ],
-          //       elevation: 8.0,
-          //     );
-          //   },
-          //   icon: const Icon(Icons.person),
-          // ),
-          PopupMenuButton(
-            tooltip: '个人中心',
-            icon: const Icon(Icons.person),
-            onSelected: (value) {
-              // Handle the selected menu item
-              print('Selected: $value');
-            },
-            offset: const Offset(0, 40),
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                child: ListTile(
-                  leading: const Icon(Icons.account_box),
-                  title: const Text('个人资料'),
-                  onTap: () {},
-                ),
-              ),
-              PopupMenuItem(
-                child: ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: const Text('注销'),
-                  onTap: () {
-                    controller.onLogout();
-                  },
-                ),
-              ),
-            ],
-          ),
+          const ThemeModeView(),
           IconButton(
             onPressed: () => Get.toNamed(Routes.SETTING, id: 1),
             icon: const Icon(Icons.settings),
           ),
-          const ThemeModeView(),
         ],
       ),
     );

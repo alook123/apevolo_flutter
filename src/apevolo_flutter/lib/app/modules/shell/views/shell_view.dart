@@ -26,7 +26,6 @@ class ShellView extends GetView<ShellController> {
                 child: SizedBox(
                   width: controller.verticalMenuWidth.value,
                   child: ShellVerticalMenuView(
-                    getIconData: controller.userService.getIconData,
                     expandOpen: controller.menuOpen.value,
                     onExpandMenu: () =>
                         controller.menuOpen.value = !controller.menuOpen.value,
@@ -71,39 +70,30 @@ class ShellView extends GetView<ShellController> {
                   () => Column(
                     children: [
                       ShellHorizontalMenuView(
-                        title: controller.selectMenu.value?.meta?.title,
-                        subTitle:
-                            controller.selectMenuChildren.value?.meta?.title,
-                        icon: controller.selectIcon.value,
+                        title: controller.userService.menus
+                            .firstWhereOrNull(
+                              (x) =>
+                                  x.children != null &&
+                                  x.children!.any((y) =>
+                                      y.path ==
+                                      controller
+                                          .userService.currentMenu.value?.path),
+                            )
+                            ?.meta
+                            ?.title,
+                        subTitle: controller
+                            .userService.currentMenu.value?.meta?.title,
+                        icon: controller.userService.currentMenu.value !=
+                                    null &&
+                                controller
+                                        .userService.currentMenu.value!.path !=
+                                    null
+                            ? controller.userService.getIconData(
+                                controller.userService.currentMenu.value!.path!)
+                            : null,
                         visible: !controller.menuOpen.value,
                         onPressed: () => scaffoldKey.currentState!.openDrawer(),
                       ),
-                      Visibility(
-                        visible: controller.menuOpen.value,
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Row(
-                            children: [
-                              // Image.asset('assets/image/logo.png', width: 20),
-                              // const SizedBox(width: 16),
-                              Icon(controller.selectIcon.value, size: 20),
-                              const SizedBox(width: 8),
-                              Visibility(
-                                visible:
-                                    controller.selectMenu.value?.meta?.title !=
-                                            null &&
-                                        controller.selectMenuChildren.value
-                                                ?.meta?.title !=
-                                            null,
-                                child: Text(
-                                  '${controller.selectMenu.value?.meta?.title ?? ''} / ${controller.selectMenuChildren.value?.meta?.title ?? ''}',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
                       Expanded(
                         child: Scaffold(
                             body: Navigator(
@@ -126,7 +116,6 @@ class ShellView extends GetView<ShellController> {
           child: Card(
             margin: const EdgeInsets.only(left: 8, top: 8, bottom: 8),
             child: ShellVerticalMenuView(
-              getIconData: controller.userService.getIconData,
               expandOpen: controller.menuOpen.value,
               onExpandMenu: () =>
                   controller.menuOpen.value = !controller.menuOpen.value,

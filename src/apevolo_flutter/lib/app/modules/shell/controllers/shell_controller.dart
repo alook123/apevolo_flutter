@@ -7,9 +7,10 @@ import 'package:get/get.dart';
 
 class ShellController extends GetxController {
   final UserService userService = Get.find<UserService>();
-  final Rx<MenuBuild?> selectMenu = Rxn<MenuBuild>();
-  final Rx<ChildrenMenu?> selectMenuChildren = Rxn<ChildrenMenu>();
-  final Rx<IconData?> selectIcon = Rxn<IconData>();
+
+  final Rxn<MenuBuild> currentMenu = Rxn<MenuBuild>();
+
+  final Rxn<ChildrenMenu> currentChildMenu = Rxn<ChildrenMenu>();
 
   final RxBool menuOpen = true.obs;
 
@@ -25,6 +26,10 @@ class ShellController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+
+    ever(userService.openMenus, (va) {
+      //TODO:在这里获取菜单
+    });
   }
 
   @override
@@ -41,6 +46,8 @@ class ShellController extends GetxController {
       defaultValue:
           AppPages.routes.singleWhere((x) => x.name == Routes.NOT_FOUND),
     );
+
+    //userService.menus.firstWhereOrNull((x) => x.children.contains()
 
     Get.routing.args = settings.arguments;
     // Get.routing.current = settings.name!;

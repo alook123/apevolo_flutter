@@ -34,7 +34,7 @@ class ShellTagController extends GetxController {
       element.selected = false;
     }
     children.selected = true;
-    menu ??= shellMenuController.menus.singleWhere(
+    menu ??= shellMenuController.userService.menus.singleWhere(
       (element) => element.children!
           .any((child) => child.component == children.component),
     );

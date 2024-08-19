@@ -1,6 +1,7 @@
 import 'package:apevolo_flutter/app/modules/shell/controllers/shell_vertical_menu_controller.dart';
 import 'package:apevolo_flutter/app/modules/shell/views/shell_menu_buttons_view.dart';
 import 'package:apevolo_flutter/app/modules/shell/views/shell_menu_view.dart';
+import 'package:apevolo_flutter/app/modules/shell/views/shell_navigation_menu_view.dart';
 import 'package:apevolo_flutter/app/modules/shell/views/shell_tag_view.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +11,9 @@ import 'package:get/get.dart';
 class ShellVerticalMenuView extends GetView<ShellVerticalMenuController> {
   const ShellVerticalMenuView({
     super.key,
-    required this.getIconData,
     this.onExpandMenu,
     this.expandOpen = false,
   });
-
-  /// 获取图标数据
-  final IconData Function(String path) getIconData;
 
   /// 是否展开菜单
   final bool expandOpen;
@@ -45,7 +42,7 @@ class ShellVerticalMenuView extends GetView<ShellVerticalMenuController> {
                       : FluentIcons.panel_left_16_filled,
                 ),
               ),
-              ShellMenuButtonsView(
+              ShellNavigationMenuView(
                 visible: expandOpen,
               ),
             ],
@@ -58,15 +55,16 @@ class ShellVerticalMenuView extends GetView<ShellVerticalMenuController> {
                 children: [
                   ShellMenuView(
                     onTapMenuCallback: (menu) => controller.onTapMenu(menu),
-                    getIconData: (path) => getIconData(path),
                   ),
                   ShellTagView(
-                    getIconData: getIconData,
                     onTapMenuCallback: (menu) => controller.onTapMenu(menu),
                   ),
                 ],
               ),
             ),
+          ),
+          ShellMenuButtonsView(
+            visible: expandOpen,
           ),
         ],
       ),

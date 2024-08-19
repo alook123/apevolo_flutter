@@ -8,14 +8,11 @@ class ShellTagView extends GetView<ShellTagController> {
   const ShellTagView({
     super.key,
     required this.onTapMenuCallback,
-    required this.getIconData,
   });
 
   /// 点击菜单事件
   final void Function(ChildrenMenu menu) onTapMenuCallback;
 
-  /// 获取图标数据
-  final IconData Function(String path) getIconData;
   @override
   Widget build(BuildContext context) {
     return GetBuilder(
@@ -85,7 +82,8 @@ class ShellTagView extends GetView<ShellTagController> {
                       ListTile(
                         leading: entry.path == null
                             ? const Icon(Icons.error)
-                            : Icon(getIconData(entry.path!)),
+                            : Icon(controller.userService
+                                .getIconData(entry.path!)),
                         title: Text(entry.meta?.title ?? ''),
                         onTap: () {
                           onTapMenuCallback(entry);

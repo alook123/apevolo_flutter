@@ -1,6 +1,7 @@
 import 'package:apevolo_flutter/app/modules/components/theme_mode/controllers/theme_mode_controller.dart';
 import 'package:apevolo_flutter/app/modules/home/controllers/home_controller.dart';
 import 'package:apevolo_flutter/app/modules/shell/controllers/shell_menu_controller.dart';
+import 'package:apevolo_flutter/app/modules/shell/controllers/shell_navigation_menu_controller.dart';
 import 'package:apevolo_flutter/app/modules/shell/controllers/shell_tag_controller.dart';
 import 'package:apevolo_flutter/app/provider/apevolo_com/apevolo_dio_service.dart';
 import 'package:apevolo_flutter/app/provider/apevolo_com/auth/authorization_provider.dart';
@@ -18,6 +19,8 @@ class ShellBinding extends Bindings {
         () => AuthorizationProvider(Get.find<ApevoloDioService>().dio));
     Get.lazyPut<MenuProvider>(
         () => MenuProvider(Get.find<ApevoloDioService>().dio));
+    Get.lazyPut<ShellNavigationMenuController>(
+        () => ShellNavigationMenuController());
     Get.lazyPut<ShellVerticalMenuController>(
         () => ShellVerticalMenuController());
     Get.lazyPut<ThemeModeController>(() => ThemeModeController());

@@ -1,9 +1,11 @@
+import 'package:apevolo_flutter/app/service/system_service.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SettingController extends GetxController {
-  //TODO: Implement SettingController
+  final SystemService systemService = Get.find<SystemService>();
+  final Rx<String> themeModeText = '浅色'.obs;
 
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
@@ -19,5 +21,10 @@ class SettingController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
+  Future<void> onChangeThemeMode() async {
+    Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
+    systemService.themeMode.val = Get.isDarkMode ? 'light' : 'dark';
+    themeModeText.value = Get.isDarkMode ? '浅色' : '深色';
+    update();
+  }
 }

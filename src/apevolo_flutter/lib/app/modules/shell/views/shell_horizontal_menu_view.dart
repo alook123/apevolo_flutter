@@ -1,4 +1,5 @@
 import 'package:apevolo_flutter/app/modules/shell/views/shell_menu_buttons_view.dart';
+import 'package:apevolo_flutter/app/modules/shell/views/shell_navigation_menu_view.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,7 @@ class ShellHorizontalMenuView extends GetView {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: _visible,
+      // visible: _visible,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -39,21 +40,19 @@ class ShellHorizontalMenuView extends GetView {
                 onPressed: _onPressed,
                 icon: const Icon(FluentIcons.panel_left_16_filled),
               ),
-              const SizedBox(width: 16),
-              TextButton(
-                onPressed: () {},
-                child: Row(
-                  children: [
-                    // Image.asset('assets/image/logo.png', width: 20),
-                    const SizedBox(width: 16),
-                    Icon(_icon, size: 20),
-                    const SizedBox(width: 8),
-                    Visibility(
-                      visible: _title.isNotEmpty || _subTitle.isNotEmpty,
-                      child: Text('$_title / $_subTitle'),
-                    ),
-                  ],
-                ),
+              const SizedBox(width: 8),
+              ShellNavigationMenuView(visible: _visible),
+              Row(
+                children: [
+                  // Image.asset('assets/image/logo.png', width: 20),
+                  const SizedBox(width: 16),
+                  Icon(_icon, size: 20),
+                  const SizedBox(width: 8),
+                  Visibility(
+                    //visible: _title.isNotEmpty || _subTitle.isNotEmpty,
+                    child: Text('$_title / $_subTitle'),
+                  ),
+                ],
               ),
             ],
           ),

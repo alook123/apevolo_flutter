@@ -10,9 +10,16 @@ import 'package:get_storage/get_storage.dart';
 class UserService extends GetxService {
   final GetStorage _userStorage = GetStorage('userData');
   final Rxn<AuthLogin> loginInfo = Rxn<AuthLogin>();
-  final RxMap<String, IconData> menuIconDatas = <String, IconData>{}.obs;
+  final RxMap<String?, IconData> menuIconDatas = <String?, IconData>{}.obs;
 
+  ///菜单
+  final RxList<MenuBuild> menus = <MenuBuild>[].obs;
+
+  ///打开过的菜单
   final RxMap<String, ChildrenMenu> openMenus = <String, ChildrenMenu>{}.obs;
+
+  final Rxn<ChildrenMenu> currentMenu = Rxn<ChildrenMenu>();
+
   final ReadWriteValue<String?> openTag = null.val(
     'userData',
     getBox: () => GetStorage('userData'),
@@ -52,12 +59,15 @@ class UserService extends GetxService {
     openMenus.listen(
       (value) {
         _userStorage.write('openMenus', value);
+        if (value.isNotEmpty) {
+          currentMenu.value = value.values.last;
+        }
       },
     );
   }
 
-  IconData getIconData(String path) {
-    if (menuIconDatas[path] == null) {
+  IconData getIconData(String? path) {
+    if (path == null || menuIconDatas[path] == null) {
       // MaterialIcons 字体库的第一个图标代码点
       int firstCodePoint = 0xE000;
       // MaterialIcons 字体库的最后一个图标代码点
