@@ -15,11 +15,7 @@ class ShellNavigationMenuView extends GetView<ShellNavigationMenuController> {
       builder: (controller) {
         return Visibility(
           visible: visible,
-          child: ButtonBar(
-            alignment: MainAxisAlignment.end,
-            buttonPadding: const EdgeInsets.all(0),
-            // buttonTextTheme: ButtonTextTheme.primary,
-            overflowButtonSpacing: 0,
+          child: OverflowBar(
             children: [
               IconButton(
                 onPressed: controller.onToHome,

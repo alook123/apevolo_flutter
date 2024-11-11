@@ -30,7 +30,7 @@ class ShellTagView extends GetView<ShellTagController> {
                       horizontal: 8,
                       vertical: 18,
                     ),
-                    child: const Divider(
+                    child: Divider(
                       height: 2,
                       color: Colors.black12,
                       indent: 8,

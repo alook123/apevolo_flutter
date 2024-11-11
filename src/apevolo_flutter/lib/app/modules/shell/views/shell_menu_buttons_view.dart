@@ -1,5 +1,6 @@
 import 'package:apevolo_flutter/app/modules/components/theme_mode/views/theme_mode_view.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,46 +12,44 @@ class ShellMenuButtonsView extends GetView {
   Widget build(BuildContext context) {
     return Visibility(
       visible: visible,
-      child: ButtonBar(
-        alignment: MainAxisAlignment.center,
-        buttonPadding: const EdgeInsets.all(0),
-        // buttonTextTheme: ButtonTextTheme.primary,
-        overflowButtonSpacing: 0,
+      child: OverflowBar(
         children: [
-          AnimatedContainer(
-            duration: const Duration(seconds: 5),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10), // Add border radius
-              gradient: const LinearGradient(
-                colors: [
-                  Colors.red,
-                  Colors.orange,
-                  Colors.yellow,
-                  Colors.green,
-                  Colors.blue,
-                  Colors.indigo,
-                  Colors.purple,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            padding: const EdgeInsets.only(left: 8, right: 8),
-            child: const Text(
-              'APEVOlO',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
+          // AnimatedContainer(
+          //   duration: const Duration(seconds: 5),
+          //   alignment: Alignment.center,
+          //   decoration: BoxDecoration(
+          //     borderRadius: BorderRadius.circular(10), // Add border radius
+          //     gradient: const LinearGradient(
+          //       colors: [
+          //         Colors.red,
+          //         Colors.orange,
+          //         Colors.yellow,
+          //         Colors.green,
+          //         Colors.blue,
+          //         Colors.indigo,
+          //         Colors.purple,
+          //       ],
+          //       begin: Alignment.topLeft,
+          //       end: Alignment.bottomRight,
+          //     ),
+          //   ),
+          //   padding: const EdgeInsets.only(left: 8, right: 8),
+          //   child: const Text(
+          //     'APEVOlO',
+          //     style: TextStyle(
+          //       fontSize: 16,
+          //       fontWeight: FontWeight.bold,
+          //       color: Colors.white,
+          //     ),
+          //     textAlign: TextAlign.center,
+          //     overflow: TextOverflow.ellipsis,
+          //   ),
+          // ),
           IconButton(
             onPressed: () {
-              print('Selected:');
+              if (kDebugMode) {
+                print('Selected:');
+              }
             },
             tooltip: '个人中心',
             padding: EdgeInsets.zero,
