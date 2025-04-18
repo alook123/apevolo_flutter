@@ -32,7 +32,7 @@ Future<void> main() async {
         Locale('zh', 'CN'), // 添加中文支持
       ],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      // scrollBehavior: MyCustomScrollBehavior(),
+      //scrollBehavior: MyCustomScrollBehavior(),
     ),
   );
 }

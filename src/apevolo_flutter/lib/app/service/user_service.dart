@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login_model.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login.dart';
 import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -64,6 +64,14 @@ class UserService extends GetxService {
         }
       },
     );
+  }
+
+  /// 清除用户信息
+  Future<void> clearUserInfo() async {
+    await _userStorage.remove('loginInfo');
+    await _userStorage.remove('openMenus');
+    loginInfo.value = null;
+    openMenus.clear();
   }
 
   IconData getIconData(String? path) {

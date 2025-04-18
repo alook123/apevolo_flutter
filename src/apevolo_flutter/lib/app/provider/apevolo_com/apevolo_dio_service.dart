@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login_model.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:dio/dio.dart';
@@ -15,7 +15,8 @@ class ApevoloDioService extends GetxService {
   final UserService userService = Get.find<UserService>();
   final dio = Dio(
     BaseOptions(
-      baseUrl: "https://www.apevolo.com",
+      // baseUrl: "https://www.apevolo.com",
+      baseUrl: "http://47.83.239.29",
       receiveDataWhenStatusError: true,
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
@@ -93,7 +94,9 @@ class ApevoloDioService extends GetxService {
         //使用新的访问令牌更新请求标头
         exception.requestOptions.headers['Authorization'] =
             'Bearer ${token.accessToken}';
-        userService.loginInfo.value?.token = token;
+        final old = userService.loginInfo.value!;
+        userService.loginInfo.value = old.copyWith(token: token);
+        // userService.loginInfo.value?.token = token;
         userService.loginInfo.refresh();
 
         //使用更新后的标头重复请求
@@ -101,6 +104,24 @@ class ApevoloDioService extends GetxService {
       } else {
         Get.offAllNamed(Routes.LOGIN);
         return handler.next(exception);
+      }
+    }
+    if (exception.response?.statusCode == 403) {
+      // 如果提示过该提示，则不再提示
+      if (userService.loginInfo.value?.token?.accessToken == null) {
+        return handler.next(exception);
+      }
+
+      Get.snackbar(
+        '提示',
+        '''您没有权限访问此资源，请联系管理员。''',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      userService.clearUserInfo();
+
+      /// 如果当前页面是登录页，则不需要跳转
+      if (Get.currentRoute != Routes.LOGIN) {
+        Get.offAndToNamed(Routes.LOGIN);
       }
     }
 

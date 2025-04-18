@@ -21,7 +21,7 @@ dependencies:
     flutter_localization: ^0.2.0
     retrofit: '>=4.0.0 <5.0.0'
     logger: any #for logging purpose
-    json_annotation: ^4.8.1
+    json_annotation: ^4.9.0
     flutter_localizations:
         sdk: flutter
 
@@ -30,8 +30,8 @@ dev_dependencies:
     flutter_test:
         sdk: flutter
     retrofit_generator: '>=7.0.0 <8.0.0'
-    build_runner: '>=2.3.0 <4.0.0'
-    json_serializable: ^6.6.2
+    build_runner: ^2.4.15
+    json_serializable: ^6.9.0
 
 flutter:
     assets:

@@ -58,7 +58,9 @@ class ShellMenuButtonsView extends GetView {
               tooltip: '个人中心',
               icon: const Icon(Icons.person),
               onSelected: (value) {
-                print('Selected: $value');
+                if (kDebugMode) {
+                  print('Selected: $value');
+                }
               },
               offset: const Offset(0, 40),
               itemBuilder: (context) => [
