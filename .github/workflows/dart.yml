@@ -44,7 +44,7 @@ jobs:
 
             # Build Flutter Web
             - name: Build Flutter Web
-              run: flutter build web
+              run: flutter build web --no-tree-shake-icons
 
             # Set up SSH
             - name: Set up SSH
