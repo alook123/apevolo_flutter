@@ -6,37 +6,65 @@
 name: Dart
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    push:
+        branches: ['master']
+    pull_request:
+        branches: ['master']
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      # Note: This workflow uses the latest stable version of the Dart SDK.
-      # You can specify other versions if desired, see documentation here:
-      # https://github.com/dart-lang/setup-dart/blob/main/README.md
-      # - uses: dart-lang/setup-dart@v1
-      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+            # Note: This workflow uses the latest stable version of the Dart SDK.
+            # You can specify other versions if desired, see documentation here:
+            # https://github.com/dart-lang/setup-dart/blob/main/README.md
+            # - uses: dart-lang/setup-dart@v1
+            - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
 
-      - name: Install dependencies
-        run: dart pub get
+            - name: Install dependencies
+              run: dart pub get
 
-      # Uncomment this step to verify the use of 'dart format' on each commit.
-      # - name: Verify formatting
-      #   run: dart format --output=none --set-exit-if-changed .
+            # Uncomment this step to verify the use of 'dart format' on each commit.
+            # - name: Verify formatting
+            #   run: dart format --output=none --set-exit-if-changed .
 
-      # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source
-        run: dart analyze
+            # Consider passing '--fatal-infos' for slightly stricter analysis.
+            - name: Analyze project source
+              run: dart analyze
 
-      # Your project will need to have tests in test/ and a dependency on
-      # package:test for this step to succeed. Note that Flutter projects will
-      # want to change this to 'flutter test'.
-      - name: Run tests
-        run: dart test
+            # Install Flutter
+            - name: Install Flutter
+              run: |
+                  git clone https://github.com/flutter/flutter.git -b stable
+                  echo "export PATH=\"\$PATH:\$PWD/flutter/bin\"" >> $GITHUB_ENV
+                  flutter doctor
+
+            # Your project will need to have tests in test/ and a dependency on
+            # package:test for this step to succeed. Note that Flutter projects will
+            # want to change this to 'flutter test'.
+            - name: Run tests
+              run: dart test
+
+            # Build Flutter Web
+            - name: Build Flutter Web
+              run: flutter build web
+
+            # Set up SSH
+            - name: Set up SSH
+              run: |
+                  mkdir -p ~/.ssh
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+                  chmod 600 ~/.ssh/id_rsa
+                  echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+            # Deploy to server
+            - name: Deploy to Server
+              env:
+                  SERVER_USER: ${{ secrets.SERVER_USER }}
+                  SERVER_HOST: ${{ secrets.SERVER_HOST }}
+                  SERVER_PATH: ${{ secrets.SERVER_PATH }}
+              run: |
+                  scp -r build/web/* $SERVER_USER@$SERVER_HOST:$SERVER_PATH
