@@ -18,12 +18,13 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            # Note: This workflow uses the latest stable version of the Dart SDK.
-            # You can specify other versions if desired, see documentation here:
-            # https://github.com/dart-lang/setup-dart/blob/main/README.md
-            # - uses: dart-lang/setup-dart@v1
-            - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+            # Install Flutter
+            - name: Install Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
 
+            # Install dependencies
             - name: Install dependencies
               run: flutter pub get
 
@@ -34,13 +35,6 @@ jobs:
             # Consider passing '--fatal-infos' for slightly stricter analysis.
             - name: Analyze project source
               run: dart analyze
-
-            # Install Flutter
-            - name: Install Flutter
-              run: |
-                  git clone https://github.com/flutter/flutter.git -b stable
-                  echo "export PATH=\"\$PATH:\$PWD/flutter/bin\"" >> $GITHUB_ENV
-                  flutter doctor
 
             # Your project will need to have tests in test/ and a dependency on
             # package:test for this step to succeed. Note that Flutter projects will
