@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
@@ -15,14 +14,13 @@ class ApevoloDioService extends GetxService {
   final UserService userService = Get.find<UserService>();
   final dio = Dio(
     BaseOptions(
-      // baseUrl: "https://www.apevolo.com",
       baseUrl: "http://47.83.239.29",
       receiveDataWhenStatusError: true,
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
       sendTimeout: const Duration(seconds: 60),
       headers: {
-        'Platform': Platform.operatingSystem,
+        // 'Platform': Platform.operatingSystem,
         'Accept': 'application/json',
       },
       contentType: 'application/json; charset=utf-8',
@@ -50,9 +48,9 @@ class ApevoloDioService extends GetxService {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    if (userService.loginInfo.value?.token?.accessToken != null) {
+    if (userService.loginInfo.value?.token.accessToken != null) {
       options.headers['Authorization'] =
-          'Bearer ${userService.loginInfo.value?.token?.accessToken}';
+          'Bearer ${userService.loginInfo.value?.token.accessToken}';
     }
     return handler.next(options);
   }
@@ -86,10 +84,10 @@ class ApevoloDioService extends GetxService {
     }
 
     if (exception.response?.statusCode == 401) {
-      if (userService.loginInfo.value?.token?.accessToken != null) {
+      if (userService.loginInfo.value?.token.accessToken != null) {
         // 如果收到 401 响应，则刷新访问令牌
-        Token token = await refreshToken(
-            userService.loginInfo.value!.token!.accessToken!);
+        Token token =
+            await refreshToken(userService.loginInfo.value!.token.accessToken);
 
         //使用新的访问令牌更新请求标头
         exception.requestOptions.headers['Authorization'] =
@@ -108,7 +106,7 @@ class ApevoloDioService extends GetxService {
     }
     if (exception.response?.statusCode == 403) {
       // 如果提示过该提示，则不再提示
-      if (userService.loginInfo.value?.token?.accessToken == null) {
+      if (userService.loginInfo.value?.token.accessToken == null) {
         return handler.next(exception);
       }
 

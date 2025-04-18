@@ -8,6 +8,7 @@ import '../controllers/login_controller.dart';
 class LoginBinding extends Bindings {
   @override
   void dependencies() {
+    // Get.lazyPut<ApevoloDioService>(() => ApevoloDioService());
     Get.lazyPut<LoginController>(
       () => LoginController(),
     );
