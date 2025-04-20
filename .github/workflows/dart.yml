@@ -63,6 +63,5 @@ jobs:
               env:
                   SERVER_USER: ${{ secrets.SERVER_USER }}
                   SERVER_HOST: ${{ secrets.SERVER_HOST }}
-                  SERVER_PATH: ${{ secrets.SERVER_PATH }}
               run: |
-                  docker save apevolo-flutter-web:latest | bzip2 | ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST 'bunzip2 | docker load && docker stop apevolo-flutter-web || true && docker rm apevolo-flutter-web || true && docker run -d --name apevolo-flutter-web -p 80:80 -v $SERVER_PATH:/usr/share/nginx/html apevolo-flutter-web:latest'
+                  docker save apevolo-flutter-web:latest | bzip2 | ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST 'bunzip2 | docker load && docker stop apevolo-flutter-web || true && docker rm apevolo-flutter-web || true && docker run -d --name apevolo-flutter-web -p 80:80 apevolo-flutter-web:latest'
