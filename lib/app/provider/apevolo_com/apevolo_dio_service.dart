@@ -14,7 +14,7 @@ class ApevoloDioService extends GetxService {
   final UserService userService = Get.find<UserService>();
   final dio = Dio(
     BaseOptions(
-      baseUrl: kDebugMode ? "http://47.83.239.29" : "localhost:8002",
+      baseUrl: kDebugMode ? "http://47.83.239.29" : "127.0.0.1:8002",
       receiveDataWhenStatusError: true,
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
