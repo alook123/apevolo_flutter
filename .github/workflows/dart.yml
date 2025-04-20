@@ -64,4 +64,4 @@ jobs:
                   SERVER_USER: ${{ secrets.SERVER_USER }}
                   SERVER_HOST: ${{ secrets.SERVER_HOST }}
               run: |
-                  docker save apevolo-flutter-web:latest | bzip2 | ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST 'bunzip2 | docker load && docker stop apevolo-flutter-web || true && docker rm apevolo-flutter-web || true && docker run -d --name apevolo-flutter-web -p 8001:8001 apevolo-flutter-web:latest'
+                  docker save apevolo-flutter-web:latest | bzip2 | ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST 'bunzip2 | docker load && docker stop apevolo-flutter-web || true && docker rm apevolo-flutter-web || true && docker run -d --name apevolo-flutter-web -p 8001:80 apevolo-flutter-web:latest'
