@@ -3,6 +3,6 @@ FROM nginx:alpine
 # 只复制已经由 CI 构建好的 web 目录
 COPY build/web /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 8001
 
 CMD ["nginx", "-g", "daemon off;"]
