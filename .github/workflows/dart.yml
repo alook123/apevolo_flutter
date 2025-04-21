@@ -350,156 +350,6 @@ jobs:
                   path: apevolo-flutter-linux-x64-*.tar.gz
                   retention-days: 1
 
-    # Linux (ARM64) build job
-    build-linux-arm64:
-        needs: setup-flutter
-        runs-on: ubuntu-latest
-        if: startsWith(github.ref, 'refs/tags/')
-
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-
-            # Setup Flutter cache
-            - name: Cache Flutter dependencies
-              uses: actions/cache@v3
-              with:
-                  path: |
-                      ~/.pub-cache
-                      ~/.flutter
-                  key: ${{ runner.os }}-flutter-arm64-${{ needs.setup-flutter.outputs.flutter-version }}
-                  restore-keys: |
-                      ${{ runner.os }}-flutter-arm64-
-
-            - name: Install Flutter
-              uses: subosito/flutter-action@v2
-              with:
-                  channel: stable
-                  cache: true
-
-            - name: Set up QEMU
-              uses: docker/setup-qemu-action@v2
-              with:
-                  platforms: arm64
-
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v2
-
-            - name: Create Dockerfile for ARM64 build
-              run: |
-                  cat > Dockerfile.arm64 << 'EOF'
-                  FROM --platform=linux/arm64 ubuntu:20.04
-
-                  ENV DEBIAN_FRONTEND=noninteractive
-
-                  # Install dependencies
-                  RUN apt-get update && apt-get install -y \
-                      curl git unzip xz-utils zip libglu1-mesa wget \
-                      ninja-build libgtk-3-dev libblkid-dev liblzma-dev \
-                      cmake clang pkg-config libgtk-3-dev \
-                      && apt-get clean
-
-                  # Create working directory
-                  WORKDIR /app
-
-                  # Copy project files (excluding flutter_sdk directory which will be mounted)
-                  COPY . .
-
-                  # Copy in the Flutter SDK
-                  COPY flutter_sdk /flutter
-
-                  # Set environment variable for Flutter
-                  ENV PATH="/flutter/bin:${PATH}"
-
-                  # Verify Flutter installation
-                  RUN flutter --version
-
-                  # Get dependencies and build
-                  RUN cd /app && \
-                      flutter config --enable-linux-desktop && \
-                      flutter pub get && \
-                      flutter build linux --release --no-tree-shake-icons
-
-                  # Package the app
-                  RUN mkdir -p /output && \
-                      cd build/linux/arm64/release/bundle && \
-                      VERSION=$(echo "${CI_TAG}" | sed 's/refs\/tags\///') && \
-                      tar -czf /output/apevolo-flutter-linux-arm64-${VERSION:-latest}.tar.gz *
-                  EOF
-
-            - name: Setup Flutter for Docker
-              run: |
-                  echo "Setting up Flutter for Docker build..."
-
-                  # Download and extract Flutter SDK if not available from cache
-                  if [ ! -d "$HOME/.flutter" ]; then
-                    echo "Downloading Flutter SDK..."
-                    mkdir -p "$HOME/.flutter"
-                    curl -o flutter.tar.xz https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.19.3-stable.tar.xz
-                    tar xf flutter.tar.xz -C "$HOME"
-                    export PATH="$HOME/flutter/bin:$PATH"
-                    flutter precache
-                    flutter --version
-                  else
-                    echo "Using cached Flutter SDK"
-                    export PATH="$HOME/.flutter/bin:$PATH"
-                    flutter --version
-                  fi
-
-                  # Copy Flutter SDK to a directory for Docker
-                  echo "Preparing Flutter SDK for Docker container..."
-                  mkdir -p flutter_sdk
-                  cp -R "$HOME/.flutter/"* flutter_sdk/ || cp -R "$HOME/flutter/"* flutter_sdk/
-                  ls -la flutter_sdk/bin
-
-                  # Make sure the Flutter binary is executable in the copied SDK
-                  chmod +x flutter_sdk/bin/flutter
-
-            - name: Build ARM64 version using Docker
-              run: |
-                  VERSION=${GITHUB_REF#refs/tags/}
-
-                  echo "Starting Docker build for ARM64..."
-
-                  # Create buildx builder instance
-                  docker buildx create --name arm64builder --use
-
-                  # Build the image, specifying platform and load it locally
-                  docker buildx build --platform linux/arm64 -f Dockerfile.arm64 \
-                    --build-arg CI_TAG=${GITHUB_REF} \
-                    -t flutter-linux-arm64-builder:latest \
-                    --load .
-
-                  # Run a container from the image
-                  echo "Creating container from built image..."
-                  docker create --name arm64-builder flutter-linux-arm64-builder:latest
-
-                  # Copy build artifact from container
-                  echo "Copying build artifact from container..."
-                  docker cp arm64-builder:/output/apevolo-flutter-linux-arm64-${VERSION}.tar.gz ./apevolo-flutter-linux-arm64-${VERSION}.tar.gz || \
-                  docker cp arm64-builder:/output/apevolo-flutter-linux-arm64-latest.tar.gz ./apevolo-flutter-linux-arm64-${VERSION}.tar.gz
-
-                  # Check if file was copied successfully
-                  if [ -f ./apevolo-flutter-linux-arm64-${VERSION}.tar.gz ]; then
-                    echo "Build artifact successfully copied"
-                    ls -la ./apevolo-flutter-linux-arm64-*.tar.gz
-                  else
-                    echo "Failed to copy build artifact"
-                    # Debug by examining container
-                    docker exec arm64-builder ls -la /output /app/build/linux || true
-                  fi
-
-                  # Clean up
-                  docker rm arm64-builder
-                  docker buildx rm arm64builder
-
-            - name: Upload Linux ARM64 artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: linux-arm64-build
-                  path: apevolo-flutter-linux-arm64-*.tar.gz
-                  retention-days: 1
-
     deploy:
         needs: build
         runs-on: ubuntu-latest
@@ -533,13 +383,7 @@ jobs:
 
     release:
         needs:
-            [
-                build,
-                build-windows-x64,
-                build-macos-universal,
-                build-linux-x64,
-                build-linux-arm64,
-            ]
+            [build, build-windows-x64, build-macos-universal, build-linux-x64]
         runs-on: ubuntu-latest
         if: startsWith(github.ref, 'refs/tags/')
 
@@ -581,11 +425,6 @@ jobs:
               with:
                   name: linux-x64-build
 
-            - name: Download Linux arm64 build
-              uses: actions/download-artifact@v4
-              with:
-                  name: linux-arm64-build
-
             # List downloaded files
             - name: List files
               run: ls -la
@@ -600,7 +439,6 @@ jobs:
                       apevolo-flutter-macos-universal-${{ steps.get_version.outputs.VERSION }}.zip
                       apevolo-flutter-macos-${{ steps.get_version.outputs.VERSION }}.zip
                       apevolo-flutter-linux-x64-${{ steps.get_version.outputs.VERSION }}.tar.gz
-                      apevolo-flutter-linux-arm64-${{ steps.get_version.outputs.VERSION }}.tar.gz
                   name: Release ${{ steps.get_version.outputs.VERSION }}
                   body: |
                       ## Apevolo Flutter ${{ steps.get_version.outputs.VERSION }}
@@ -622,7 +460,6 @@ jobs:
 
                       - **Linux**
                         - x64 版本 (apevolo-flutter-linux-x64-${{ steps.get_version.outputs.VERSION }}.tar.gz)
-                        - ARM64 版本 (apevolo-flutter-linux-arm64-${{ steps.get_version.outputs.VERSION }}.tar.gz)
 
                       ### 🚀 部署方式
                       #### Web
@@ -644,7 +481,7 @@ jobs:
                       ### 💻 系统要求
                       - **Windows**: 64位系统
                       - **macOS**: Intel或Apple Silicon芯片的Mac (macOS 10.14或更高版本)
-                      - **Linux**: x86_64或ARM64架构
+                      - **Linux**: x86_64架构
                   draft: false
                   prerelease: false
               env:
