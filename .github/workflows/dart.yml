@@ -14,7 +14,21 @@ on:
         branches: ['master']
 
 jobs:
+    setup-flutter:
+        runs-on: ubuntu-latest
+        outputs:
+            flutter-version: ${{ steps.flutter-version.outputs.version }}
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Flutter
+              id: flutter-version
+              run: |
+                  echo "version=$(grep 'flutter:' pubspec.yaml | awk '{print $2}' | tr -d '\"' || echo 'stable')" >> $GITHUB_OUTPUT
+
     build:
+        needs: setup-flutter
         runs-on: ubuntu-latest
 
         steps:
@@ -22,11 +36,23 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
+            # Setup Flutter cache
+            - name: Cache Flutter dependencies
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      ~/.pub-cache
+                      ~/.flutter
+                  key: ${{ runner.os }}-flutter-${{ needs.setup-flutter.outputs.flutter-version }}
+                  restore-keys: |
+                      ${{ runner.os }}-flutter-
+
             # Install Flutter
             - name: Install Flutter
               uses: subosito/flutter-action@v2
               with:
                   channel: stable
+                  cache: true
 
             # Install dependencies
             - name: Install dependencies
@@ -84,6 +110,7 @@ jobs:
 
     # Windows (x64) build job
     build-windows-x64:
+        needs: setup-flutter
         runs-on: windows-latest
         if: startsWith(github.ref, 'refs/tags/')
 
@@ -91,10 +118,22 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
+            # Setup Flutter cache
+            - name: Cache Flutter dependencies
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      ~/AppData/Local/Pub/Cache
+                      ~/AppData/Local/flutter
+                  key: ${{ runner.os }}-flutter-${{ needs.setup-flutter.outputs.flutter-version }}
+                  restore-keys: |
+                      ${{ runner.os }}-flutter-
+
             - name: Install Flutter
               uses: subosito/flutter-action@v2
               with:
                   channel: stable
+                  cache: true
 
             - name: Install dependencies
               run: flutter pub get
@@ -105,11 +144,35 @@ jobs:
             - name: Build Windows
               run: flutter build windows --release
 
+            # 调试构建输出路径
+            - name: Debug build directory
+              run: |
+                  Get-ChildItem -Path build -Recurse -Depth 2
+
+            # 修改打包命令以适应实际路径
             - name: Package Windows build
               run: |
                   $VERSION = $env:GITHUB_REF -replace 'refs/tags/', ''
-                  cd build/windows/runner/Release
-                  7z a -tzip ../../../../apevolo-flutter-windows-x64-$VERSION.zip *
+                  # 查找实际的构建输出路径
+                  $buildPath = Get-ChildItem -Path "build\windows" -Recurse -Include "Release" | Select-Object -First 1 -ExpandProperty FullName
+                  if ($buildPath) {
+                    Write-Host "Found build path: $buildPath"
+                    Set-Location $buildPath
+                    # 检查是否找到了构建文件
+                    Get-ChildItem
+                    7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
+                  } else {
+                    # 如果找不到 Release 目录，尝试其他可能的路径
+                    Write-Host "Release directory not found, trying alternative paths"
+                    $alternativePath = "build\windows\x64\runner\Release"
+                    if (Test-Path $alternativePath) {
+                      Set-Location $alternativePath
+                      7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
+                    } else {
+                      Write-Error "Could not find Windows build output directory"
+                      exit 1
+                    }
+                  }
 
             - name: Upload Windows artifact
               uses: actions/upload-artifact@v4
@@ -120,6 +183,7 @@ jobs:
 
     # macOS (Universal - Intel + ARM) build job
     build-macos-universal:
+        needs: setup-flutter
         runs-on: macos-latest
         if: startsWith(github.ref, 'refs/tags/')
 
@@ -127,10 +191,23 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
+            # Setup Flutter cache
+            - name: Cache Flutter dependencies
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      ~/.pub-cache
+                      ~/Library/Developer/Xcode/DerivedData
+                      ~/.flutter
+                  key: ${{ runner.os }}-flutter-${{ needs.setup-flutter.outputs.flutter-version }}
+                  restore-keys: |
+                      ${{ runner.os }}-flutter-
+
             - name: Install Flutter
               uses: subosito/flutter-action@v2
               with:
                   channel: stable
+                  cache: true
 
             - name: Install dependencies
               run: flutter pub get
@@ -139,7 +216,7 @@ jobs:
               run: flutter config --enable-macos-desktop
 
             - name: Build macOS
-              run: flutter build macos --release
+              run: flutter build macos --release --no-tree-shake-icons
 
             # Package as Universal Binary (x64 + arm64)
             - name: Package macOS build as Universal Binary
@@ -165,6 +242,7 @@ jobs:
 
     # Linux (x64) build job
     build-linux-x64:
+        needs: setup-flutter
         runs-on: ubuntu-latest
         if: startsWith(github.ref, 'refs/tags/')
 
@@ -172,10 +250,22 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
+            # Setup Flutter cache
+            - name: Cache Flutter dependencies
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      ~/.pub-cache
+                      ~/.flutter
+                  key: ${{ runner.os }}-flutter-${{ needs.setup-flutter.outputs.flutter-version }}
+                  restore-keys: |
+                      ${{ runner.os }}-flutter-
+
             - name: Install Flutter
               uses: subosito/flutter-action@v2
               with:
                   channel: stable
+                  cache: true
 
             - name: Install Linux dependencies
               run: |
@@ -206,6 +296,7 @@ jobs:
 
     # Linux (ARM64) build job
     build-linux-arm64:
+        needs: setup-flutter
         runs-on: ubuntu-latest
         if: startsWith(github.ref, 'refs/tags/')
 
@@ -213,10 +304,22 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4
 
+            # Setup Flutter cache
+            - name: Cache Flutter dependencies
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      ~/.pub-cache
+                      ~/.flutter
+                  key: ${{ runner.os }}-flutter-arm64-${{ needs.setup-flutter.outputs.flutter-version }}
+                  restore-keys: |
+                      ${{ runner.os }}-flutter-arm64-
+
             - name: Install Flutter
               uses: subosito/flutter-action@v2
               with:
                   channel: stable
+                  cache: true
 
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v2
