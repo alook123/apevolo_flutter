@@ -8,6 +8,8 @@ name: Dart
 on:
     push:
         branches: ['master']
+        tags:
+            - 'v*'
     pull_request:
         branches: ['master']
 
@@ -16,7 +18,9 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v4
+            # Checkout code
+            - name: Checkout code
+              uses: actions/checkout@v4
 
             # Install Flutter
             - name: Install Flutter
@@ -50,6 +54,247 @@ jobs:
             - name: Build Docker Image
               run: docker build -f Dockerfile.CI -t apevolo-flutter-web:latest .
 
+            # Upload Docker image as artifact
+            - name: Save Docker image
+              run: docker save apevolo-flutter-web:latest | gzip > docker-image.tar.gz
+
+            - name: Upload Docker image as artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: docker-image
+                  path: docker-image.tar.gz
+                  retention-days: 1
+
+            # Build web release for GitHub Release
+            - name: Compress web build for release
+              if: startsWith(github.ref, 'refs/tags/')
+              run: |
+                  VERSION=${GITHUB_REF#refs/tags/}
+                  cd build/web
+                  zip -r ../../apevolo-flutter-web-${VERSION}.zip .
+
+            # Upload web build as artifact for release job
+            - name: Upload web build artifact
+              if: startsWith(github.ref, 'refs/tags/')
+              uses: actions/upload-artifact@v3
+              with:
+                  name: web-build
+                  path: apevolo-flutter-web-*.zip
+                  retention-days: 1
+
+    # Windows (x64) build job
+    build-windows-x64:
+        runs-on: windows-latest
+        if: startsWith(github.ref, 'refs/tags/')
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Install Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+
+            - name: Install dependencies
+              run: flutter pub get
+
+            - name: Enable Windows desktop
+              run: flutter config --enable-windows-desktop
+
+            - name: Build Windows
+              run: flutter build windows --release
+
+            - name: Package Windows build
+              run: |
+                  $VERSION = $env:GITHUB_REF -replace 'refs/tags/', ''
+                  cd build/windows/runner/Release
+                  7z a -tzip ../../../../apevolo-flutter-windows-x64-$VERSION.zip *
+
+            - name: Upload Windows artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: windows-x64-build
+                  path: apevolo-flutter-windows-x64-*.zip
+                  retention-days: 1
+
+    # macOS (Universal - Intel + ARM) build job
+    build-macos-universal:
+        runs-on: macos-latest
+        if: startsWith(github.ref, 'refs/tags/')
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Install Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+
+            - name: Install dependencies
+              run: flutter pub get
+
+            - name: Enable macOS desktop
+              run: flutter config --enable-macos-desktop
+
+            - name: Build macOS
+              run: flutter build macos --release
+
+            # Package as Universal Binary (x64 + arm64)
+            - name: Package macOS build as Universal Binary
+              run: |
+                  VERSION=${GITHUB_REF#refs/tags/}
+                  cd build/macos/Build/Products/Release
+
+                  # Check if we can create universal binary
+                  if [ -d "*.app" ]; then
+                    echo "Creating universal binary package"
+                    ditto -c -k --sequesterRsrc --keepParent *.app ../../../../../apevolo-flutter-macos-universal-${VERSION}.zip
+                  else
+                    echo "Creating standard package (architecture dependent)"
+                    ditto -c -k --sequesterRsrc --keepParent *.app ../../../../../apevolo-flutter-macos-${VERSION}.zip
+                  fi
+
+            - name: Upload macOS Universal artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: macos-build
+                  path: apevolo-flutter-macos-*.zip
+                  retention-days: 1
+
+    # Linux (x64) build job
+    build-linux-x64:
+        runs-on: ubuntu-latest
+        if: startsWith(github.ref, 'refs/tags/')
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Install Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+
+            - name: Install Linux dependencies
+              run: |
+                  sudo apt-get update -y
+                  sudo apt-get install -y ninja-build libgtk-3-dev libblkid-dev liblzma-dev
+
+            - name: Install dependencies
+              run: flutter pub get
+
+            - name: Enable Linux desktop
+              run: flutter config --enable-linux-desktop
+
+            - name: Build Linux
+              run: flutter build linux --release
+
+            - name: Package Linux build
+              run: |
+                  VERSION=${GITHUB_REF#refs/tags/}
+                  cd build/linux/x64/release/bundle
+                  tar -czf ../../../../../apevolo-flutter-linux-x64-${VERSION}.tar.gz *
+
+            - name: Upload Linux artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: linux-x64-build
+                  path: apevolo-flutter-linux-x64-*.tar.gz
+                  retention-days: 1
+
+    # Linux (ARM64) build job
+    build-linux-arm64:
+        runs-on: ubuntu-latest
+        if: startsWith(github.ref, 'refs/tags/')
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Install Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v2
+              with:
+                  platforms: arm64
+
+            - name: Create Dockerfile for ARM64 build
+              run: |
+                  cat > Dockerfile.arm64 << 'EOF'
+                  FROM arm64v8/ubuntu:20.04
+
+                  ENV DEBIAN_FRONTEND=noninteractive
+
+                  # Install dependencies
+                  RUN apt-get update && apt-get install -y \
+                      curl git unzip xz-utils zip libglu1-mesa wget \
+                      ninja-build libgtk-3-dev libblkid-dev liblzma-dev \
+                      cmake clang pkg-config libgtk-3-dev \
+                      && apt-get clean
+
+                  # Install Flutter
+                  RUN git clone https://github.com/flutter/flutter.git /flutter
+                  ENV PATH="/flutter/bin:${PATH}"
+
+                  # Set Flutter to stable channel
+                  RUN flutter channel stable && flutter upgrade
+
+                  # Enable Linux desktop
+                  RUN flutter config --enable-linux-desktop
+
+                  # Create working directory
+                  WORKDIR /app
+
+                  # Copy project files
+                  COPY . .
+
+                  # Get dependencies
+                  RUN flutter pub get
+
+                  # Build for Linux
+                  RUN flutter build linux --release
+
+                  # Package the app
+                  RUN cd build/linux/arm64/release/bundle && \
+                      VERSION=$(echo "${CI_TAG}" | sed 's/refs\/tags\///') && \
+                      tar -czf /app/apevolo-flutter-linux-arm64-${VERSION:-latest}.tar.gz *
+                  EOF
+
+            - name: Build ARM64 version using Docker
+              run: |
+                  VERSION=${GITHUB_REF#refs/tags/}
+                  docker build --platform linux/arm64 -f Dockerfile.arm64 -t flutter-linux-arm64-builder --build-arg CI_TAG=${GITHUB_REF} .
+                  docker create --name arm64-builder flutter-linux-arm64-builder
+                  docker cp arm64-builder:/app/apevolo-flutter-linux-arm64-${VERSION}.tar.gz ./apevolo-flutter-linux-arm64-${VERSION}.tar.gz || docker cp arm64-builder:/app/apevolo-flutter-linux-arm64-latest.tar.gz ./apevolo-flutter-linux-arm64-${VERSION}.tar.gz
+                  docker rm arm64-builder
+
+            - name: Upload Linux ARM64 artifact
+              uses: actions/upload-artifact@v3
+              with:
+                  name: linux-arm64-build
+                  path: apevolo-flutter-linux-arm64-*.tar.gz
+                  retention-days: 1
+
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+
+        steps:
+            # Download Docker image artifact
+            - name: Download Docker image
+              uses: actions/download-artifact@v3
+              with:
+                  name: docker-image
+
+            - name: Load Docker image
+              run: gunzip -c docker-image.tar.gz | docker load
+
             # Set up SSH
             - name: Set up SSH
               run: |
@@ -65,3 +310,109 @@ jobs:
                   SERVER_HOST: ${{ secrets.SERVER_HOST }}
               run: |
                   docker save apevolo-flutter-web:latest | bzip2 | ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST 'bunzip2 | docker load && docker stop apevolo-flutter-web || true && docker rm apevolo-flutter-web || true && docker run -d --name apevolo-flutter-web -p 8001:80 apevolo-flutter-web:latest'
+
+    release:
+        needs:
+            [
+                build,
+                build-windows-x64,
+                build-macos-universal,
+                build-linux-x64,
+                build-linux-arm64,
+            ]
+        runs-on: ubuntu-latest
+        if: startsWith(github.ref, 'refs/tags/')
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            # Get the version from tag
+            - name: Get version
+              id: get_version
+              run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+            # Download all build artifacts
+            - name: Download web build
+              uses: actions/download-artifact@v3
+              with:
+                  name: web-build
+
+            - name: Download Windows x64 build
+              uses: actions/download-artifact@v3
+              with:
+                  name: windows-x64-build
+
+            - name: Download macOS build
+              uses: actions/download-artifact@v3
+              with:
+                  name: macos-build
+
+            - name: Download Linux x64 build
+              uses: actions/download-artifact@v3
+              with:
+                  name: linux-x64-build
+
+            - name: Download Linux arm64 build
+              uses: actions/download-artifact@v3
+              with:
+                  name: linux-arm64-build
+
+            # List downloaded files
+            - name: List files
+              run: ls -la
+
+            # Create GitHub Release
+            - name: Create Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: |
+                      apevolo-flutter-web-${{ steps.get_version.outputs.VERSION }}.zip
+                      apevolo-flutter-windows-x64-${{ steps.get_version.outputs.VERSION }}.zip
+                      apevolo-flutter-macos-universal-${{ steps.get_version.outputs.VERSION }}.zip
+                      apevolo-flutter-macos-${{ steps.get_version.outputs.VERSION }}.zip
+                      apevolo-flutter-linux-x64-${{ steps.get_version.outputs.VERSION }}.tar.gz
+                      apevolo-flutter-linux-arm64-${{ steps.get_version.outputs.VERSION }}.tar.gz
+                  name: Release ${{ steps.get_version.outputs.VERSION }}
+                  body: |
+                      ## Apevolo Flutter ${{ steps.get_version.outputs.VERSION }}
+
+                      ### 📦 可用平台
+                      - **Web**
+                        - 通用版本 (apevolo-flutter-web-${{ steps.get_version.outputs.VERSION }}.zip)
+
+                      - **Windows**
+                        - x64 版本 (apevolo-flutter-windows-x64-${{ steps.get_version.outputs.VERSION }}.zip)
+
+                      - **macOS**
+                        - 通用版本 (Intel + Apple Silicon) (apevolo-flutter-macos-universal-${{ steps.get_version.outputs.VERSION }}.zip)
+
+                      - **Linux**
+                        - x64 版本 (apevolo-flutter-linux-x64-${{ steps.get_version.outputs.VERSION }}.tar.gz)
+                        - ARM64 版本 (apevolo-flutter-linux-arm64-${{ steps.get_version.outputs.VERSION }}.tar.gz)
+
+                      ### 🚀 部署方式
+                      #### Web
+                      1. 解压 ZIP 文件
+                      2. 部署到您的 Web 服务器
+
+                      #### Windows
+                      1. 解压 ZIP 文件
+                      2. 运行可执行文件
+
+                      #### macOS
+                      1. 解压 ZIP 文件
+                      2. 移动应用程序到应用程序文件夹
+
+                      #### Linux
+                      1. 解压 tar.gz 文件
+                      2. 运行可执行文件
+
+                      ### 💻 系统要求
+                      - **Windows**: 64位系统
+                      - **macOS**: Intel或Apple Silicon芯片的Mac (macOS 10.14或更高版本)
+                      - **Linux**: x86_64或ARM64架构
+                  draft: false
+                  prerelease: false
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
