@@ -147,30 +147,86 @@ jobs:
             # 调试构建输出路径
             - name: Debug build directory
               run: |
-                  Get-ChildItem -Path build -Recurse -Depth 2
+                  Get-ChildItem -Path build -Recurse -Depth 3 | Where-Object { $_.Name -like "*.exe" -or $_.FullName -like "*Release*" }
 
             # 修改打包命令以适应实际路径
             - name: Package Windows build
               run: |
                   $VERSION = $env:GITHUB_REF -replace 'refs/tags/', ''
-                  # 查找实际的构建输出路径
-                  $buildPath = Get-ChildItem -Path "build\windows" -Recurse -Include "Release" | Select-Object -First 1 -ExpandProperty FullName
-                  if ($buildPath) {
-                    Write-Host "Found build path: $buildPath"
-                    Set-Location $buildPath
-                    # 检查是否找到了构建文件
-                    Get-ChildItem
+
+                  # 查找输出目录并验证可执行文件是否存在
+                  $exeFiles = Get-ChildItem -Path "build" -Recurse -Include "*.exe"
+
+                  if ($exeFiles.Count -gt 0) {
+                    Write-Host "Found executable files:"
+                    $exeFiles | ForEach-Object { Write-Host "  $($_.FullName)" }
+                    
+                    # 找到第一个exe文件所在的目录作为打包根目录
+                    $exeDir = $exeFiles[0].Directory.FullName
+                    Write-Host "Using directory for packaging: $exeDir"
+                    
+                    # 创建目标文件夹
+                    $packageDir = "windows-package"
+                    New-Item -Path $packageDir -ItemType Directory -Force
+                    
+                    # 复制所有必需的文件到打包目录
+                    Copy-Item -Path "$exeDir\*" -Destination $packageDir -Recurse
+                    
+                    # 确认复制是否成功
+                    Write-Host "Files in package directory:"
+                    Get-ChildItem -Path $packageDir -Recurse | ForEach-Object { Write-Host "  $($_.FullName)" }
+                    
+                    # 创建自释放批处理文件，帮助用户运行应用
+                    $batchContent = @"
+                    @echo off
+                    echo 启动 Apevolo Flutter 应用...
+                    start "" "$($exeFiles[0].Name)"
+                    "@
+                    Set-Content -Path "$packageDir\启动应用.bat" -Value $batchContent -Encoding ASCII
+                    
+                    # 打包
+                    Set-Location $packageDir
                     7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
                   } else {
-                    # 如果找不到 Release 目录，尝试其他可能的路径
-                    Write-Host "Release directory not found, trying alternative paths"
-                    $alternativePath = "build\windows\x64\runner\Release"
-                    if (Test-Path $alternativePath) {
-                      Set-Location $alternativePath
+                    # 如果找不到exe文件，尝试直接打包Release目录
+                    Write-Host "No .exe files found. Trying to find Release directory..."
+                    
+                    $releaseDirs = Get-ChildItem -Path "build\windows" -Recurse -Include "Release" | Where-Object { $_.PSIsContainer }
+                    
+                    if ($releaseDirs.Count -gt 0) {
+                      $releaseDir = $releaseDirs[0].FullName
+                      Write-Host "Found Release directory: $releaseDir"
+                      Set-Location $releaseDir
+                      
+                      # 创建自释放批处理文件
+                      $files = Get-ChildItem -Path "."
+                      $files | ForEach-Object { Write-Host "  $($_.Name)" }
+                      
+                      # 查找可能的启动文件
+                      $possibleExe = Get-ChildItem -Path "." -Include "*.exe", "*.bat", "runner.exe" -Recurse -ErrorAction SilentlyContinue
+                      if ($possibleExe.Count -gt 0) {
+                        $launchScript = @"
+                      @echo off
+                      echo 启动 Apevolo Flutter 应用...
+                      start "" "$($possibleExe[0].Name)"
+                      "@
+                                              Set-Content -Path "启动应用.bat" -Value $launchScript -Encoding ASCII
+                                            }
+                      
+                      # 打包
                       7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
-                    } else {
-                      Write-Error "Could not find Windows build output directory"
-                      exit 1
+                      } else {
+                      Write-Error "Could not find Windows build output directory or executable files"
+                      # 尝试直接查找 runner.exe
+                      $runnerExe = Get-ChildItem -Path "build" -Recurse -Include "runner.exe" -ErrorAction SilentlyContinue
+                      if ($runnerExe.Count -gt 0) {
+                        Write-Host "Found runner.exe at: $($runnerExe[0].FullName)"
+                        $runnerDir = $runnerExe[0].Directory.FullName
+                        Set-Location $runnerDir
+                        7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
+                      } else {
+                        exit 1
+                      }
                     }
                   }
 
@@ -340,15 +396,8 @@ jobs:
                       cmake clang pkg-config libgtk-3-dev \
                       && apt-get clean
 
-                  # Install Flutter
-                  RUN git clone https://github.com/flutter/flutter.git /flutter
-                  ENV PATH="/flutter/bin:${PATH}"
-
-                  # Set Flutter to stable channel
-                  RUN flutter channel stable && flutter upgrade
-
-                  # Enable Linux desktop
-                  RUN flutter config --enable-linux-desktop
+                  # Create flutter directory
+                  RUN mkdir -p /flutter
 
                   # Create working directory
                   WORKDIR /app
@@ -356,11 +405,13 @@ jobs:
                   # Copy project files
                   COPY . .
 
-                  # Get dependencies
-                  RUN flutter pub get
+                  ENV PATH="/flutter/bin:${PATH}"
 
-                  # Build for Linux
-                  RUN flutter build linux --release
+                  # Get dependencies and build
+                  RUN cd /app && \
+                      flutter config --enable-linux-desktop && \
+                      flutter pub get && \
+                      flutter build linux --release
 
                   # Package the app
                   RUN cd build/linux/arm64/release/bundle && \
@@ -368,12 +419,36 @@ jobs:
                       tar -czf /app/apevolo-flutter-linux-arm64-${VERSION:-latest}.tar.gz *
                   EOF
 
+            - name: Setup Flutter for Docker
+              run: |
+                  FLUTTER_HOME=$HOME/.flutter  # 根据缓存的实际路径调整
+                  if [ ! -d "$FLUTTER_HOME" ]; then
+                    # 如果缓存没有生效，下载 Flutter
+                    git clone https://github.com/flutter/flutter.git $FLUTTER_HOME
+                    $FLUTTER_HOME/bin/flutter channel stable
+                    $FLUTTER_HOME/bin/flutter upgrade
+                  fi
+
+                  # 创建一个 Flutter 归档文件 (SDK)，可以复制到 Docker 中
+                  mkdir -p flutter_sdk
+                  cp -R $FLUTTER_HOME/* flutter_sdk/
+
             - name: Build ARM64 version using Docker
               run: |
                   VERSION=${GITHUB_REF#refs/tags/}
-                  docker build --platform linux/arm64 -f Dockerfile.arm64 -t flutter-linux-arm64-builder --build-arg CI_TAG=${GITHUB_REF} .
+
+                  # 构建 Docker 镜像，将准备好的 Flutter SDK 复制进去
+                  docker build -f Dockerfile.arm64 --build-arg CI_TAG=${GITHUB_REF} -t flutter-linux-arm64-builder . \
+                    --build-arg FLUTTER_SDK=flutter_sdk
+
+                  # 创建容器
                   docker create --name arm64-builder flutter-linux-arm64-builder
-                  docker cp arm64-builder:/app/apevolo-flutter-linux-arm64-${VERSION}.tar.gz ./apevolo-flutter-linux-arm64-${VERSION}.tar.gz || docker cp arm64-builder:/app/apevolo-flutter-linux-arm64-latest.tar.gz ./apevolo-flutter-linux-arm64-${VERSION}.tar.gz
+
+                  # 复制构建结果
+                  docker cp arm64-builder:/app/apevolo-flutter-linux-arm64-${VERSION}.tar.gz ./apevolo-flutter-linux-arm64-${VERSION}.tar.gz || \
+                  docker cp arm64-builder:/app/apevolo-flutter-linux-arm64-latest.tar.gz ./apevolo-flutter-linux-arm64-${VERSION}.tar.gz
+
+                  # 清理容器
                   docker rm arm64-builder
 
             - name: Upload Linux ARM64 artifact
@@ -435,6 +510,14 @@ jobs:
               id: get_version
               run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+            # Get recent changes for changelog
+            - name: Get recent changes
+              id: recent_changes
+              run: |
+                  echo "changelog<<EOF" >> $GITHUB_OUTPUT
+                  git log -n 20 --pretty=format:"* %h %s (%an)" >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+
             # Download all build artifacts
             - name: Download web build
               uses: actions/download-artifact@v4
@@ -479,6 +562,11 @@ jobs:
                   name: Release ${{ steps.get_version.outputs.VERSION }}
                   body: |
                       ## Apevolo Flutter ${{ steps.get_version.outputs.VERSION }}
+
+                      ### 📝 更新日志
+                      ```
+                      ${{ steps.recent_changes.outputs.changelog }}
+                      ```
 
                       ### 📦 可用平台
                       - **Web**
