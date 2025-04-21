@@ -178,10 +178,10 @@ jobs:
                     
                     # 创建自释放批处理文件，帮助用户运行应用
                     $batchContent = @"
-                    @echo off
-                    echo 启动 Apevolo Flutter 应用...
-                    start "" "$($exeFiles[0].Name)"
-                    "@
+                  @echo off
+                  echo 启动 Apevolo Flutter 应用...
+                  start "" "$($exeFiles[0].Name)"
+                  "@
                     Set-Content -Path "$packageDir\启动应用.bat" -Value $batchContent -Encoding ASCII
                     
                     # 打包
@@ -206,12 +206,12 @@ jobs:
                       $possibleExe = Get-ChildItem -Path "." -Include "*.exe", "*.bat", "runner.exe" -Recurse -ErrorAction SilentlyContinue
                       if ($possibleExe.Count -gt 0) {
                         $launchScript = @"
-                      @echo off
-                      echo 启动 Apevolo Flutter 应用...
-                      start "" "$($possibleExe[0].Name)"
-                      "@
-                                              Set-Content -Path "启动应用.bat" -Value $launchScript -Encoding ASCII
-                                            }
+                  @echo off
+                  echo 启动 Apevolo Flutter 应用...
+                  start "" "$($possibleExe[0].Name)"
+                  "@
+                                          Set-Content -Path "启动应用.bat" -Value $launchScript -Encoding ASCII
+                                        }
                       
                       # 打包
                       7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
@@ -382,10 +382,13 @@ jobs:
               with:
                   platforms: arm64
 
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+
             - name: Create Dockerfile for ARM64 build
               run: |
                   cat > Dockerfile.arm64 << 'EOF'
-                  FROM arm64v8/ubuntu:20.04
+                  FROM --platform=linux/arm64 ubuntu:20.04
 
                   ENV DEBIAN_FRONTEND=noninteractive
 
@@ -437,12 +440,18 @@ jobs:
               run: |
                   VERSION=${GITHUB_REF#refs/tags/}
 
-                  # 构建 Docker 镜像，将准备好的 Flutter SDK 复制进去
-                  docker build -f Dockerfile.arm64 --build-arg CI_TAG=${GITHUB_REF} -t flutter-linux-arm64-builder . \
-                    --build-arg FLUTTER_SDK=flutter_sdk
+                  # 使用 buildx 构建支持多架构
+                  docker buildx create --use
+
+                  # 创建临时容器用于复制构建结果
+                  docker buildx build --platform linux/arm64 -f Dockerfile.arm64 \
+                    --build-arg CI_TAG=${GITHUB_REF} \
+                    --build-arg FLUTTER_SDK=flutter_sdk \
+                    -t flutter-linux-arm64-builder:latest \
+                    --load .
 
                   # 创建容器
-                  docker create --name arm64-builder flutter-linux-arm64-builder
+                  docker create --name arm64-builder flutter-linux-arm64-builder:latest
 
                   # 复制构建结果
                   docker cp arm64-builder:/app/apevolo-flutter-linux-arm64-${VERSION}.tar.gz ./apevolo-flutter-linux-arm64-${VERSION}.tar.gz || \
