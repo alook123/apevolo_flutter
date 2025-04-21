@@ -400,9 +400,9 @@ jobs:
             - name: Get recent changes
               id: recent_changes
               run: |
-                  echo "changelog<<EOF" >> $GITHUB_OUTPUT
+                  echo 'changelog<<EOF' >> $GITHUB_OUTPUT
                   git log -n 20 --pretty=format:"* %h %s (%an)" >> $GITHUB_OUTPUT
-                  echo "EOF" >> $GITHUB_OUTPUT
+                  echo 'EOF' >> $GITHUB_OUTPUT
 
             # Download all build artifacts
             - name: Download web build
