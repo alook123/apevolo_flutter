@@ -144,55 +144,23 @@ jobs:
             - name: Build Windows
               run: flutter build windows --release
 
-            # 简化后的 Windows 打包步骤
+            # Windows 打包步骤
             - name: Package Windows build
               run: |
                   $VERSION = $env:GITHUB_REF -replace 'refs/tags/', ''
 
-                  # 标准的 Flutter Windows 构建输出路径
+                  # 检查标准 Flutter Windows 构建输出路径
                   $RELEASE_DIR = "build\windows\runner\Release"
 
-                  # 检查目录是否存在
                   if (Test-Path $RELEASE_DIR) {
-                    Write-Host "Found standard Windows release directory: $RELEASE_DIR"
+                    Write-Host "Packaging Windows release from: $RELEASE_DIR"
                     
-                    # 创建启动批处理文件
-                    $batchContent = @"
-                    @echo off
-                    echo 启动 Apevolo Flutter 应用...
-                    start "" "apevolo_flutter.exe"
-                    "@
-                    Set-Content -Path "$RELEASE_DIR\启动应用.bat" -Value $batchContent -Encoding ASCII
-                    
-                    # 进入发布目录并打包所有文件
+                    # 直接打包整个 Release 目录
                     Set-Location $RELEASE_DIR
                     7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
-                    
                   } else {
-                    Write-Host "Standard release directory not found, searching for alternatives..."
-                    # 查找实际的构建输出路径和可执行文件
-                    $exeFiles = Get-ChildItem -Path "build\windows" -Recurse -Include "*.exe"
-                    
-                    if ($exeFiles.Count -gt 0) {
-                      $exeDir = $exeFiles[0].Directory.FullName
-                      Write-Host "Found executable at: $($exeFiles[0].FullName)"
-                      Write-Host "Using directory: $exeDir"
-                      
-                      # 创建启动批处理文件
-                      $batchContent = @"
-                      @echo off
-                      echo 启动 Apevolo Flutter 应用...
-                      start "" "$($exeFiles[0].Name)"
-                      "@
-                      Set-Content -Path "$exeDir\启动应用.bat" -Value $batchContent -Encoding ASCII
-                      
-                      # 打包
-                      Set-Location $exeDir
-                      7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
-                    } else {
-                      Write-Error "Could not find any Windows executables!"
-                      exit 1
-                    }
+                    Write-Error "Windows build output directory not found at: $RELEASE_DIR"
+                    exit 1
                   }
 
             - name: Upload Windows artifact
