@@ -27,7 +27,7 @@ jobs:
               run: |
                   echo "version=$(grep 'flutter:' pubspec.yaml | awk '{print $2}' | tr -d '\"' || echo 'stable')" >> $GITHUB_OUTPUT
 
-    build:
+    build-web:
         needs: setup-flutter
         runs-on: ubuntu-latest
 
@@ -144,89 +144,54 @@ jobs:
             - name: Build Windows
               run: flutter build windows --release
 
-            # 调试构建输出路径
-            - name: Debug build directory
-              run: |
-                  Get-ChildItem -Path build -Recurse -Depth 3 | Where-Object { $_.Name -like "*.exe" -or $_.FullName -like "*Release*" }
-
-            # 修改打包命令以适应实际路径
+            # 简化后的 Windows 打包步骤
             - name: Package Windows build
               run: |
                   $VERSION = $env:GITHUB_REF -replace 'refs/tags/', ''
 
-                  # 查找输出目录并验证可执行文件是否存在
-                  $exeFiles = Get-ChildItem -Path "build" -Recurse -Include "*.exe"
+                  # 标准的 Flutter Windows 构建输出路径
+                  $RELEASE_DIR = "build\windows\runner\Release"
 
-                  if ($exeFiles.Count -gt 0) {
-                    Write-Host "Found executable files:"
-                    $exeFiles | ForEach-Object { Write-Host "  $($_.FullName)" }
+                  # 检查目录是否存在
+                  if (Test-Path $RELEASE_DIR) {
+                    Write-Host "Found standard Windows release directory: $RELEASE_DIR"
                     
-                    # 找到第一个exe文件所在的目录作为打包根目录
-                    $exeDir = $exeFiles[0].Directory.FullName
-                    Write-Host "Using directory for packaging: $exeDir"
-                    
-                    # 创建目标文件夹
-                    $packageDir = "windows-package"
-                    New-Item -Path $packageDir -ItemType Directory -Force
-                    
-                    # 复制所有必需的文件到打包目录
-                    Copy-Item -Path "$exeDir\*" -Destination $packageDir -Recurse
-                    
-                    # 确认复制是否成功
-                    Write-Host "Files in package directory:"
-                    Get-ChildItem -Path $packageDir -Recurse | ForEach-Object { Write-Host "  $($_.FullName)" }
-                    
-                    # 创建自释放批处理文件，帮助用户运行应用
+                    # 创建启动批处理文件
                     $batchContent = @"
-                  @echo off
-                  echo 启动 Apevolo Flutter 应用...
-                  start "" "$($exeFiles[0].Name)"
-                  "@
-                    Set-Content -Path "$packageDir\启动应用.bat" -Value $batchContent -Encoding ASCII
+                    @echo off
+                    echo 启动 Apevolo Flutter 应用...
+                    start "" "apevolo_flutter.exe"
+                    "@
+                    Set-Content -Path "$RELEASE_DIR\启动应用.bat" -Value $batchContent -Encoding ASCII
                     
-                    # 打包
-                    Set-Location $packageDir
+                    # 进入发布目录并打包所有文件
+                    Set-Location $RELEASE_DIR
                     7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
+                    
                   } else {
-                    # 如果找不到exe文件，尝试直接打包Release目录
-                    Write-Host "No .exe files found. Trying to find Release directory..."
+                    Write-Host "Standard release directory not found, searching for alternatives..."
+                    # 查找实际的构建输出路径和可执行文件
+                    $exeFiles = Get-ChildItem -Path "build\windows" -Recurse -Include "*.exe"
                     
-                    $releaseDirs = Get-ChildItem -Path "build\windows" -Recurse -Include "Release" | Where-Object { $_.PSIsContainer }
-                    
-                    if ($releaseDirs.Count -gt 0) {
-                      $releaseDir = $releaseDirs[0].FullName
-                      Write-Host "Found Release directory: $releaseDir"
-                      Set-Location $releaseDir
+                    if ($exeFiles.Count -gt 0) {
+                      $exeDir = $exeFiles[0].Directory.FullName
+                      Write-Host "Found executable at: $($exeFiles[0].FullName)"
+                      Write-Host "Using directory: $exeDir"
                       
-                      # 创建自释放批处理文件
-                      $files = Get-ChildItem -Path "."
-                      $files | ForEach-Object { Write-Host "  $($_.Name)" }
-                      
-                      # 查找可能的启动文件
-                      $possibleExe = Get-ChildItem -Path "." -Include "*.exe", "*.bat", "runner.exe" -Recurse -ErrorAction SilentlyContinue
-                      if ($possibleExe.Count -gt 0) {
-                        $launchScript = @"
-                  @echo off
-                  echo 启动 Apevolo Flutter 应用...
-                  start "" "$($possibleExe[0].Name)"
-                  "@
-                                          Set-Content -Path "启动应用.bat" -Value $launchScript -Encoding ASCII
-                                        }
+                      # 创建启动批处理文件
+                      $batchContent = @"
+                      @echo off
+                      echo 启动 Apevolo Flutter 应用...
+                      start "" "$($exeFiles[0].Name)"
+                      "@
+                      Set-Content -Path "$exeDir\启动应用.bat" -Value $batchContent -Encoding ASCII
                       
                       # 打包
+                      Set-Location $exeDir
                       7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
-                      } else {
-                      Write-Error "Could not find Windows build output directory or executable files"
-                      # 尝试直接查找 runner.exe
-                      $runnerExe = Get-ChildItem -Path "build" -Recurse -Include "runner.exe" -ErrorAction SilentlyContinue
-                      if ($runnerExe.Count -gt 0) {
-                        Write-Host "Found runner.exe at: $($runnerExe[0].FullName)"
-                        $runnerDir = $runnerExe[0].Directory.FullName
-                        Set-Location $runnerDir
-                        7z a -tzip "$env:GITHUB_WORKSPACE\apevolo-flutter-windows-x64-$VERSION.zip" *
-                      } else {
-                        exit 1
-                      }
+                    } else {
+                      Write-Error "Could not find any Windows executables!"
+                      exit 1
                     }
                   }
 
@@ -351,7 +316,7 @@ jobs:
                   retention-days: 1
 
     deploy:
-        needs: build
+        needs: build-web
         runs-on: ubuntu-latest
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
@@ -383,7 +348,12 @@ jobs:
 
     release:
         needs:
-            [build, build-windows-x64, build-macos-universal, build-linux-x64]
+            [
+                build-web,
+                build-windows-x64,
+                build-macos-universal,
+                build-linux-x64,
+            ]
         runs-on: ubuntu-latest
         if: startsWith(github.ref, 'refs/tags/')
 
@@ -400,9 +370,8 @@ jobs:
             - name: Get recent changes
               id: recent_changes
               run: |
-                  echo 'changelog<<EOF' >> $GITHUB_OUTPUT
-                  git log -n 20 --pretty=format:"* %h %s (%an)" >> $GITHUB_OUTPUT
-                  echo 'EOF' >> $GITHUB_OUTPUT
+                  CHANGELOG=$(git log -n 20 --pretty=format:"* %h %s (%an)")
+                  echo "changelog=$CHANGELOG" >> $GITHUB_OUTPUT
 
             # Download all build artifacts
             - name: Download web build
