@@ -5,7 +5,6 @@ import 'package:apevolo_flutter/app/provider/apevolo_com/api/menu/menu_provider.
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:apevolo_flutter/app/utilities/logger_utils.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
@@ -33,12 +32,12 @@ class ShellMenuController extends GetxController with StateMixin {
   Future<void> onLoadMenu() async {
     menuProvider.build().then((value) {
       userService.menus.value = value;
-      for (var element in userService.menus) {
-        userService.getSvgIconPath(element.path ?? '');
-        for (var element2 in element.children ?? []) {
-          userService.getSvgIconPath(element2.path ?? '');
-        }
-      }
+      // for (var element in userService.menus) {
+      //   userService.getSvgIconPath(element.path ?? '');
+      //   for (var element2 in element.children ?? []) {
+      //     userService.getSvgIconPath(element2.path ?? '');
+      //   }
+      // }
       change(userService.menus, status: RxStatus.success());
     }).onError((error, stackTrace) {
       Logger.write('error:$error');

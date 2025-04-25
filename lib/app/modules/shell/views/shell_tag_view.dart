@@ -1,4 +1,5 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
+import 'package:apevolo_flutter/app/modules/components/views/svg_picture_view.dart';
 import 'package:apevolo_flutter/app/modules/shell/controllers/shell_tag_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -80,15 +81,9 @@ class ShellTagView extends GetView<ShellTagController> {
                     return MapEntry(
                       entry.key,
                       ListTile(
-                        leading: entry.value.path == null
-                            ? const Icon(Icons.error)
-                            : SvgPicture.asset(
-                                controller.userService
-                                    .getSvgIconPath(entry.value.path!),
-                                height: 24,
-                                width: 24,
-                                color: Theme.of(context).iconTheme.color,
-                              ),
+                        leading: SvgPictureView(
+                          entry.value.path,
+                        ),
                         title: Text(entry.value.meta?.title ?? ''),
                         onTap: () {
                           onTapMenuCallback(entry.value);
