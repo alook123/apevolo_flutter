@@ -50,3 +50,7 @@ app.*.map.json
 
 #idea
 /.idea
+
+
+# Generated Dart files
+**/*.g.dart

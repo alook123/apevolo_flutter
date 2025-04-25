@@ -10,5 +10,15 @@ abstract class UserProvider {
   factory UserProvider(Dio dio, {String baseUrl}) = _UserProvider;
 
   @GET('/query')
-  Future<UserQuery> query(@Body() UserQueryRequest task);
+  Future<UserQuery> query(
+    @Query('id') int? id,
+    @Query('deptId') int? deptId,
+    @Query('deptIds') List<int>? deptIds,
+    @Query('keyWords') String? keyWords,
+    @Query('enabled') bool? enabled,
+    @Query('pageIndex') int? pageIndex,
+    @Query('pageSize') int? pageSize,
+    @Query('sortFields') List<String>? sortFields,
+    @Query('totalElements') int? totalElements,
+  );
 }

@@ -1,32 +1,24 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/model_base.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'user_query_model.g.dart';
+
+@JsonSerializable()
 class UserQuery extends ModelBase {
   List<Content>? content;
   int? totalElements;
+  int? totalPages;
 
-  UserQuery({this.content, this.totalElements});
+  UserQuery({this.content, this.totalElements, this.totalPages});
 
-  UserQuery.fromJson(Map<String, dynamic> json) {
-    if (json['content'] != null) {
-      content = <Content>[];
-      json['content'].forEach((v) {
-        content?.add(Content.fromJson(v));
-      });
-    }
-    totalElements = json['totalElements'];
-  }
+  factory UserQuery.fromJson(Map<String, dynamic> json) =>
+      _$UserQueryFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    if (content != null) {
-      data['content'] = content?.map((v) => v.toJson()).toList();
-    }
-    data['totalElements'] = totalElements;
-    return data;
-  }
+  Map<String, dynamic> toJson() => _$UserQueryToJson(this);
 }
 
+@JsonSerializable()
 class Content {
   String? username;
   String? nickName;
@@ -34,139 +26,121 @@ class Content {
   bool? isAdmin;
   bool? enabled;
   String? password;
-  String? deptId;
+  int? deptId;
   String? phone;
   String? avatarPath;
-  bool? sex;
   String? gender;
+  String? passwordReSetTime;
   List<Roles>? roles;
   Dept? dept;
-  List<Dept>? jobs;
-  String? id;
+  List<Job>? jobs;
+  int? tenantId;
+  Tenant? tenant;
+  int? id;
   String? createBy;
-  String? createTime;
+  DateTime? createTime;
+  String? updateBy;
+  DateTime? updateTime;
 
-  Content(
-      {this.username,
-      this.nickName,
-      this.email,
-      this.isAdmin,
-      this.enabled,
-      this.password,
-      this.deptId,
-      this.phone,
-      this.avatarPath,
-      this.sex,
-      this.gender,
-      this.roles,
-      this.dept,
-      this.jobs,
-      this.id,
-      this.createBy,
-      this.createTime});
+  Content({
+    this.username,
+    this.nickName,
+    this.email,
+    this.isAdmin,
+    this.enabled,
+    this.password,
+    this.deptId,
+    this.phone,
+    this.avatarPath,
+    this.gender,
+    this.passwordReSetTime,
+    this.roles,
+    this.dept,
+    this.jobs,
+    this.tenantId,
+    this.tenant,
+    this.id,
+    this.createBy,
+    this.createTime,
+    this.updateBy,
+    this.updateTime,
+  });
 
-  Content.fromJson(Map<String, dynamic> json) {
-    username = json['username'];
-    nickName = json['nickName'];
-    email = json['email'];
-    isAdmin = json['isAdmin'];
-    enabled = json['enabled'];
-    password = json['password'];
-    deptId = json['deptId'];
-    phone = json['phone'];
-    avatarPath = json['avatarPath'];
-    sex = json['sex'];
-    gender = json['gender'];
-    if (json['roles'] != null) {
-      roles = <Roles>[];
-      json['roles'].forEach((v) {
-        roles?.add(Roles.fromJson(v));
-      });
-    }
-    dept = json['dept'] != null ? Dept?.fromJson(json['dept']) : null;
-    if (json['jobs'] != null) {
-      jobs = <Dept>[];
-      json['jobs'].forEach((v) {
-        jobs?.add(Dept.fromJson(v));
-      });
-    }
-    id = json['id'];
-    createBy = json['createBy'];
-    createTime = json['createTime'];
-  }
+  factory Content.fromJson(Map<String, dynamic> json) =>
+      _$ContentFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['username'] = username;
-    data['nickName'] = nickName;
-    data['email'] = email;
-    data['isAdmin'] = isAdmin;
-    data['enabled'] = enabled;
-    data['password'] = password;
-    data['deptId'] = deptId;
-    data['phone'] = phone;
-    data['avatarPath'] = avatarPath;
-    data['sex'] = sex;
-    data['gender'] = gender;
-    if (roles != null) {
-      data['roles'] = roles?.map((v) => v.toJson()).toList();
-    }
-    if (dept != null) {
-      data['dept'] = dept?.toJson();
-    }
-    if (jobs != null) {
-      data['jobs'] = jobs?.map((v) => v.toJson()).toList();
-    }
-    data['id'] = id;
-    data['createBy'] = createBy;
-    data['createTime'] = createTime;
-    return data;
-  }
+  Map<String, dynamic> toJson() => _$ContentToJson(this);
 }
 
+@JsonSerializable()
 class Roles {
-  String? id;
+  int? id;
   String? name;
   String? permission;
   int? level;
-  String? dataScope;
+  int? dataScopeType;
 
-  Roles({this.id, this.name, this.permission, this.level, this.dataScope});
+  Roles({this.id, this.name, this.permission, this.level, this.dataScopeType});
 
-  Roles.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    permission = json['permission'];
-    level = json['level'];
-    dataScope = json['dataScope'];
-  }
+  factory Roles.fromJson(Map<String, dynamic> json) => _$RolesFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['id'] = id;
-    data['name'] = name;
-    data['permission'] = permission;
-    data['level'] = level;
-    data['dataScope'] = dataScope;
-    return data;
-  }
+  Map<String, dynamic> toJson() => _$RolesToJson(this);
 }
 
+@JsonSerializable()
 class Dept {
-  String? id;
+  int? id;
   String? name;
 
   Dept({this.id, this.name});
 
-  Dept.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-  }
+  factory Dept.fromJson(Map<String, dynamic> json) => _$DeptFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['id'] = id;
-    data['name'] = name;
-    return data;
-  }
+  Map<String, dynamic> toJson() => _$DeptToJson(this);
+}
+
+@JsonSerializable()
+class Job {
+  int? id;
+  String? name;
+
+  Job({this.id, this.name});
+
+  factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
+
+  Map<String, dynamic> toJson() => _$JobToJson(this);
+}
+
+@JsonSerializable()
+class Tenant {
+  int? tenantId;
+  String? name;
+  String? description;
+  int? tenantType;
+  String? configId;
+  int? dbType;
+  String? connectionString;
+  int? id;
+  String? createBy;
+  String? createTime;
+  String? updateBy;
+  String? updateTime;
+
+  Tenant(
+      {this.tenantId,
+      this.name,
+      this.description,
+      this.tenantType,
+      this.configId,
+      this.dbType,
+      this.connectionString,
+      this.id,
+      this.createBy,
+      this.createTime,
+      this.updateBy,
+      this.updateTime});
+
+  factory Tenant.fromJson(Map<String, dynamic> json) => _$TenantFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TenantToJson(this);
 }

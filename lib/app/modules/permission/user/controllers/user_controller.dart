@@ -67,7 +67,21 @@ class UserController extends GetxController {
     request.createTime?.add(createFromTextController.text as DateTime);
     request.createTime?.add(createToTextController.text as DateTime);
     request.enabled = enabled.value;
-    await userProvider.query(request).then(
+
+    // 从 UserQueryRequest 对象中提取参数，通过 URL 参数方式传递
+    await userProvider
+        .query(
+      request.id,
+      request.deptId,
+      request.deptIds,
+      request.keyWords,
+      request.enabled,
+      request.pageIndex,
+      request.pageSize,
+      request.sortFields,
+      request.totalElements,
+    )
+        .then(
       (value) {
         query.value = value;
         update();

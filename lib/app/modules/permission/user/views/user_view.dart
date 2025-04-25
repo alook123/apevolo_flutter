@@ -1,6 +1,7 @@
 import 'package:apevolo_flutter/app/modules/permission/user/views/user_search_view.dart';
 import 'package:apevolo_flutter/app/modules/components/search_filter/views/search_filter_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 import 'package:get/get.dart';
 
@@ -153,11 +154,7 @@ class UserView extends GetView<UserController> {
                                                       Text(e.nickName ?? ''),
                                                     ),
                                                     DataCell(
-                                                      Text(e.sex == null
-                                                          ? '未知'
-                                                          : (e.sex == true
-                                                              ? '女'
-                                                              : '男')),
+                                                      Text(e.gender ?? ''),
                                                     ),
                                                     DataCell(
                                                       Text(e.phone ?? ''),
@@ -176,7 +173,8 @@ class UserView extends GetView<UserController> {
                                                               : '禁用')),
                                                     ),
                                                     DataCell(
-                                                      Text(e.createTime ?? ''),
+                                                      Text(e.createTime
+                                                          .toString()),
                                                     ),
                                                     DataCell(
                                                       Text(e.createBy ?? ''),

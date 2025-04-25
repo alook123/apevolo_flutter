@@ -122,7 +122,7 @@ class Job {
 @JsonSerializable()
 class Token {
   @JsonKey(name: 'access_token')
-  final String accessToken;
+  final String? accessToken;
   @JsonKey(name: 'expires_in')
   final int expiresIn;
   @JsonKey(name: 'token_type')
