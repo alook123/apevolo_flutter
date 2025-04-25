@@ -74,7 +74,7 @@ jobs:
 
             # Build Flutter Web
             - name: Build Flutter Web
-              run: flutter build web --no-tree-shake-icons
+              run: flutter build web
 
             # Build Docker image using Dockerfile.CI
             - name: Build Docker Image
@@ -205,7 +205,7 @@ jobs:
               run: flutter config --enable-macos-desktop
 
             - name: Build macOS
-              run: flutter build macos --release --no-tree-shake-icons
+              run: flutter build macos --release
 
             # Package as Universal Binary (x64 + arm64)
             - name: Package macOS build as Universal Binary
