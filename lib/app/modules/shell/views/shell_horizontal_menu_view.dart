@@ -2,7 +2,7 @@ import 'package:apevolo_flutter/app/modules/shell/views/shell_menu_buttons_view.
 import 'package:apevolo_flutter/app/modules/shell/views/shell_navigation_menu_view.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class ShellHorizontalMenuView extends GetView {
@@ -10,19 +10,19 @@ class ShellHorizontalMenuView extends GetView {
     super.key,
     String? title,
     String? subTitle,
-    IconData? icon,
+    String? svgIconPath,
     bool visible = true,
     Function()? onPressed,
   }) {
     _title = title ?? '';
     _subTitle = subTitle ?? '';
-    _icon = icon;
+    _svgIconPath = svgIconPath;
     _visible = visible;
     _onPressed = onPressed;
   }
 
   late final String _title, _subTitle;
-  late final IconData? _icon;
+  late final String? _svgIconPath;
   late final bool _visible;
 
   /// 点击汉堡菜单按钮事件
@@ -46,7 +46,14 @@ class ShellHorizontalMenuView extends GetView {
                 children: [
                   // Image.asset('assets/image/logo.png', width: 20),
                   const SizedBox(width: 16),
-                  Icon(_icon, size: 20),
+                  _svgIconPath != null
+                      ? SvgPicture.asset(
+                          _svgIconPath!,
+                          height: 20,
+                          width: 20,
+                          color: Theme.of(context).iconTheme.color,
+                        )
+                      : const SizedBox.shrink(),
                   const SizedBox(width: 8),
                   Visibility(
                     //visible: _title.isNotEmpty || _subTitle.isNotEmpty,

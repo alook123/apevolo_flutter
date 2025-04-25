@@ -1,7 +1,7 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
 import 'package:apevolo_flutter/app/modules/shell/controllers/shell_menu_controller.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class ShellMenuView extends GetView<ShellMenuController> {
@@ -25,8 +25,16 @@ class ShellMenuView extends GetView<ShellMenuController> {
                   .map((x) => ExpansionTile(
                         leading: x.path == null
                             ? const Icon(Icons.error)
-                            : Icon(controller.userService
-                                .getIconData(x.path ?? '')),
+                            : SvgPicture.asset(
+                                controller.userService
+                                    .getSvgIconPath(x.path ?? ''),
+                                height: 24,
+                                width: 24,
+                                colorFilter: ColorFilter.mode(
+                                  Theme.of(context).iconTheme.color!,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
                         title: Text(x.meta?.title ?? ''),
                         onExpansionChanged: (value) =>
                             controller.onExpansionChanged(value, x),
@@ -36,8 +44,16 @@ class ShellMenuView extends GetView<ShellMenuController> {
                                 return ListTile(
                                   leading: y.path == null
                                       ? const Icon(Icons.error)
-                                      : Icon(controller.userService
-                                          .getIconData(y.path ?? '')),
+                                      : SvgPicture.asset(
+                                          controller.userService
+                                              .getSvgIconPath(y.path ?? ''),
+                                          height: 24,
+                                          width: 24,
+                                          colorFilter: ColorFilter.mode(
+                                            Theme.of(context).iconTheme.color!,
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
                                   title: Text(y.meta?.title ?? ''),
                                   onTap: () {
                                     controller.onTapMenu(children: y, menu: x);

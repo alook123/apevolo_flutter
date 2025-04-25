@@ -13,9 +13,6 @@ class ShellMenuController extends GetxController with StateMixin {
   final UserService userService = Get.find<UserService>();
   final MenuProvider menuProvider = Get.find<MenuProvider>();
 
-  /// 菜单图标数据
-  final RxMap<String, IconData> menuIconDatas = <String, IconData>{}.obs;
-
   @override
   Future<void> onInit() async {
     super.onInit();
@@ -37,9 +34,9 @@ class ShellMenuController extends GetxController with StateMixin {
     menuProvider.build().then((value) {
       userService.menus.value = value;
       for (var element in userService.menus) {
-        userService.getIconData(element.path ?? '');
+        userService.getSvgIconPath(element.path ?? '');
         for (var element2 in element.children ?? []) {
-          userService.getIconData(element2.path ?? '');
+          userService.getSvgIconPath(element2.path ?? '');
         }
       }
       change(userService.menus, status: RxStatus.success());

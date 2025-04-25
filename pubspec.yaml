@@ -13,7 +13,7 @@ dependencies:
     crypto: ^3.0.3
     pointycastle: ^3.7.4
     encrypt: ^5.0.3
-    dio: ^5.4.1
+    dio: ^5.8.0+1
     get_storage: ^2.1.1
     darq: 2.0.0
     flutter:
@@ -24,6 +24,7 @@ dependencies:
     json_annotation: ^4.9.0
     flutter_localizations:
         sdk: flutter
+    flutter_svg: ^2.1.0
 
 dev_dependencies:
     flutter_lints: ^2.0.0
@@ -38,4 +39,5 @@ flutter:
     assets:
         - assets/certificate/
         - assets/image/
+        - assets/svg/
     uses-material-design: true

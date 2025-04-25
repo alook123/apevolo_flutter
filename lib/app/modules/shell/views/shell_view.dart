@@ -2,7 +2,7 @@ import 'package:apevolo_flutter/app/modules/shell/views/shell_horizontal_menu_vi
 import 'package:apevolo_flutter/app/modules/shell/views/shell_vertical_menu_view.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../controllers/shell_controller.dart';
@@ -83,12 +83,12 @@ class ShellView extends GetView<ShellController> {
                             ?.title,
                         subTitle: controller
                             .userService.currentMenu.value?.meta?.title,
-                        icon: controller.userService.currentMenu.value !=
+                        svgIconPath: controller.userService.currentMenu.value !=
                                     null &&
                                 controller
                                         .userService.currentMenu.value!.path !=
                                     null
-                            ? controller.userService.getIconData(
+                            ? controller.userService.getSvgIconPath(
                                 controller.userService.currentMenu.value!.path!)
                             : null,
                         visible: !controller.menuOpen.value,

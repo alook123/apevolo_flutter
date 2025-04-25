@@ -1,7 +1,7 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
 import 'package:apevolo_flutter/app/modules/shell/controllers/shell_tag_controller.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class ShellTagView extends GetView<ShellTagController> {
@@ -75,24 +75,29 @@ class ShellTagView extends GetView<ShellTagController> {
               ],
             ),
             Column(
-              children: controller.userService.openMenus.values
+              children: controller.userService.openMenus.entries
                   .map((entry) {
                     return MapEntry(
-                      key,
+                      entry.key,
                       ListTile(
-                        leading: entry.path == null
+                        leading: entry.value.path == null
                             ? const Icon(Icons.error)
-                            : Icon(controller.userService
-                                .getIconData(entry.path!)),
-                        title: Text(entry.meta?.title ?? ''),
+                            : SvgPicture.asset(
+                                controller.userService
+                                    .getSvgIconPath(entry.value.path!),
+                                height: 24,
+                                width: 24,
+                                color: Theme.of(context).iconTheme.color,
+                              ),
+                        title: Text(entry.value.meta?.title ?? ''),
                         onTap: () {
-                          onTapMenuCallback(entry);
+                          onTapMenuCallback(entry.value);
                           controller.onTapMenu(
-                            children: entry,
+                            children: entry.value,
                           );
                         },
                         // selectedColor: Theme.of(context).colorScheme.primary,
-                        selected: entry.selected == true,
+                        selected: entry.value.selected == true,
                       ),
                     );
                   })
