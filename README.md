@@ -2,6 +2,8 @@
 
 一个基于Flutter的跨平台桌面+Web应用，用于ApeVolo企业管理系统。
 
+> **注意：** 本项目目前处于开发阶段，功能可能不完整且存在变动。最后更新日期：2025年4月25日
+
 <div align="center">
   <img src="assets/image/logo.png" alt="Logo" width="80" height="80">
 </div>

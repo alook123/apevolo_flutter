@@ -2,6 +2,8 @@
 
 A cross-platform desktop + web application based on Flutter for the ApeVolo Enterprise Management System.
 
+> **Note:** This project is currently in the development phase. Features may be incomplete and subject to change. Last updated: April 25, 2025
+
 <div align="center">
   <img src="assets/image/logo.png" alt="Logo" width="80" height="80">
 </div>
