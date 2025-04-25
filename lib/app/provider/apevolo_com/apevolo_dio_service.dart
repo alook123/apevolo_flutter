@@ -85,9 +85,9 @@ class ApevoloDioService extends GetxService {
 
     if (exception.response?.statusCode == 401) {
       if (userService.loginInfo.value?.token.accessToken != null) {
-        // 如果收到 401 响应，则刷新访问令牌
+        // 如果收到 401 响应，则刷新访问令牌}
         Token token =
-            await refreshToken(userService.loginInfo.value!.token.accessToken);
+            await refreshToken(userService.loginInfo.value!.token.accessToken!);
 
         //使用新的访问令牌更新请求标头
         exception.requestOptions.headers['Authorization'] =
@@ -148,6 +148,7 @@ class ApevoloDioService extends GetxService {
       '${dio.options.baseUrl}/auth/refreshToken',
       queryParameters: {'token': token},
     );
+    response.data['access_token'] = response.data['refresh_token'];
     Token data = Token.fromJson(response.data);
     return data;
   }
