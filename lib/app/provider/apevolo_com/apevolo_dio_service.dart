@@ -12,21 +12,29 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_disposable.dart';
 
 class ApevoloDioService extends GetxService {
   final UserService userService = Get.find<UserService>();
-  final dio = Dio(
-    BaseOptions(
+  late final Dio dio;
+
+  ApevoloDioService() {
+    final baseOptions = BaseOptions(
       baseUrl: "http://apevolo.api.alook.life",
       receiveDataWhenStatusError: true,
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
-      sendTimeout: const Duration(seconds: 60),
       headers: {
-        // 'Platform': Platform.operatingSystem,
+        'IsWasm': kIsWasm ? 'true' : 'false',
         'Accept': 'application/json',
       },
       contentType: 'application/json; charset=utf-8',
       responseType: ResponseType.json,
-    ),
-  );
+    );
+
+    // 在非Web平台上添加sendTimeout设置
+    if (!kIsWeb) {
+      baseOptions.sendTimeout = const Duration(seconds: 60);
+    }
+
+    dio = Dio(baseOptions);
+  }
 
   @override
   Future<void> onInit() async {
@@ -52,6 +60,12 @@ class ApevoloDioService extends GetxService {
       options.headers['Authorization'] =
           'Bearer ${userService.loginInfo.value?.token.accessToken}';
     }
+
+    // 在Web平台上，对于没有请求体的请求，移除sendTimeout设置
+    if (kIsWeb && options.data == null) {
+      options.sendTimeout = null;
+    }
+
     return handler.next(options);
   }
 
@@ -81,6 +95,19 @@ class ApevoloDioService extends GetxService {
     if (isScheduledTask) {
       handler.next(exception);
       return;
+    }
+
+    // 处理网络错误，如XMLHttpRequest onError回调触发等情况
+    if (exception.type == DioExceptionType.connectionError ||
+        exception.type == DioExceptionType.connectionTimeout ||
+        exception.type == DioExceptionType.unknown) {
+      Get.snackbar(
+        '网络错误',
+        '连接服务器失败，请检查网络连接后重试',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+      );
+      return handler.next(exception);
     }
 
     if (exception.response?.statusCode == 401) {
