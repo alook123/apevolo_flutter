@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'search_filter_model.g.dart';
+
+@JsonSerializable(genericArgumentFactories: true)
 class SearchFilterModel<T> {
   ///用于记录搜索条件查询的key
   String? key;
@@ -10,17 +15,10 @@ class SearchFilterModel<T> {
 
   SearchFilterModel({this.key, this.name, this.value});
 
-  SearchFilterModel.fromJson(Map<String, dynamic> json) {
-    key = json['key'];
-    name = json['name'];
-    value = json['value'];
-  }
+  factory SearchFilterModel.fromJson(
+          Map<String, dynamic> json, T Function(Object? json) fromJsonT) =>
+      _$SearchFilterModelFromJson(json, fromJsonT);
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['key'] = key;
-    data['name'] = name;
-    data['value'] = value;
-    return data;
-  }
+  Map<String, dynamic> toJson(Object? Function(T value) toJsonT) =>
+      _$SearchFilterModelToJson(this, toJsonT);
 }
