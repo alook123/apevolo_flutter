@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/modules/components/theme_mode/views/theme_mode_view.dart';
+import 'package:apevolo_flutter/app/components/theme_mode/views/theme_mode_view.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

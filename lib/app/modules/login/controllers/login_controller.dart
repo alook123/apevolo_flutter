@@ -1,5 +1,5 @@
-import 'package:apevolo_flutter/app/modules/components/captcha/controllers/captcha_controller.dart';
-import 'package:apevolo_flutter/app/provider/apevolo_com/auth/authorization_provider.dart';
+import 'package:apevolo_flutter/app/components/captcha/controllers/captcha_controller.dart';
+import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/auth_provider.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:encrypt/encrypt.dart';
@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 class LoginController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final UserService userService = Get.find<UserService>();
-  final AuthorizationProvider authProvider = Get.find<AuthorizationProvider>();
+  final AuthProvider authProvider = Get.find<AuthProvider>();
   final CaptchaController captchaController = Get.find<CaptchaController>();
 
   final TextEditingController usernameTextController = TextEditingController();

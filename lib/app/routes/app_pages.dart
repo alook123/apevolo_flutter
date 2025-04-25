@@ -1,13 +1,13 @@
 import 'package:get/get.dart';
 
-import '../modules/components/captcha/bindings/captcha_binding.dart';
-import '../modules/components/captcha/views/captcha_view.dart';
-import '../modules/components/not_found/bindings/not_found_binding.dart';
-import '../modules/components/not_found/views/not_found_view.dart';
-import '../modules/components/search_filter/bindings/search_filter_binding.dart';
-import '../modules/components/search_filter/views/search_filter_view.dart';
-import '../modules/components/theme_mode/bindings/theme_mode_binding.dart';
-import '../modules/components/theme_mode/views/theme_mode_view.dart';
+import '../components/captcha/bindings/captcha_binding.dart';
+import '../components/captcha/views/captcha_view.dart';
+import '../components/not_found/bindings/not_found_binding.dart';
+import '../components/not_found/views/not_found_view.dart';
+import '../components/search_filter/bindings/search_filter_binding.dart';
+import '../components/search_filter/views/search_filter_view.dart';
+import '../components/theme_mode/bindings/theme_mode_binding.dart';
+import '../components/theme_mode/views/theme_mode_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';

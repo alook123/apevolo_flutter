@@ -2,12 +2,11 @@ import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login.d
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
-part 'authorization_provider.g.dart';
+part 'auth_provider.g.dart';
 
 @RestApi(baseUrl: '/auth/')
-abstract class AuthorizationProvider {
-  factory AuthorizationProvider(Dio dio, {String baseUrl}) =
-      _AuthorizationProvider;
+abstract class AuthProvider {
+  factory AuthProvider(Dio dio, {String baseUrl}) = _AuthProvider;
 
   @POST('/login')
   Future<AuthLogin> login(

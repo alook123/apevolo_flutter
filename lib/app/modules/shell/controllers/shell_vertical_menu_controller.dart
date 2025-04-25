@@ -1,13 +1,13 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
-import 'package:apevolo_flutter/app/provider/apevolo_com/auth/authorization_provider.dart';
-import 'package:apevolo_flutter/app/provider/apevolo_com/api/menu/menu_provider.dart';
+import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/auth_provider.dart';
+import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/menu_provider.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:get/get.dart';
 
 class ShellVerticalMenuController extends GetxController {
   final UserService userService = Get.find<UserService>();
-  final AuthorizationProvider authProvider = Get.find<AuthorizationProvider>();
+  final AuthProvider authProvider = Get.find<AuthProvider>();
   final MenuProvider menuProvider = Get.find<MenuProvider>();
 
   ///打开过的菜单

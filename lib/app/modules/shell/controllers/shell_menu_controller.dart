@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
-import 'package:apevolo_flutter/app/provider/apevolo_com/api/menu/menu_provider.dart';
+import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/menu_provider.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:apevolo_flutter/app/utilities/logger_utils.dart';
 import 'package:flutter/foundation.dart';

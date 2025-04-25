@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/provider/apevolo_com/apevolo_dio_service.dart';
+import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/dio_service.dart';
 import 'package:apevolo_flutter/app/service/system_service.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:apevolo_flutter/app/theme/dart_theme.dart';
@@ -40,7 +40,7 @@ Future<void> main() async {
 Future<void> onInitialize() async {
   Get.put(SystemService(), permanent: true);
   Get.put(UserService(), permanent: true);
-  Get.put(ApevoloDioService(), permanent: true);
+  Get.put(DioService(), permanent: true);
 }
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {

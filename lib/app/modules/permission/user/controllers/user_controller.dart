@@ -1,14 +1,14 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/user/user_query_model.dart';
 import 'package:apevolo_flutter/app/data/models/apevolo_models/user/user_query_request_model.dart';
 import 'package:apevolo_flutter/app/modules/permission/user/controllers/user_search_controller.dart';
-import 'package:apevolo_flutter/app/provider/apevolo_com/apevolo_dio_service.dart';
-import 'package:apevolo_flutter/app/provider/apevolo_com/api/user/user_provider.dart';
+import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/dio_service.dart';
+import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/user_provider.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class UserController extends GetxController {
   final UserProvider userProvider =
-      Get.put<UserProvider>(UserProvider(Get.find<ApevoloDioService>().dio));
+      Get.put<UserProvider>(UserProvider(Get.find<DioService>().dio));
 
   final UserSearchController userSearchController =
       Get.put(UserSearchController(), tag: Get.arguments);

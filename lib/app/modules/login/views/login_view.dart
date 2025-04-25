@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/app/modules/components/captcha/views/captcha_view.dart';
+import 'package:apevolo_flutter/app/components/captcha/views/captcha_view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
