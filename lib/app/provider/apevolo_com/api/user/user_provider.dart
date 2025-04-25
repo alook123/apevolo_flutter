@@ -1,5 +1,4 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/user/user_query_model.dart';
-import 'package:apevolo_flutter/app/data/models/apevolo_models/user/user_query_request_model.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 

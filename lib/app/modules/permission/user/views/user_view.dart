@@ -1,7 +1,6 @@
 import 'package:apevolo_flutter/app/modules/permission/user/views/user_search_view.dart';
 import 'package:apevolo_flutter/app/modules/components/search_filter/views/search_filter_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localization/flutter_localization.dart';
 
 import 'package:get/get.dart';
 

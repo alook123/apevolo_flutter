@@ -2,7 +2,6 @@ import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_m
 import 'package:apevolo_flutter/app/modules/components/views/svg_picture_view.dart';
 import 'package:apevolo_flutter/app/modules/shell/controllers/shell_tag_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class ShellTagView extends GetView<ShellTagController> {
