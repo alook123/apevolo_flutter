@@ -2,7 +2,7 @@
 
 A cross-platform desktop + web application based on Flutter for the ApeVolo Enterprise Management System.
 
-> **Note:** This project is currently in the development phase. Features may be incomplete and subject to change. Last updated: April 25, 2025
+> **Note:** This project is currently in the development phase. Features may be incomplete and subject to change. Last updated: April 26, 2025
 
 <div align="center">
   <img src="assets/image/logo.png" alt="Logo" width="80" height="80">
@@ -91,16 +91,40 @@ flutter pub run build_runner build --delete-conflicting-outputs
 ```
 lib/
 ├── app/
+│   ├── components/         # Common components
 │   ├── data/               # Data layer
 │   │   ├── models/         # Data models
+│   │   ├── providers/      # API providers
 │   │   └── repositories/   # Data repositories
 │   ├── modules/            # Feature modules
-│   ├── provider/           # API providers
+│   │   ├── home/           # Home module
+│   │   ├── login/          # Login module
+│   │   ├── permission/     # Permission module
+│   │   ├── setting/        # Settings module
+│   │   └── shell/          # Shell module
 │   ├── routes/             # Route configuration
+│   ├── service/            # Global services
 │   ├── theme/              # Theme configuration
-│   └── utils/              # Utility classes
+│   └── utilities/          # Utility classes
 └── main.dart               # Application entry
 ```
+
+## 🧰 Technology Stack
+
+The following are the main technology frameworks and libraries used in this project:
+
+- **Flutter**: Cross-platform UI framework
+- **GetX**: State management, routing, and dependency injection framework
+- **Dio**: HTTP client
+- **Retrofit**: Type-safe REST API client generator
+- **json_serializable**: JSON serialization/deserialization
+- **Get Storage**: Local storage solution
+- **Flutter SVG**: SVG icon support
+- **encrypt**: Data encryption library
+- **Flutter Localizations**: Internationalization support
+- **Material Design 3**: Modern UI design
+- **FluentUI System Icons**: Icon system
+- **UUID**: Universal unique identifier generation
 
 ## 📄 Copyright
 
@@ -111,3 +135,5 @@ ApeVolo Flutter Copyright © 2025 ApeVolo Team
 - [ApeVolo Backend Project](https://github.com/xianhc/ApeVolo.Admin)
 - [Flutter Official Documentation](https://docs.flutter.dev/)
 - [Dart Official Documentation](https://dart.dev/guides)
+- [GetX Documentation](https://pub.dev/packages/get)
+- [Retrofit Documentation](https://pub.dev/packages/retrofit)
