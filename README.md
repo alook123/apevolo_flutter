@@ -34,7 +34,7 @@ ApeVolo Flutter是ApeVolo企业管理系统的移动端应用，支持Web、Wind
 ### 2. 克隆项目
 
 ```bash
-git clone https://github.com/yourusername/apevolo_flutter.git
+git clone https://github.com/alook123/apevolo_flutter.git
 cd apevolo_flutter
 ```
 
