@@ -6,6 +6,8 @@
   <img src="assets/image/logo.png" alt="Logo" width="80" height="80">
 </div>
 
+简体中文 | [English](./README_EN.md)
+
 ## 📱 项目简介
 
 ApeVolo Flutter是ApeVolo企业管理系统的移动端应用，支持Web、Windows、Mac、Linux等多个平台。该应用提供了企业管理所需的各种功能，包括用户管理、权限控制、数据分析等。
