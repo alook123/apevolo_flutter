@@ -35,39 +35,37 @@ class ShellHorizontalMenuView extends GetView {
       debugPrint('当前菜单子标题: $_subTitle');
       debugPrint('当前菜单icon路径: $_svgIconPath');
     }
-    return Visibility(
-      // visible: _visible,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: _onPressed,
-                icon: const Icon(FluentIcons.panel_left_16_filled),
-              ),
-              const SizedBox(width: 8),
-              ShellNavigationMenuView(visible: _visible),
-              Image.asset('assets/image/logo.png', width: 20),
-              Row(
-                children: [
-                  const SizedBox(width: 16),
-                  Visibility(
-                      visible: _svgIconPath != null,
-                      child:
-                          SvgPictureView(_svgIconPath, width: 20, height: 20)),
-                  const SizedBox(width: 8),
-                  Visibility(
-                    visible: _title.isNotEmpty || _subTitle.isNotEmpty,
-                    child: Text('$_title / $_subTitle'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          ShellMenuButtonsView(visible: _visible),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Visibility(
+                visible: _visible,
+                child: IconButton(
+                  onPressed: _onPressed,
+                  icon: const Icon(FluentIcons.panel_left_16_filled),
+                )),
+            const SizedBox(width: 8),
+            ShellNavigationMenuView(visible: _visible),
+            // Image.asset('assets/image/logo.png', width: 20, height: 20),
+            Row(
+              children: [
+                const SizedBox(width: 16),
+                Visibility(
+                    visible: _svgIconPath != null,
+                    child: SvgPictureView(_svgIconPath, width: 20, height: 20)),
+                const SizedBox(width: 8),
+                Visibility(
+                  visible: _title.isNotEmpty || _subTitle.isNotEmpty,
+                  child: Text('$_title / $_subTitle'),
+                ),
+              ],
+            ),
+          ],
+        ),
+        ShellMenuButtonsView(visible: _visible),
+      ],
     );
   }
 }

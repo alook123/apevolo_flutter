@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:apevolo_flutter/app/constants/about_constants.dart';
 
 import '../controllers/setting_controller.dart';
 
@@ -39,20 +40,22 @@ class SettingView extends GetView<SettingController> {
           ),
           bottomNavigationBar: AboutListTile(
             icon: Image.asset(
-              'assets/image/logo.png',
+              AboutConstants.appIconPath,
               width: 26,
             ),
-            applicationName: 'Apevolo_flutter',
-            applicationVersion: '1.0.0',
+            applicationName: AboutConstants.appName,
+            applicationVersion: AboutConstants.appVersion,
             applicationIcon: Image.asset(
-              'assets/image/logo.png',
+              AboutConstants.appIconPath,
               width: 100,
             ),
-            applicationLegalese: '© 2024 Apevolo. All rights reserved.',
-            aboutBoxChildren: const [
-              Text('This is a sample Flutter app.'),
-              SizedBox(height: 8.0),
-              Text('Developed by My Company.'),
+            applicationLegalese: AboutConstants.appLegalese,
+            aboutBoxChildren: [
+              for (final description in AboutConstants.appDescription)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(description),
+                ),
             ],
             dense: true,
           ),

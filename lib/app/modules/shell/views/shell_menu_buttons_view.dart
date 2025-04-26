@@ -1,4 +1,5 @@
 import 'package:apevolo_flutter/app/components/theme_mode/views/theme_mode_view.dart';
+import 'package:apevolo_flutter/app/constants/about_constants.dart';
 import 'package:apevolo_flutter/app/controllers/auth_controller.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart';
@@ -64,6 +65,28 @@ class ShellMenuButtonsView extends GetView<AuthController> {
           IconButton(
             onPressed: () => Get.toNamed(Routes.SETTING, id: 1),
             icon: const Icon(Icons.settings),
+          ),
+          IconButton(
+            onPressed: () {
+              // 打开about对话框
+              showAboutDialog(
+                context: context,
+                applicationName: AboutConstants.appName,
+                applicationVersion: AboutConstants.appVersion,
+                applicationIcon: Image.asset(AboutConstants.appIconPath,
+                    width: 20, height: 20),
+                applicationLegalese: AboutConstants.appLegalese,
+                children: [
+                  for (final description in AboutConstants.appDescription)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(description),
+                    ),
+                ],
+              );
+            },
+            icon:
+                Image.asset(AboutConstants.appIconPath, width: 20, height: 20),
           ),
         ],
       ),
