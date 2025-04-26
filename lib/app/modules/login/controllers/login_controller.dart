@@ -17,6 +17,9 @@ class LoginController extends GetxController
   final TextEditingController passwordTextController = TextEditingController();
   final TextEditingController captchaTextController = TextEditingController();
 
+  // 密码可见性控制
+  final RxBool isPasswordVisible = false.obs;
+
   // 用户名输入框的焦点节点
   late final FocusNode usernameFocusNode = FocusNode();
 
@@ -244,5 +247,10 @@ class LoginController extends GetxController
         print('登录控制器捕获到错误: $error');
       }
     }
+  }
+
+  // 切换密码可见性
+  void togglePasswordVisibility() {
+    isPasswordVisible.value = !isPasswordVisible.value;
   }
 }

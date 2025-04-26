@@ -117,30 +117,42 @@ class LoginView extends GetView<LoginController> {
                         ),
                       ),
                       const SizedBox(height: 16.0),
-                      TextFormField(
-                        controller: controller.passwordTextController,
-                        decoration: const InputDecoration(
-                          labelText: '密码',
-                          prefixIcon: Icon(Icons.password),
-                          hintText: '输入密码',
+                      Obx(
+                        () => TextFormField(
+                          controller: controller.passwordTextController,
+                          decoration: InputDecoration(
+                            labelText: '密码',
+                            prefixIcon: const Icon(Icons.password),
+                            hintText: '输入密码',
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                controller.isPasswordVisible.value
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                controller.togglePasswordVisibility();
+                              },
+                            ),
+                          ),
+                          obscureText: !controller.isPasswordVisible.value,
+                          keyboardType: TextInputType.visiblePassword,
+                          textInputAction: TextInputAction.done,
+                          autofillHints: const [AutofillHints.password],
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return '请输入密码! ';
+                            }
+                            return null;
+                          },
+                          onFieldSubmitted: (_) {
+                            if (_formKey.currentState!.validate()) {
+                              controller.onLogin();
+                            }
+                          },
                         ),
-                        obscureText: true,
-                        keyboardType: TextInputType.visiblePassword,
-                        textInputAction: TextInputAction.done,
-                        autofillHints: const [AutofillHints.password],
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '请输入密码! ';
-                          }
-                          return null;
-                        },
-                        onFieldSubmitted: (_) {
-                          if (_formKey.currentState!.validate()) {
-                            controller.onLogin();
-                          }
-                        },
                       ),
                     ],
                   ),
