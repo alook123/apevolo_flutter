@@ -10,6 +10,10 @@ class CaptchaController extends GetxController with StateMixin {
 
   late String captchaId;
 
+  // late bool? showCaptcha = true;
+
+  final Rx<bool> isShowing = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -31,6 +35,7 @@ class CaptchaController extends GetxController with StateMixin {
       captchaId = value["captchaId"]!;
       String imgBase64 = value["img"]!;
       Uint8List captchaImage = base64.decode(imgBase64.split(',')[1]);
+      isShowing.value = value["showCaptcha"] ?? false;
       change(captchaImage, status: RxStatus.success());
     }).onError((error, stackTrace) {
       Logger.write('error:$error');
