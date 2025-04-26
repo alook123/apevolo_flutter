@@ -1,33 +1,38 @@
 import 'package:apevolo_flutter/app/components/captcha/controllers/captcha_controller.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/auth_provider.dart';
-import 'package:apevolo_flutter/app/routes/app_pages.dart';
-import 'package:apevolo_flutter/app/service/user_service.dart';
-import 'package:encrypt/encrypt.dart';
+import 'package:apevolo_flutter/app/controllers/auth_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  final UserService userService = Get.find<UserService>();
-  final AuthProvider authProvider = Get.find<AuthProvider>();
-  final CaptchaController captchaController = Get.find<CaptchaController>();
+  // 使用AuthController处理认证逻辑
+  final AuthController authController = Get.find<AuthController>();
+  final CaptchaController _captchaController = Get.find<CaptchaController>();
 
+  // UI控制器
   final TextEditingController usernameTextController = TextEditingController();
   final TextEditingController passwordTextController = TextEditingController();
   final TextEditingController captchaTextController = TextEditingController();
 
-  final Rx<String?> loginFailedText = Rx(null);
-  late final Encrypter? encrypter;
+  // 登录状态 - 使用自己的Rx变量
+  final Rx<String?> loginFailedText = Rx<String?>(null);
+  final RxBool isLoggingIn = false.obs;
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    final publicPem =
-        await rootBundle.loadString('assets/certificate/public_apevolo.pem');
-    dynamic publicKey = RSAKeyParser().parse(publicPem);
-    encrypter = Encrypter(RSA(publicKey: publicKey));
+
+    // 监听AuthController中的状态变化
+    ever(authController.loginErrorText, (value) {
+      loginFailedText.value = value;
+    });
+
+    ever(authController.isLoggingIn, (value) {
+      isLoggingIn.value = value;
+    });
+
+    // 在调试模式下预填充凭据
     if (kDebugMode) {
       usernameTextController.text = "apevolo";
       passwordTextController.text = "123456";
@@ -37,47 +42,39 @@ class LoginController extends GetxController
   @override
   Future<void> onReady() async {
     super.onReady();
-    await userService.loadUserInfo();
-    if (userService.loginInfo.value != null) {
-      Get.offAllNamed(Routes.SHELL);
-    }
+    // 检查是否已登录，如果已登录则导航到主界面
+    await authController.validateLoginState();
   }
 
   @override
   void onClose() {
+    // 释放文本控制器
+    usernameTextController.dispose();
+    passwordTextController.dispose();
+    captchaTextController.dispose();
     super.onClose();
   }
 
+  // 刷新验证码
   Future<void> onRefresh() async {
-    captchaController.onRefresh();
+    _captchaController.onRefresh();
   }
 
+  // 处理登录事件
   Future<void> onLogin() async {
-    String passwordBase64 =
-        encrypter!.encrypt(passwordTextController.text).base64;
-
-    authProvider
-        .login(
-      usernameTextController.text,
-      passwordBase64,
-      captchaTextController.text,
-      captchaController.captchaId,
-    )
-        .then(
-      (value) async {
-        loginFailedText.value = null;
-        userService.loginInfo.value = value;
-        Get.offAllNamed(Routes.SHELL);
-      },
-    ).catchError(
-      (error) {
-        loginFailedText.value =
-            error is String ? error : error.response.data['message'].toString();
-        Get.snackbar("错误", loginFailedText.value.toString());
-        if (kDebugMode) {
-          Get.defaultDialog(title: '错误', middleText: error.toString());
-        }
-      },
-    );
+    try {
+      await authController.login(
+        usernameTextController.text,
+        passwordTextController.text,
+        captchaTextController.text,
+        _captchaController.captchaId,
+      );
+      // 登录成功的处理已经在AuthController中完成
+    } catch (error) {
+      // 错误处理已经在AuthController中完成
+      if (kDebugMode) {
+        print('登录控制器捕获到错误: $error');
+      }
+    }
   }
 }

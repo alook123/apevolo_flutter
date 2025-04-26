@@ -1,10 +1,11 @@
 import 'package:apevolo_flutter/app/components/theme_mode/views/theme_mode_view.dart';
+import 'package:apevolo_flutter/app/controllers/auth_controller.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ShellMenuButtonsView extends GetView {
+class ShellMenuButtonsView extends GetView<AuthController> {
   const ShellMenuButtonsView({super.key, this.visible = false});
 
   final bool visible;
@@ -14,37 +15,6 @@ class ShellMenuButtonsView extends GetView {
       visible: visible,
       child: OverflowBar(
         children: [
-          // AnimatedContainer(
-          //   duration: const Duration(seconds: 5),
-          //   alignment: Alignment.center,
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(10), // Add border radius
-          //     gradient: const LinearGradient(
-          //       colors: [
-          //         Colors.red,
-          //         Colors.orange,
-          //         Colors.yellow,
-          //         Colors.green,
-          //         Colors.blue,
-          //         Colors.indigo,
-          //         Colors.purple,
-          //       ],
-          //       begin: Alignment.topLeft,
-          //       end: Alignment.bottomRight,
-          //     ),
-          //   ),
-          //   padding: const EdgeInsets.only(left: 8, right: 8),
-          //   child: const Text(
-          //     'APEVOlO',
-          //     style: TextStyle(
-          //       fontSize: 16,
-          //       fontWeight: FontWeight.bold,
-          //       color: Colors.white,
-          //     ),
-          //     textAlign: TextAlign.center,
-          //     overflow: TextOverflow.ellipsis,
-          //   ),
-          // ),
           IconButton(
             onPressed: () {
               if (kDebugMode) {
@@ -76,7 +46,10 @@ class ShellMenuButtonsView extends GetView {
                     leading: const Icon(Icons.logout),
                     title: const Text('注销'),
                     onTap: () {
-                      controller.onLogout();
+                      // 关闭弹出菜单
+                      Navigator.pop(context);
+                      // 显示确认对话框
+                      _showLogoutConfirmDialog(context);
                     },
                   ),
                 ),
@@ -93,6 +66,98 @@ class ShellMenuButtonsView extends GetView {
             icon: const Icon(Icons.settings),
           ),
         ],
+      ),
+    );
+  }
+
+  // 显示注销确认对话框
+  void _showLogoutConfirmDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('确认注销'),
+          content: const Text('您确定要注销当前账号吗？'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _handleLogout(context);
+              },
+              child: const Text('确认'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // 处理注销操作
+  void _handleLogout(BuildContext context) async {
+    try {
+      // 显示加载指示器
+      final loadingDialog = _buildLoadingDialog(context);
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => loadingDialog,
+      );
+
+      // 调用AuthController的logout方法执行注销
+      await controller.logout();
+
+      // 关闭加载对话框 (如果导航到登录页面，这一步可能不需要)
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+    } catch (e) {
+      // 关闭加载对话框
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+
+      // 显示错误提示
+      Get.snackbar(
+        '注销失败',
+        e.toString(),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+
+      if (kDebugMode) {
+        print('注销过程中发生错误: $e');
+      }
+    }
+  }
+
+  // 构建加载对话框
+  Widget _buildLoadingDialog(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(
+              '正在注销...',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -82,14 +82,8 @@ class ShellView extends GetView<ShellController> {
                             ?.title,
                         subTitle: controller
                             .userService.currentMenu.value?.meta?.title,
-                        // svgIconPath: controller.userService.currentMenu.value !=
-                        //             null &&
-                        //         controller
-                        //                 .userService.currentMenu.value!.path !=
-                        //             null
-                        //     ? controller.userService.getSvgIconPath(
-                        //         controller.userService.currentMenu.value!.path!)
-                        //     : null,
+                        svgIconPath: controller
+                            .userService.currentMenu.value?.meta?.icon,
                         visible: !controller.menuOpen.value,
                         onPressed: () => scaffoldKey.currentState!.openDrawer(),
                       ),

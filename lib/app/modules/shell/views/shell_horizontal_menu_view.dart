@@ -1,8 +1,8 @@
+import 'package:apevolo_flutter/app/components/views/svg_picture_view.dart';
 import 'package:apevolo_flutter/app/modules/shell/views/shell_menu_buttons_view.dart';
 import 'package:apevolo_flutter/app/modules/shell/views/shell_navigation_menu_view.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class ShellHorizontalMenuView extends GetView {
@@ -29,6 +29,12 @@ class ShellHorizontalMenuView extends GetView {
   late final Function()? _onPressed;
   @override
   Widget build(BuildContext context) {
+    // 打印当前菜单的标题和子标题、icon路径
+    if (_visible) {
+      debugPrint('当前菜单标题: $_title');
+      debugPrint('当前菜单子标题: $_subTitle');
+      debugPrint('当前菜单icon路径: $_svgIconPath');
+    }
     return Visibility(
       // visible: _visible,
       child: Row(
@@ -42,21 +48,17 @@ class ShellHorizontalMenuView extends GetView {
               ),
               const SizedBox(width: 8),
               ShellNavigationMenuView(visible: _visible),
+              Image.asset('assets/image/logo.png', width: 20),
               Row(
                 children: [
-                  // Image.asset('assets/image/logo.png', width: 20),
                   const SizedBox(width: 16),
-                  _svgIconPath != null
-                      ? SvgPicture.asset(
-                          _svgIconPath!,
-                          height: 20,
-                          width: 20,
-                          color: Theme.of(context).iconTheme.color,
-                        )
-                      : const SizedBox.shrink(),
+                  Visibility(
+                      visible: _svgIconPath != null,
+                      child:
+                          SvgPictureView(_svgIconPath, width: 20, height: 20)),
                   const SizedBox(width: 8),
                   Visibility(
-                    //visible: _title.isNotEmpty || _subTitle.isNotEmpty,
+                    visible: _title.isNotEmpty || _subTitle.isNotEmpty,
                     child: Text('$_title / $_subTitle'),
                   ),
                 ],

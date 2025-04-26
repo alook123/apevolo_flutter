@@ -1,3 +1,4 @@
+import 'package:apevolo_flutter/app/controllers/auth_binding.dart';
 import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/dio_service.dart';
 import 'package:apevolo_flutter/app/service/system_service.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
@@ -25,6 +26,7 @@ Future<void> main() async {
       debugShowCheckedModeBanner: false,
       enableLog: true,
       onInit: onInitialize,
+      initialBinding: AuthBinding(), // 添加AuthBinding作为初始绑定
       logWriterCallback: Logger.write,
       theme: lightTheme,
       darkTheme: darkTheme,

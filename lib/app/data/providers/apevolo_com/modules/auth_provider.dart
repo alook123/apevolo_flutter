@@ -13,7 +13,7 @@ abstract class AuthProvider {
     @Field() String userName,
     @Field() String password,
     @Field() String captcha,
-    @Field() String captchaId,
+    @Field() String? captchaId,
   );
 
   @GET('/info')
