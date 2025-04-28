@@ -61,6 +61,9 @@ class ShellMenuButtonsView extends GetView<AuthController> {
             onPressed: () {},
             icon: const Icon(Icons.message),
           ),
+          // Obx(() {
+          //   return    const ThemeModeView(),;
+          // }),
           const ThemeModeView(),
           IconButton(
             onPressed: () => Get.toNamed(Routes.SETTING, id: 1),

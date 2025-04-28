@@ -72,9 +72,9 @@ class LoginView extends GetView<LoginController> {
                   autovalidateMode: AutovalidateMode.disabled,
                   child: Card(
                     elevation: 4.0,
-                    shadowColor:
-                        Theme.of(context).colorScheme.shadow.withOpacity(0.3),
-                    surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
+                    shadowColor: Theme.of(context).cardColor,
+                    surfaceTintColor:
+                        Theme.of(context).cardTheme.surfaceTintColor,
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(26.0),
                       child: Column(
@@ -257,10 +257,11 @@ class LoginView extends GetView<LoginController> {
                                     children: [
                                       const CaptchaView(),
                                       const SizedBox(width: 16.0),
-                                      IconButton.filledTonal(
+                                      IconButton(
                                         onPressed: () {
                                           controller.onRefresh();
                                         },
+                                        // icon: const Icon(Icons.refresh),
                                         icon: const Icon(Icons.refresh),
                                       )
                                     ],
@@ -286,25 +287,20 @@ class LoginView extends GetView<LoginController> {
                               ],
                             ),
                           ),
-                          FilledButton.tonalIcon(
+                          OutlinedButton.icon(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
                                 controller.onLogin();
                               }
                             },
-                            style: FilledButton.styleFrom(
-                              minimumSize: const Size.fromHeight(30),
-                            ),
+                            // style: FilledButton.styleFrom(
+                            //   minimumSize: const Size.fromHeight(30),
+                            // ),
                             icon: const Icon(
                               Icons.login,
                             ),
-                            label: const Text(
-                              "登录",
-                              style: TextStyle(
-                                fontSize: 20,
-                              ),
-                            ),
+                            label: const Text("登录"),
                           ),
                         ],
                       ),

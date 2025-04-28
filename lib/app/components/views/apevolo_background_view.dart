@@ -24,18 +24,49 @@ class _ApeVoloBackgroundState extends State<ApeVoloBackground>
   late Animation<double> _floatingAnimation;
   late Animation<double> _rotationAnimation;
 
+  // 存储每个字母的初始位置和种子，避免UI重建时位置跳变
+  static final Map<int, Map<String, double>> _letterBasePositions = {};
+  static bool _positionsInitialized = false;
+
+  // 修改为静态方法，这样可以从ApeVoloBackgroundPainter静态访问
+  static void initializeLetterPositions(Size size, math.Random globalRandom) {
+    if (_positionsInitialized) return;
+
+    final safeMargin = size.width * 0.1;
+    final availableWidth = size.width - safeMargin * 2;
+    final availableHeight = size.height - safeMargin * 2;
+
+    // 为每个字母生成固定的初始位置
+    for (int i = 0; i < 7; i++) {
+      // 为每个字母创建一个确定性随机数生成器
+      final letterRandom = math.Random(42 + i * 10);
+
+      // 生成一个基础位置，这在整个应用生命周期内保持不变
+      _letterBasePositions[i] = {
+        'baseX': safeMargin + letterRandom.nextDouble() * availableWidth,
+        'baseY': safeMargin + letterRandom.nextDouble() * availableHeight,
+        'seed1': letterRandom.nextDouble() * 10,
+        'seed2': letterRandom.nextDouble() * 10,
+        'seed3': letterRandom.nextDouble() * 10,
+        'baseSize': 50.0 + letterRandom.nextDouble() * 40.0,
+      };
+    }
+
+    _positionsInitialized = true;
+  }
+
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 15), // 动画持续时间
+      duration: const Duration(seconds: 60), // 增加动画持续时间，使运动更加平缓
     );
 
-    // 使用循环动画
+    // 使用循环动画，但添加重复回调以确保平滑过渡
     _animationController.repeat();
 
-    // 创建浮动动画效果
+    // 创建浮动动画效果，使用更平滑的曲线
     _floatingAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween<double>(begin: 0, end: 1),
@@ -52,7 +83,7 @@ class _ApeVoloBackgroundState extends State<ApeVoloBackground>
       ),
     );
 
-    // 创建旋转动画
+    // 创建旋转动画，使用更平滑的过渡
     _rotationAnimation = Tween<double>(
       begin: 0,
       end: 2 * math.pi,
@@ -139,8 +170,16 @@ class ApeVoloBackgroundPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // 初始化字母位置
+    _initializeLetterPositions(size, math.Random(42));
+
     // 绘制Apevolo字母风格背景
     _drawApeVoloBackground(canvas, size);
+  }
+
+  void _initializeLetterPositions(Size size, math.Random random) {
+    // 静态变量，确保在ApeVoloBackgroundState类中已初始化
+    _ApeVoloBackgroundState.initializeLetterPositions(size, random);
   }
 
   void _drawApeVoloBackground(Canvas canvas, Size size) {
@@ -264,67 +303,39 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final availableHeight = size.height - safeMargin * 2;
 
     for (int i = 0; i < letterCount; i++) {
-      // 为每个字母生成一个随机初始位置和方向，但基于确定性随机数，以保证一致性
-      // 随机种子基于字母索引，这样每个字母都会有自己的随机序列
-      final letterRandom = math.Random(42 + i * 10);
-
-      // 随机初始位置（一个确定的初始位置）
-      // 注意：我们使用animationValue来模拟时间的流逝
+      // 使用预先存储的基础位置和种子值，确保每次UI重建时保持相同的起始位置
+      final baseX = _ApeVoloBackgroundState._letterBasePositions[i]!['baseX']!;
+      final baseY = _ApeVoloBackgroundState._letterBasePositions[i]!['baseY']!;
+      final seed1 = _ApeVoloBackgroundState._letterBasePositions[i]!['seed1']!;
+      final seed2 = _ApeVoloBackgroundState._letterBasePositions[i]!['seed2']!;
+      final seed3 = _ApeVoloBackgroundState._letterBasePositions[i]!['seed3']!;
+      final baseSize =
+          _ApeVoloBackgroundState._letterBasePositions[i]!['baseSize']!;
 
       // 使用佩林噪声(Perlin noise)的思想，结合多个不同频率的正弦/余弦波
       // 这会产生看起来更加随机但仍然平滑的运动
 
       // 基础移动 - 低频
-      final lowFreqX = math.sin((animationValue * 0.7 * math.pi) + i * 1.5) *
+      final lowFreqX = math.sin((animationValue * 0.7 * math.pi) + seed1) *
           (availableWidth * 0.3);
-      final lowFreqY = math.cos((animationValue * 0.5 * math.pi) + i * 2.1) *
+      final lowFreqY = math.cos((animationValue * 0.5 * math.pi) + seed2) *
           (availableHeight * 0.3);
 
       // 中频移动 - 添加变化
-      final midFreqX = math.sin((animationValue * 1.5 * math.pi) + i * 3.7) *
+      final midFreqX = math.sin((animationValue * 1.5 * math.pi) + seed3) *
           (availableWidth * 0.1);
-      final midFreqY = math.cos((animationValue * 1.3 * math.pi) + i * 2.9) *
+      final midFreqY = math.cos((animationValue * 1.3 * math.pi) + seed1) *
           (availableHeight * 0.1);
 
       // 高频移动 - 添加小的随机性波动
-      final highFreqX = math.sin((animationValue * 5.0 * math.pi) + i * 7.3) *
+      final highFreqX = math.sin((animationValue * 5.0 * math.pi) + seed2) *
           (availableWidth * 0.02);
-      final highFreqY = math.cos((animationValue * 4.7 * math.pi) + i * 6.5) *
+      final highFreqY = math.cos((animationValue * 4.7 * math.pi) + seed3) *
           (availableHeight * 0.02);
 
-      // 应用噪声扰动 - 使用不同相位的正弦函数，创造更不规则的运动
-      // 以不同速率移动的噪声
-      final noiseX = (math.sin(animationValue * 3.1 + i) * 0.3 +
-              math.sin(animationValue * 1.7 + i * 2.3) * 0.4 +
-              math.sin(animationValue * 0.5 + i * 3.7) * 0.3) *
-          (availableWidth * 0.1);
-
-      final noiseY = (math.cos(animationValue * 2.3 + i * 1.1) * 0.3 +
-              math.cos(animationValue * 1.1 + i * 3.1) * 0.4 +
-              math.cos(animationValue * 0.7 + i * 2.5) * 0.3) *
-          (availableHeight * 0.1);
-
-      // 每个字母有不同的基准位置偏移，使它们分散在屏幕上
-      final baseOffsetX = letterRandom.nextDouble() * availableWidth * 0.6 -
-          availableWidth * 0.3;
-      final baseOffsetY = letterRandom.nextDouble() * availableHeight * 0.6 -
-          availableHeight * 0.3;
-
-      // 最终位置计算
-      final posX = safeMargin +
-          availableWidth * 0.5 +
-          baseOffsetX +
-          lowFreqX +
-          midFreqX +
-          highFreqX +
-          noiseX;
-      final posY = safeMargin +
-          availableHeight * 0.5 +
-          baseOffsetY +
-          lowFreqY +
-          midFreqY +
-          highFreqY +
-          noiseY;
+      // 最终位置计算 - 使用固定的基础位置加上动画位移
+      final posX = baseX + lowFreqX + midFreqX + highFreqX;
+      final posY = baseY + lowFreqY + midFreqY + highFreqY;
 
       // 特殊处理字母p和l，避免它们总是在屏幕中心（登录卡片位置）
       final isCardHiddenLetter = letters[i] == 'p' || letters[i] == 'l';
@@ -348,15 +359,14 @@ class ApeVoloBackgroundPainter extends CustomPainter {
           finalX += (distToCenterX / distToCenter) * pushDistance;
           finalY += (distToCenterY / distToCenter) * pushDistance;
         } else {
-          // 如果正好在中心，随机选择一个方向推开
-          final randomAngle = letterRandom.nextDouble() * 2 * math.pi;
-          finalX += math.cos(randomAngle) * availableWidth * 0.2;
-          finalY += math.sin(randomAngle) * availableWidth * 0.2;
+          // 如果正好在中心，使用确定性随机方向推开（而不是每次重建UI都变化）
+          final pushAngle = seed1 * math.pi * 2; // 用种子值创建固定的角度
+          finalX += math.cos(pushAngle) * availableWidth * 0.2;
+          finalY += math.sin(pushAngle) * availableWidth * 0.2;
         }
       }
 
-      // 字母大小随动画变化，增加基础大小使字母更清晰
-      final baseSize = 50.0 + letterRandom.nextDouble() * 40.0; // 增加基础大小
+      // 字母大小随动画变化，使用固定的基础大小
       final letterSize = baseSize * (0.9 + floatingValue * 0.2);
 
       // 颜色随机选择
@@ -379,8 +389,9 @@ class ApeVoloBackgroundPainter extends CustomPainter {
       canvas.translate(finalX, finalY);
 
       // 随机旋转效果，结合多个频率使旋转不那么规则
-      final angle = math.sin(animationValue * 1.5 * math.pi + i * 0.7) * 0.15 +
-          math.sin(animationValue * 0.7 * math.pi + i * 1.3) * 0.05;
+      // 使用种子值确保旋转角度的变化是确定性的
+      final angle = math.sin(animationValue * 1.5 * math.pi + seed1) * 0.15 +
+          math.sin(animationValue * 0.7 * math.pi + seed2) * 0.05;
       canvas.rotate(angle);
 
       // 绘制相应的字母
