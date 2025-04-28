@@ -1,97 +1,54 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../controllers/apevolo_background_controller.dart';
 
 /// Apevolo字母风格的Material 3动态背景组件
-class ApeVoloBackground extends StatefulWidget {
+class ApeVoloBackgroundView extends GetView<ApeVoloBackgroundController> {
   final Color primaryColor;
   final Color secondaryColor;
   final Color? tertiaryColor;
 
-  const ApeVoloBackground({
-    Key? key,
+  const ApeVoloBackgroundView({
+    super.key,
     required this.primaryColor,
     required this.secondaryColor,
     this.tertiaryColor,
-  }) : super(key: key);
+  });
 
-  @override
-  State<ApeVoloBackground> createState() => _ApeVoloBackgroundState();
-}
-
-class _ApeVoloBackgroundState extends State<ApeVoloBackground>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _floatingAnimation;
-  late Animation<double> _rotationAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 15), // 动画持续时间
-    );
-
-    // 使用循环动画
-    _animationController.repeat();
-
-    // 创建浮动动画效果
-    _floatingAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 0, end: 1),
-        weight: 50,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1, end: 0),
-        weight: 50,
-      ),
-    ]).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-
-    // 创建旋转动画
-    _rotationAnimation = Tween<double>(
-      begin: 0,
-      end: 2 * math.pi,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.linear,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+  /// 静态方法用于清理背景资源，可从外部调用
+  static void clearResources() {
+    // 使用Get.find找到控制器实例并调用其清理方法
+    if (Get.isRegistered<ApeVoloBackgroundController>()) {
+      final controller = Get.find<ApeVoloBackgroundController>();
+      controller.clearResources();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final backgroundColor = Theme.of(context).colorScheme.background;
-    final tertiaryColor =
-        widget.tertiaryColor ?? Theme.of(context).colorScheme.tertiary;
+    final tertiaryColorValue =
+        tertiaryColor ?? Theme.of(context).colorScheme.tertiary;
 
     return AnimatedBuilder(
-      animation: _animationController,
+      animation: controller.animationController,
       builder: (context, child) {
         return CustomPaint(
           painter: ApeVoloBackgroundPainter(
-            primaryColor:
-                widget.primaryColor.withOpacity(isDarkMode ? 0.3 : 0.2),
-            secondaryColor:
-                widget.secondaryColor.withOpacity(isDarkMode ? 0.3 : 0.2),
-            tertiaryColor: tertiaryColor.withOpacity(isDarkMode ? 0.25 : 0.15),
+            primaryColor: primaryColor.withOpacity(isDarkMode ? 0.3 : 0.2),
+            secondaryColor: secondaryColor.withOpacity(isDarkMode ? 0.3 : 0.2),
+            tertiaryColor:
+                tertiaryColorValue.withOpacity(isDarkMode ? 0.25 : 0.15),
             backgroundColor: backgroundColor,
             isDarkMode: isDarkMode,
-            animationValue: _animationController.value,
-            floatingValue: _floatingAnimation.value,
-            rotationValue: _rotationAnimation.value,
+            animationValue: controller.animationController.value,
+            floatingValue: controller.floatingAnimation.value,
+            rotationValue: controller.rotationAnimation.value,
+            letterBasePositions: controller.letterBasePositions,
+            positionsInitialized: controller.positionsInitialized,
           ),
           child: Container(
             decoration: BoxDecoration(
@@ -125,6 +82,8 @@ class ApeVoloBackgroundPainter extends CustomPainter {
   final double animationValue; // 0.0 到 1.0 的动画进度值
   final double floatingValue; // 浮动值
   final double rotationValue; // 旋转角度
+  final Map<int, Map<String, double>> letterBasePositions;
+  final bool positionsInitialized;
 
   ApeVoloBackgroundPainter({
     required this.primaryColor,
@@ -135,6 +94,8 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     required this.animationValue,
     required this.floatingValue,
     required this.rotationValue,
+    required this.letterBasePositions,
+    required this.positionsInitialized,
   });
 
   @override
@@ -144,21 +105,13 @@ class ApeVoloBackgroundPainter extends CustomPainter {
   }
 
   void _drawApeVoloBackground(Canvas canvas, Size size) {
-    // 保存当前绘制状态
     canvas.save();
-
-    // 绘制Apevolo字母色块
     _drawLetterShapes(canvas, size);
-
-    // 恢复绘制状态
     canvas.restore();
   }
 
   void _drawLetterShapes(Canvas canvas, Size size) {
-    // 创建随机数生成器，但与动画值相关联以确保确定性
     final random = math.Random(42);
-
-    // 绘制各种形状
     _drawFloatingCircles(canvas, size, random);
     _drawFloatingRectangles(canvas, size, random);
     _drawApeVoloLetters(canvas, size, random);
@@ -168,22 +121,18 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final circleCount = 12;
 
     for (int i = 0; i < circleCount; i++) {
-      // 使用随机数，但以确定性方式生成，确保不会在动画期间改变位置
       final randomX = random.nextDouble() * size.width;
       final randomY = random.nextDouble() * size.height;
       final randomRadius = 20.0 + random.nextDouble() * 60.0;
 
-      // 使用动画值计算漂浮效果
       final floatOffsetX = math.sin((animationValue * 2 * math.pi) + i) * 20.0;
       final floatOffsetY =
           math.cos((animationValue * 2 * math.pi) + i * 1.5) * 20.0;
 
-      // 循环交替使用颜色
       final color = i % 3 == 0
           ? primaryColor
           : (i % 3 == 1 ? secondaryColor : tertiaryColor);
 
-      // 为圆形添加透明度变化效果
       final opacity =
           0.7 + math.sin((animationValue * 2 * math.pi) + i * 0.5) * 0.3;
 
@@ -203,7 +152,6 @@ class ApeVoloBackgroundPainter extends CustomPainter {
       final randomX = random.nextDouble() * size.width;
       final randomY = random.nextDouble() * size.height;
 
-      // 尺寸和位置偏移使用动画值进行计算
       final width = 40.0 + random.nextDouble() * 80.0;
       final height = 40.0 + random.nextDouble() * 80.0;
 
@@ -212,17 +160,14 @@ class ApeVoloBackgroundPainter extends CustomPainter {
       final floatOffsetY =
           math.sin((animationValue * 2 * math.pi) + i * 1.2) * 25.0;
 
-      // 旋转角度
       final angle = rotationValue *
           (0.2 + random.nextDouble() * 0.2) *
           (i % 2 == 0 ? 1 : -1);
 
-      // 颜色选择
       final color = i % 3 == 0
           ? secondaryColor
           : (i % 3 == 1 ? primaryColor : tertiaryColor);
 
-      // 透明度变化效果
       final opacity =
           0.6 + math.cos((animationValue * 2 * math.pi) + i * 0.8) * 0.4;
 
@@ -232,11 +177,9 @@ class ApeVoloBackgroundPainter extends CustomPainter {
 
       canvas.save();
 
-      // 应用动画效果
       canvas.translate(randomX + floatOffsetX, randomY + floatOffsetY);
       canvas.rotate(angle);
 
-      // 绘制圆角矩形
       final rect = Rect.fromCenter(
         center: Offset.zero,
         width: width * (0.9 + floatingValue * 0.2),
@@ -252,30 +195,87 @@ class ApeVoloBackgroundPainter extends CustomPainter {
   }
 
   void _drawApeVoloLetters(Canvas canvas, Size size, math.Random random) {
-    // "apevolo"的每个字母
     final letters = ['a', 'p', 'e', 'v', 'o', 'l', 'o'];
-    final letterCount = 7; // 对应"apevolo"的7个字母
+    final letterCount = 7;
+
+    final safeMargin = size.width * 0.1;
+    final availableWidth = size.width - safeMargin * 2;
+    final availableHeight = size.height - safeMargin * 2;
+
+    // 初始化位置信息，如果尚未初始化
+    if (!positionsInitialized || letterBasePositions.isEmpty) {
+      for (int i = 0; i < letterCount; i++) {
+        // 为每个字母创建一个确定性随机数生成器
+        final letterRandom = math.Random(42 + i * 10);
+
+        // 生成基础位置，在整个应用生命周期内保持不变
+        letterBasePositions[i] = {
+          'baseX': safeMargin + letterRandom.nextDouble() * availableWidth,
+          'baseY': safeMargin + letterRandom.nextDouble() * availableHeight,
+          'seed1': letterRandom.nextDouble() * 10,
+          'seed2': letterRandom.nextDouble() * 10,
+          'seed3': letterRandom.nextDouble() * 10,
+          'baseSize': 50.0 + letterRandom.nextDouble() * 40.0,
+        };
+      }
+    }
 
     for (int i = 0; i < letterCount; i++) {
-      final randomX = size.width * (0.1 + random.nextDouble() * 0.8);
-      final randomY = size.height * (0.1 + random.nextDouble() * 0.8);
+      // 使用已初始化的位置信息
+      final baseX = letterBasePositions[i]!['baseX']!;
+      final baseY = letterBasePositions[i]!['baseY']!;
+      final seed1 = letterBasePositions[i]!['seed1']!;
+      final seed2 = letterBasePositions[i]!['seed2']!;
+      final seed3 = letterBasePositions[i]!['seed3']!;
+      final baseSize = letterBasePositions[i]!['baseSize']!;
 
-      final floatOffsetX =
-          math.sin((animationValue * 2 * math.pi) + i * 1.3) * 30.0;
-      final floatOffsetY =
-          math.cos((animationValue * 2 * math.pi) + i * 0.9) * 30.0;
+      final lowFreqX = math.sin((animationValue * 0.7 * math.pi) + seed1) *
+          (availableWidth * 0.3);
+      final lowFreqY = math.cos((animationValue * 0.5 * math.pi) + seed2) *
+          (availableHeight * 0.3);
 
-      // 字母大小随动画变化
-      final baseSize = 40.0 + random.nextDouble() * 50.0;
+      final midFreqX = math.sin((animationValue * 1.5 * math.pi) + seed3) *
+          (availableWidth * 0.1);
+      final midFreqY = math.cos((animationValue * 1.3 * math.pi) + seed1) *
+          (availableHeight * 0.1);
+
+      final highFreqX = math.sin((animationValue * 5.0 * math.pi) + seed2) *
+          (availableWidth * 0.02);
+      final highFreqY = math.cos((animationValue * 4.7 * math.pi) + seed3) *
+          (availableHeight * 0.02);
+
+      final posX = baseX + lowFreqX + midFreqX + highFreqX;
+      final posY = baseY + lowFreqY + midFreqY + highFreqY;
+
+      final isCardHiddenLetter = letters[i] == 'p' || letters[i] == 'l';
+
+      final distToCenterX = posX - (size.width / 2);
+      final distToCenterY = posY - (size.height / 2);
+      final distToCenter = math
+          .sqrt(distToCenterX * distToCenterX + distToCenterY * distToCenterY);
+
+      double finalX = posX;
+      double finalY = posY;
+
+      if (isCardHiddenLetter && distToCenter < availableWidth * 0.2) {
+        final pushDistance = availableWidth * 0.2 - distToCenter;
+        if (distToCenter > 0) {
+          finalX += (distToCenterX / distToCenter) * pushDistance;
+          finalY += (distToCenterY / distToCenter) * pushDistance;
+        } else {
+          final pushAngle = seed1 * math.pi * 2;
+          finalX += math.cos(pushAngle) * availableWidth * 0.2;
+          finalY += math.sin(pushAngle) * availableWidth * 0.2;
+        }
+      }
+
       final letterSize = baseSize * (0.9 + floatingValue * 0.2);
 
-      // 颜色随机选择
       final color = i % 3 == 0
           ? tertiaryColor
           : (i % 3 == 1 ? primaryColor : secondaryColor);
 
-      // 透明度变化
-      final opacity = 0.7 + math.sin((animationValue * 2 * math.pi) + i) * 0.3;
+      final opacity = 0.8 + math.sin((animationValue * 2 * math.pi) + i) * 0.2;
 
       final paint = Paint()
         ..color = color.withOpacity(opacity)
@@ -285,16 +285,12 @@ class ApeVoloBackgroundPainter extends CustomPainter {
 
       canvas.save();
 
-      // 应用位置和旋转
-      final centerX = randomX + floatOffsetX;
-      final centerY = randomY + floatOffsetY;
-      canvas.translate(centerX, centerY);
+      canvas.translate(finalX, finalY);
 
-      // 轻微的旋转效果
-      final angle = (math.sin(animationValue * 2 * math.pi + i) * 0.2);
+      final angle = math.sin(animationValue * 1.5 * math.pi + seed1) * 0.15 +
+          math.sin(animationValue * 0.7 * math.pi + seed2) * 0.05;
       canvas.rotate(angle);
 
-      // 绘制相应的字母
       _drawSpecificLetter(canvas, letters[i], letterSize, paint);
 
       canvas.restore();
@@ -323,7 +319,7 @@ class ApeVoloBackgroundPainter extends CustomPainter {
         _drawLetterL(canvas, size, paint);
         break;
       default:
-        _drawLetterO(canvas, size, paint); // 默认为'o'
+        _drawLetterO(canvas, size, paint);
     }
   }
 
@@ -331,16 +327,15 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true;
 
     final path = Path();
-    // 绘制字母'a'的主要部分
-    path.moveTo(-size * 0.3, size * 0.4); // 左下角起点
-    path.lineTo(0, -size * 0.4); // 顶点
-    path.lineTo(size * 0.3, size * 0.4); // 右下角
+    path.moveTo(-size * 0.3, size * 0.4);
+    path.lineTo(0, -size * 0.4);
+    path.lineTo(size * 0.3, size * 0.4);
 
-    // 绘制横线
     final crossbarPath = Path();
     crossbarPath.moveTo(-size * 0.2, size * 0.1);
     crossbarPath.lineTo(size * 0.2, size * 0.1);
@@ -353,19 +348,22 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true;
 
     final path = Path();
-    // 绘制字母'p'的竖线
-    path.moveTo(-size * 0.2, size * 0.4); // 左下角
-    path.lineTo(-size * 0.2, -size * 0.4); // 竖线到顶部
+    path.moveTo(-size * 0.2, size * 0.4);
+    path.lineTo(-size * 0.2, -size * 0.4);
 
-    // 绘制p的环形部分
-    final arcRect =
-        Rect.fromLTRB(-size * 0.2, -size * 0.4, size * 0.2, -size * 0.05);
+    final arcRect = Rect.fromLTRB(
+      -size * 0.2,
+      -size * 0.4,
+      size * 0.2,
+      0,
+    );
     path.addArc(arcRect, -math.pi / 2, math.pi);
-    path.lineTo(-size * 0.2, -size * 0.05); // 闭合环形
+    path.lineTo(-size * 0.2, 0);
 
     canvas.drawPath(path, strokePaint);
   }
@@ -374,25 +372,21 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true;
 
     final path = Path();
-    // 绘制字母'e'的竖线
-    path.moveTo(-size * 0.2, size * 0.4); // 左下角
-    path.lineTo(-size * 0.2, -size * 0.4); // 竖线到顶部
+    path.moveTo(-size * 0.2, size * 0.4);
+    path.lineTo(-size * 0.2, -size * 0.4);
 
-    // 绘制e的三条横线
-    // 顶部横线
     path.moveTo(-size * 0.2, -size * 0.4);
     path.lineTo(size * 0.2, -size * 0.4);
 
-    // 中间横线
     final middlePath = Path();
     middlePath.moveTo(-size * 0.2, 0);
-    middlePath.lineTo(size * 0.15, 0);
+    middlePath.lineTo(size * 0.2, 0);
 
-    // 底部横线
     final bottomPath = Path();
     bottomPath.moveTo(-size * 0.2, size * 0.4);
     bottomPath.lineTo(size * 0.2, size * 0.4);
@@ -406,14 +400,14 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true;
 
     final path = Path();
-    // 绘制字母'v'的两条线
-    path.moveTo(-size * 0.3, -size * 0.4); // 左上角
-    path.lineTo(0, size * 0.4); // 底部中点
-    path.lineTo(size * 0.3, -size * 0.4); // 右上角
+    path.moveTo(-size * 0.3, -size * 0.4);
+    path.lineTo(0, size * 0.4);
+    path.lineTo(size * 0.3, -size * 0.4);
 
     canvas.drawPath(path, strokePaint);
   }
@@ -422,11 +416,15 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true;
 
     final ovalRect = Rect.fromCenter(
-        center: Offset.zero, width: size * 0.6, height: size * 0.8);
+      center: Offset.zero,
+      width: size * 0.6,
+      height: size * 0.8,
+    );
 
     canvas.drawOval(ovalRect, strokePaint);
   }
@@ -435,16 +433,14 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true;
 
     final path = Path();
-    // 绘制字母'L'的竖线
-    path.moveTo(-size * 0.2, -size * 0.4); // 左上角
-    path.lineTo(-size * 0.2, size * 0.4); // 竖线到底部
-
-    // 绘制底部横线
-    path.lineTo(size * 0.2, size * 0.4); // 右下角
+    path.moveTo(-size * 0.2, -size * 0.4);
+    path.lineTo(-size * 0.2, size * 0.4);
+    path.lineTo(size * 0.2, size * 0.4);
 
     canvas.drawPath(path, strokePaint);
   }
@@ -457,5 +453,7 @@ class ApeVoloBackgroundPainter extends CustomPainter {
       oldDelegate.isDarkMode != isDarkMode ||
       oldDelegate.animationValue != animationValue ||
       oldDelegate.floatingValue != floatingValue ||
-      oldDelegate.rotationValue != rotationValue;
+      oldDelegate.rotationValue != rotationValue ||
+      oldDelegate.letterBasePositions != letterBasePositions ||
+      oldDelegate.positionsInitialized != positionsInitialized;
 }

@@ -1,76 +1,20 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../controllers/material_background_controller.dart';
 
 /// Material 3 风格的动态背景组件
-class MaterialBackground extends StatefulWidget {
+class MaterialBackgroundView extends GetView<MaterialBackgroundController> {
   final Color primaryColor;
   final Color secondaryColor;
 
-  const MaterialBackground({
-    Key? key,
+  const MaterialBackgroundView({
+    super.key,
     required this.primaryColor,
     required this.secondaryColor,
-  }) : super(key: key);
-
-  @override
-  State<MaterialBackground> createState() => _MaterialBackgroundState();
-}
-
-class _MaterialBackgroundState extends State<MaterialBackground>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _rotationAnimation;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 20), // 动画持续时间
-    );
-
-    // 使用循环动画，但确保平滑过渡
-    _animationController.repeat();
-
-    // 创建循环旋转动画 - 使用Tween<double>并设置适当的开始和结束值
-    _rotationAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 0, end: 2 * math.pi),
-        weight: 100,
-      ),
-    ]).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        // 使用循环曲线避免跳跃
-        curve: Curves.linear,
-      ),
-    );
-
-    // 创建缩放动画（呼吸效果）- 使用正弦函数实现平滑循环
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.05),
-        weight: 50,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.05, end: 1.0),
-        weight: 50,
-      ),
-    ]).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,20 +22,21 @@ class _MaterialBackgroundState extends State<MaterialBackground>
     final backgroundColor = Theme.of(context).colorScheme.background;
     final surfaceColor = Theme.of(context).colorScheme.surfaceVariant;
 
+    // 更新控制器中的颜色
+    controller.updateColors(primary: primaryColor, secondary: secondaryColor);
+
     return AnimatedBuilder(
-      animation: _animationController,
+      animation: controller.animationController,
       builder: (context, child) {
         return CustomPaint(
           painter: MaterialBackgroundPainter(
-            primaryColor:
-                widget.primaryColor.withOpacity(isDarkMode ? 0.25 : 0.2),
-            secondaryColor:
-                widget.secondaryColor.withOpacity(isDarkMode ? 0.25 : 0.2),
+            primaryColor: primaryColor.withOpacity(isDarkMode ? 0.25 : 0.2),
+            secondaryColor: secondaryColor.withOpacity(isDarkMode ? 0.25 : 0.2),
             backgroundColor: backgroundColor,
             isDarkMode: isDarkMode,
-            animationValue: _animationController.value,
-            rotationValue: _rotationAnimation.value,
-            scaleValue: _scaleAnimation.value,
+            animationValue: controller.animationController.value,
+            rotationValue: controller.rotationAnimation.value,
+            scaleValue: controller.scaleAnimation.value,
           ),
           child: Container(
             decoration: BoxDecoration(

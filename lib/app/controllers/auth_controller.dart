@@ -6,7 +6,7 @@ import 'package:encrypt/encrypt.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:apevolo_flutter/app/components/views/apevolo_background_view.dart';
+import 'package:apevolo_flutter/app/components/apevolo_background/views/apevolo_background_view.dart';
 
 /// 认证控制器
 /// 负责处理所有认证相关操作：登录、注销等
@@ -85,7 +85,7 @@ class AuthController extends GetxController {
       _userService.loginInfo.value = loginResult;
 
       // 清理背景资源
-      ApeVoloBackground.clearResources();
+      ApeVoloBackgroundView.clearResources();
 
       // 导航到主界面
       await Get.offAllNamed(Routes.SHELL);

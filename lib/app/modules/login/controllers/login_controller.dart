@@ -5,6 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'dart:math';
+
+// 背景类型枚举
+enum BackgroundType {
+  apevolo,
+  material,
+  // 以后可以在这里添加更多背景类型
+}
 
 class LoginController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -20,8 +28,11 @@ class LoginController extends GetxController
   // 密码可见性控制
   final RxBool isPasswordVisible = false.obs;
 
-  // 背景控制
-  final RxBool useApeVoloBackground = true.obs;
+  // 背景控制 - 使用枚举类型
+  final Rx<BackgroundType> backgroundType = BackgroundType.apevolo.obs;
+
+  // 显示背景选择器 (仅在调试模式下)
+  final RxBool showBackgroundSelector = kDebugMode.obs;
 
   // 用户名输入框的焦点节点
   late final FocusNode usernameFocusNode = FocusNode();
@@ -47,6 +58,11 @@ class LoginController extends GetxController
   Future<void> onInit() async {
     super.onInit();
 
+    // 随机选择背景类型 (在非调试模式下)
+    if (!kDebugMode) {
+      _randomizeBackground();
+    }
+
     // 监听AuthController中的状态变化
     ever(authController.loginErrorText, (value) {
       loginFailedText.value = value;
@@ -68,6 +84,18 @@ class LoginController extends GetxController
       passwordTextController.text = "123456";
       _previousText = usernameTextController.text;
     }
+  }
+
+  // 随机选择背景
+  void _randomizeBackground() {
+    // 随机选择一个背景类型
+    final values = BackgroundType.values;
+    backgroundType.value = values[Random().nextInt(values.length)];
+  }
+
+  // 设置背景类型
+  void setBackgroundType(BackgroundType type) {
+    backgroundType.value = type;
   }
 
   // 加载用户名历史记录

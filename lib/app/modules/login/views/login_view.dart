@@ -1,7 +1,8 @@
 import 'package:apevolo_flutter/app/components/captcha/views/captcha_view.dart';
+import 'package:apevolo_flutter/app/components/material_background/views/material_background_view.dart';
 import 'package:apevolo_flutter/app/components/theme_mode/views/theme_mode_view.dart';
-import 'package:apevolo_flutter/app/components/views/apevolo_background_view.dart';
-import 'package:apevolo_flutter/app/components/views/material_background_view.dart';
+import 'package:apevolo_flutter/app/components/apevolo_background/views/apevolo_background_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -27,35 +28,43 @@ class LoginView extends GetView<LoginController> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // 背景切换按钮
-          IconButton(
-            onPressed: () {
-              controller.useApeVoloBackground.value =
-                  !controller.useApeVoloBackground.value;
-            },
-            icon: const Icon(Icons.wallpaper),
-          ),
-
-          const SizedBox(height: 16), // 两个按钮之间的间距
+          // 在调试模式下显示背景选择器
+          if (kDebugMode)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: _buildBackgroundSelector(context),
+            ),
           // 主题切换按钮
           const ThemeModeView(),
         ],
       ),
       body: Stack(
         children: [
-          // 添加Material 3风格的背景
+          // 添加背景（基于选择）
           Positioned.fill(
-            child: Obx(() => controller.useApeVoloBackground.value
-                ? ApeVoloBackground(
+            child: Obx(() {
+              switch (controller.backgroundType.value) {
+                case BackgroundType.apevolo:
+                  return ApeVoloBackgroundView(
                     primaryColor: Theme.of(context).colorScheme.primary,
                     secondaryColor: Theme.of(context).colorScheme.secondary,
                     tertiaryColor: Theme.of(context).colorScheme.tertiary,
-                  )
-                : MaterialBackground(
+                  );
+                case BackgroundType.material:
+                  return MaterialBackgroundView(
                     primaryColor: Theme.of(context).colorScheme.primary,
                     secondaryColor: Theme.of(context).colorScheme.tertiary,
-                  )),
+                  );
+                default:
+                  return ApeVoloBackgroundView(
+                    primaryColor: Theme.of(context).colorScheme.primary,
+                    secondaryColor: Theme.of(context).colorScheme.secondary,
+                    tertiaryColor: Theme.of(context).colorScheme.tertiary,
+                  );
+              }
+            }),
           ),
           // 登录表单内容
           Center(
@@ -311,6 +320,25 @@ class LoginView extends GetView<LoginController> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBackgroundSelector(BuildContext context) {
+    return Obx(
+      () => DropdownButton<BackgroundType>(
+        value: controller.backgroundType.value,
+        onChanged: (BackgroundType? newValue) {
+          if (newValue != null) {
+            controller.setBackgroundType(newValue);
+          }
+        },
+        items: BackgroundType.values.map((BackgroundType type) {
+          return DropdownMenuItem<BackgroundType>(
+            value: type,
+            child: Text(type.toString().split('.').last),
+          );
+        }).toList(),
       ),
     );
   }

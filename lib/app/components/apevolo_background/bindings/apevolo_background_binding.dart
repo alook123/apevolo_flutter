@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'apevolo_background_controller.dart';
+import '../controllers/apevolo_background_controller.dart';
 
 /// ApeVolo背景组件的绑定类
 class ApeVoloBackgroundBinding extends Bindings {
