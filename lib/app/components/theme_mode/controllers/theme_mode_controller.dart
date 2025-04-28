@@ -16,8 +16,13 @@ class ThemeModeController extends GetxController {
   }
 
   @override
-  void onReady() {
+  Future<void> onReady() async {
     super.onReady();
+    String value = Get.isDarkMode ? 'dark' : 'light';
+
+    theme.value = value;
+    _systemService.themeMode.val = value;
+    update();
   }
 
   @override
@@ -32,7 +37,7 @@ class ThemeModeController extends GetxController {
       Get.changeThemeMode(ThemeMode.dark);
     }
 
-    String value = Get.isDarkMode ? 'light' : 'dark';
+    String value = Get.isDarkMode ? 'dark' : 'light';
 
     theme.value = value;
     _systemService.themeMode.val = value;
