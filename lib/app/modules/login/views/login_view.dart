@@ -1,6 +1,6 @@
 import 'package:apevolo_flutter/app/components/captcha/views/captcha_view.dart';
 import 'package:apevolo_flutter/app/components/theme_mode/views/theme_mode_view.dart';
-import 'package:apevolo_flutter/app/components/views/android_robot_background_view.dart';
+import 'package:apevolo_flutter/app/components/views/apevolo_background_view.dart';
 import 'package:apevolo_flutter/app/components/views/material_background_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,17 +29,14 @@ class LoginView extends GetView<LoginController> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           // 背景切换按钮
-          FloatingActionButton(
-            heroTag: 'backgroundToggle',
+          IconButton(
             onPressed: () {
-              controller.useAndroidRobotBackground.value =
-                  !controller.useAndroidRobotBackground.value;
+              controller.useApeVoloBackground.value =
+                  !controller.useApeVoloBackground.value;
             },
-            tooltip: controller.useAndroidRobotBackground.value
-                ? '切换到原始背景'
-                : '切换到Android机器人背景',
-            child: const Icon(Icons.wallpaper),
+            icon: const Icon(Icons.wallpaper),
           ),
+
           const SizedBox(height: 16), // 两个按钮之间的间距
           // 主题切换按钮
           const ThemeModeView(),
@@ -49,8 +46,8 @@ class LoginView extends GetView<LoginController> {
         children: [
           // 添加Material 3风格的背景
           Positioned.fill(
-            child: Obx(() => controller.useAndroidRobotBackground.value
-                ? AndroidRobotBackground(
+            child: Obx(() => controller.useApeVoloBackground.value
+                ? ApeVoloBackground(
                     primaryColor: Theme.of(context).colorScheme.primary,
                     secondaryColor: Theme.of(context).colorScheme.secondary,
                     tertiaryColor: Theme.of(context).colorScheme.tertiary,

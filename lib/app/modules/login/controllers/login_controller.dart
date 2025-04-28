@@ -21,7 +21,7 @@ class LoginController extends GetxController
   final RxBool isPasswordVisible = false.obs;
 
   // 背景控制
-  final RxBool useAndroidRobotBackground = true.obs;
+  final RxBool useApeVoloBackground = true.obs;
 
   // 用户名输入框的焦点节点
   late final FocusNode usernameFocusNode = FocusNode();

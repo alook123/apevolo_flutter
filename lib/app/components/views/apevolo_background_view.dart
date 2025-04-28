@@ -256,17 +256,107 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final letters = ['a', 'p', 'e', 'v', 'o', 'l', 'o'];
     final letterCount = 7; // 对应"apevolo"的7个字母
 
+    // 设置一个边缘安全区域，防止字母太靠近边缘导致清晰度下降或被裁剪
+    final safeMargin = size.width * 0.1; // 屏幕宽度的10%作为安全边距
+
+    // 可用区域尺寸
+    final availableWidth = size.width - safeMargin * 2;
+    final availableHeight = size.height - safeMargin * 2;
+
     for (int i = 0; i < letterCount; i++) {
-      final randomX = size.width * (0.1 + random.nextDouble() * 0.8);
-      final randomY = size.height * (0.1 + random.nextDouble() * 0.8);
+      // 为每个字母生成一个随机初始位置和方向，但基于确定性随机数，以保证一致性
+      // 随机种子基于字母索引，这样每个字母都会有自己的随机序列
+      final letterRandom = math.Random(42 + i * 10);
 
-      final floatOffsetX =
-          math.sin((animationValue * 2 * math.pi) + i * 1.3) * 30.0;
-      final floatOffsetY =
-          math.cos((animationValue * 2 * math.pi) + i * 0.9) * 30.0;
+      // 随机初始位置（一个确定的初始位置）
+      // 注意：我们使用animationValue来模拟时间的流逝
 
-      // 字母大小随动画变化
-      final baseSize = 40.0 + random.nextDouble() * 50.0;
+      // 使用佩林噪声(Perlin noise)的思想，结合多个不同频率的正弦/余弦波
+      // 这会产生看起来更加随机但仍然平滑的运动
+
+      // 基础移动 - 低频
+      final lowFreqX = math.sin((animationValue * 0.7 * math.pi) + i * 1.5) *
+          (availableWidth * 0.3);
+      final lowFreqY = math.cos((animationValue * 0.5 * math.pi) + i * 2.1) *
+          (availableHeight * 0.3);
+
+      // 中频移动 - 添加变化
+      final midFreqX = math.sin((animationValue * 1.5 * math.pi) + i * 3.7) *
+          (availableWidth * 0.1);
+      final midFreqY = math.cos((animationValue * 1.3 * math.pi) + i * 2.9) *
+          (availableHeight * 0.1);
+
+      // 高频移动 - 添加小的随机性波动
+      final highFreqX = math.sin((animationValue * 5.0 * math.pi) + i * 7.3) *
+          (availableWidth * 0.02);
+      final highFreqY = math.cos((animationValue * 4.7 * math.pi) + i * 6.5) *
+          (availableHeight * 0.02);
+
+      // 应用噪声扰动 - 使用不同相位的正弦函数，创造更不规则的运动
+      // 以不同速率移动的噪声
+      final noiseX = (math.sin(animationValue * 3.1 + i) * 0.3 +
+              math.sin(animationValue * 1.7 + i * 2.3) * 0.4 +
+              math.sin(animationValue * 0.5 + i * 3.7) * 0.3) *
+          (availableWidth * 0.1);
+
+      final noiseY = (math.cos(animationValue * 2.3 + i * 1.1) * 0.3 +
+              math.cos(animationValue * 1.1 + i * 3.1) * 0.4 +
+              math.cos(animationValue * 0.7 + i * 2.5) * 0.3) *
+          (availableHeight * 0.1);
+
+      // 每个字母有不同的基准位置偏移，使它们分散在屏幕上
+      final baseOffsetX = letterRandom.nextDouble() * availableWidth * 0.6 -
+          availableWidth * 0.3;
+      final baseOffsetY = letterRandom.nextDouble() * availableHeight * 0.6 -
+          availableHeight * 0.3;
+
+      // 最终位置计算
+      final posX = safeMargin +
+          availableWidth * 0.5 +
+          baseOffsetX +
+          lowFreqX +
+          midFreqX +
+          highFreqX +
+          noiseX;
+      final posY = safeMargin +
+          availableHeight * 0.5 +
+          baseOffsetY +
+          lowFreqY +
+          midFreqY +
+          highFreqY +
+          noiseY;
+
+      // 特殊处理字母p和l，避免它们总是在屏幕中心（登录卡片位置）
+      final isCardHiddenLetter = letters[i] == 'p' || letters[i] == 'l';
+
+      // 登录卡片通常在屏幕中心，我们避免这些字母靠近屏幕中心
+      // 计算到屏幕中心的距离
+      final distToCenterX = posX - (size.width / 2);
+      final distToCenterY = posY - (size.height / 2);
+      final distToCenter = math
+          .sqrt(distToCenterX * distToCenterX + distToCenterY * distToCenterY);
+
+      // 如果特殊字母太靠近中心，则推开它们
+      double finalX = posX;
+      double finalY = posY;
+
+      if (isCardHiddenLetter && distToCenter < availableWidth * 0.2) {
+        // 将字母推开，远离中心
+        final pushDistance = availableWidth * 0.2 - distToCenter;
+        // 如果距离不为0，则正常化矢量
+        if (distToCenter > 0) {
+          finalX += (distToCenterX / distToCenter) * pushDistance;
+          finalY += (distToCenterY / distToCenter) * pushDistance;
+        } else {
+          // 如果正好在中心，随机选择一个方向推开
+          final randomAngle = letterRandom.nextDouble() * 2 * math.pi;
+          finalX += math.cos(randomAngle) * availableWidth * 0.2;
+          finalY += math.sin(randomAngle) * availableWidth * 0.2;
+        }
+      }
+
+      // 字母大小随动画变化，增加基础大小使字母更清晰
+      final baseSize = 50.0 + letterRandom.nextDouble() * 40.0; // 增加基础大小
       final letterSize = baseSize * (0.9 + floatingValue * 0.2);
 
       // 颜色随机选择
@@ -274,8 +364,8 @@ class ApeVoloBackgroundPainter extends CustomPainter {
           ? tertiaryColor
           : (i % 3 == 1 ? primaryColor : secondaryColor);
 
-      // 透明度变化
-      final opacity = 0.7 + math.sin((animationValue * 2 * math.pi) + i) * 0.3;
+      // 透明度变化，增加最小透明度以提高清晰度
+      final opacity = 0.8 + math.sin((animationValue * 2 * math.pi) + i) * 0.2;
 
       final paint = Paint()
         ..color = color.withOpacity(opacity)
@@ -285,13 +375,12 @@ class ApeVoloBackgroundPainter extends CustomPainter {
 
       canvas.save();
 
-      // 应用位置和旋转
-      final centerX = randomX + floatOffsetX;
-      final centerY = randomY + floatOffsetY;
-      canvas.translate(centerX, centerY);
+      // 应用最终位置
+      canvas.translate(finalX, finalY);
 
-      // 轻微的旋转效果
-      final angle = (math.sin(animationValue * 2 * math.pi + i) * 0.2);
+      // 随机旋转效果，结合多个频率使旋转不那么规则
+      final angle = math.sin(animationValue * 1.5 * math.pi + i * 0.7) * 0.15 +
+          math.sin(animationValue * 0.7 * math.pi + i * 1.3) * 0.05;
       canvas.rotate(angle);
 
       // 绘制相应的字母
@@ -331,8 +420,9 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1 // 增加笔画粗细
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true; // 启用抗锯齿
 
     final path = Path();
     // 绘制字母'a'的主要部分
@@ -353,8 +443,9 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1 // 增加笔画粗细
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true; // 启用抗锯齿
 
     final path = Path();
     // 绘制字母'p'的竖线
@@ -362,10 +453,14 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     path.lineTo(-size * 0.2, -size * 0.4); // 竖线到顶部
 
     // 绘制p的环形部分
-    final arcRect =
-        Rect.fromLTRB(-size * 0.2, -size * 0.4, size * 0.2, -size * 0.05);
+    final arcRect = Rect.fromLTRB(
+      -size * 0.2,
+      -size * 0.4,
+      size * 0.2,
+      0, // 调整闭合位置，使弧线更加明显
+    );
     path.addArc(arcRect, -math.pi / 2, math.pi);
-    path.lineTo(-size * 0.2, -size * 0.05); // 闭合环形
+    path.lineTo(-size * 0.2, 0); // 闭合环形
 
     canvas.drawPath(path, strokePaint);
   }
@@ -374,8 +469,9 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1 // 增加笔画粗细
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true; // 启用抗锯齿
 
     final path = Path();
     // 绘制字母'e'的竖线
@@ -390,7 +486,7 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     // 中间横线
     final middlePath = Path();
     middlePath.moveTo(-size * 0.2, 0);
-    middlePath.lineTo(size * 0.15, 0);
+    middlePath.lineTo(size * 0.2, 0); // 延长中间横线
 
     // 底部横线
     final bottomPath = Path();
@@ -406,8 +502,9 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1 // 增加笔画粗细
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true; // 启用抗锯齿
 
     final path = Path();
     // 绘制字母'v'的两条线
@@ -422,11 +519,15 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1 // 增加笔画粗细
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true; // 启用抗锯齿
 
     final ovalRect = Rect.fromCenter(
-        center: Offset.zero, width: size * 0.6, height: size * 0.8);
+      center: Offset.zero,
+      width: size * 0.6,
+      height: size * 0.8,
+    );
 
     canvas.drawOval(ovalRect, strokePaint);
   }
@@ -435,8 +536,9 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     final strokePaint = Paint()
       ..color = paint.color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.08
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size * 0.1 // 增加笔画粗细
+      ..strokeCap = StrokeCap.round
+      ..isAntiAlias = true; // 启用抗锯齿
 
     final path = Path();
     // 绘制字母'L'的竖线

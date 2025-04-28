@@ -36,5 +36,7 @@ class ThemeModeController extends GetxController {
 
     theme.value = value;
     _systemService.themeMode.val = value;
+
+    update();
   }
 }

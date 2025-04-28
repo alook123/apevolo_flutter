@@ -14,7 +14,9 @@ class ThemeModeView extends GetView<ThemeModeController> {
         onPressed: () {
           controller.changeThemeMode();
         },
-        icon: const Icon(Icons.light_mode),
+        icon: Icon(
+          Get.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+        ),
       ),
     );
   }
