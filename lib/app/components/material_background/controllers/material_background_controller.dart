@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 
 class MaterialBackgroundController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  final Rx<Color> primaryColor = Color(0xFF000000).obs;
-  final Rx<Color> secondaryColor = Color(0xFF000000).obs;
+  final Rx<Color> primaryColor = const Color(0xFF000000).obs;
+  final Rx<Color> secondaryColor = const Color(0xFF000000).obs;
 
   late AnimationController animationController;
   late Animation<double> rotationAnimation;

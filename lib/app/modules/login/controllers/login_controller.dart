@@ -89,7 +89,7 @@ class LoginController extends GetxController
   // 随机选择背景
   void _randomizeBackground() {
     // 随机选择一个背景类型
-    final values = BackgroundType.values;
+    const values = BackgroundType.values;
     backgroundType.value = values[Random().nextInt(values.length)];
   }
 

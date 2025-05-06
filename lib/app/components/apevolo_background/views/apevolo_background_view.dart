@@ -29,7 +29,7 @@ class ApeVoloBackgroundView extends GetView<ApeVoloBackgroundController> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = Theme.of(context).colorScheme.background;
+    final backgroundColor = Theme.of(context).colorScheme.surface;
     final tertiaryColorValue =
         tertiaryColor ?? Theme.of(context).colorScheme.tertiary;
 
@@ -80,7 +80,7 @@ class ApeVoloBackgroundView extends GetView<ApeVoloBackgroundController> {
                         backgroundColor.withOpacity(0.9),
                         Theme.of(context)
                             .colorScheme
-                            .surfaceVariant
+                            .surfaceContainerHighest
                             .withOpacity(isDarkMode ? 0.7 : 0.6),
                       ],
                       stops: const [0.0, 0.5, 1.0],
@@ -149,7 +149,7 @@ class ApeVoloBackgroundPainter extends CustomPainter {
   }
 
   void _drawFloatingCircles(Canvas canvas, Size size, math.Random random) {
-    final circleCount = 12;
+    const circleCount = 12;
     final safeMargin = size.width * 0.1;
     final availableWidth = size.width - safeMargin * 2;
     final availableHeight = size.height - safeMargin * 2;
@@ -218,7 +218,7 @@ class ApeVoloBackgroundPainter extends CustomPainter {
   }
 
   void _drawFloatingRectangles(Canvas canvas, Size size, math.Random random) {
-    final rectCount = 8;
+    const rectCount = 8;
     final safeMargin = size.width * 0.1;
     final availableWidth = size.width - safeMargin * 2;
     final availableHeight = size.height - safeMargin * 2;
@@ -305,7 +305,7 @@ class ApeVoloBackgroundPainter extends CustomPainter {
 
   void _drawApeVoloLetters(Canvas canvas, Size size, math.Random random) {
     final letters = ['a', 'p', 'e', 'v', 'o', 'l', 'o'];
-    final letterCount = 7;
+    const letterCount = 7;
 
     final safeMargin = size.width * 0.1;
     final availableWidth = size.width - safeMargin * 2;

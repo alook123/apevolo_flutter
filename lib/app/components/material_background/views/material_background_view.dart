@@ -19,8 +19,8 @@ class MaterialBackgroundView extends GetView<MaterialBackgroundController> {
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = Theme.of(context).colorScheme.background;
-    final surfaceColor = Theme.of(context).colorScheme.surfaceVariant;
+    final backgroundColor = Theme.of(context).colorScheme.surface;
+    final surfaceColor = Theme.of(context).colorScheme.surfaceContainerHighest;
 
     // 更新控制器中的颜色
     controller.updateColors(primary: primaryColor, secondary: secondaryColor);
@@ -83,7 +83,7 @@ class MaterialBackgroundPainter extends CustomPainter {
   }
 
   void _drawPatternBackground(Canvas canvas, Size size) {
-    final patternType = 2; // 可选择不同图案类型: 0=波浪, 1=网格, 2=六边形
+    const patternType = 2; // 可选择不同图案类型: 0=波浪, 1=网格, 2=六边形
 
     switch (patternType) {
       case 0:
@@ -239,7 +239,7 @@ class MaterialBackgroundPainter extends CustomPainter {
     final verticalCount = (size.height / verticalSpacing).ceil() + 2;
 
     // 计算额外的边界偏移量，确保旋转时边缘仍有图案
-    final extraOffset = hexSize * 2;
+    const extraOffset = hexSize * 2;
 
     // 使用连续函数计算动画偏移量，避免跳跃
     final continuousAnimValue = animationValue * 2 * math.pi;
