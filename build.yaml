@@ -1,0 +1,14 @@
+targets:
+    $default:
+        builders:
+            freezed:
+                generate_for:
+                    include:
+                        - lib/app/data/models/**/*.dart
+            json_serializable:
+                options:
+                    explicit_to_json: true
+                    create_factory: true
+                generate_for:
+                    include:
+                        - lib/app/data/models/**/*.dart

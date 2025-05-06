@@ -28,16 +28,10 @@ class ShellMenuController extends GetxController with StateMixin {
     super.onClose();
   }
 
-  ///加载菜单
+  /// 加载菜单
   Future<void> onLoadMenu() async {
     menuProvider.build().then((value) {
       userService.menus.value = value;
-      // for (var element in userService.menus) {
-      //   userService.getSvgIconPath(element.path ?? '');
-      //   for (var element2 in element.children ?? []) {
-      //     userService.getSvgIconPath(element2.path ?? '');
-      //   }
-      // }
       change(userService.menus, status: RxStatus.success());
     }).onError((error, stackTrace) {
       Logger.write('error:$error');
@@ -50,7 +44,11 @@ class ShellMenuController extends GetxController with StateMixin {
 
   /// 切换菜单展开状态
   Future<void> onExpansionChanged(bool value, MenuBuild menu) async {
-    userService.menus.firstWhere((x) => x == menu).expanded = value;
+    // 使用Freezed的copyWith方法直接创建新对象
+    final index = userService.menus.indexWhere((x) => x == menu);
+    if (index != -1) {
+      userService.menus[index] = menu.copyWith(expanded: value);
+    }
   }
 
   /// 点击菜单事件
@@ -62,18 +60,29 @@ class ShellMenuController extends GetxController with StateMixin {
     String tag = const Uuid().v4();
     menu ??=
         userService.menus.firstWhere((x) => x.children!.contains(children));
-    for (var element in userService.openMenus.values) {
-      element.selected = false;
+
+    // 将所有已打开菜单的选中状态设为false
+    final keys = userService.openMenus.keys.toList();
+    for (var key in keys) {
+      final menuItem = userService.openMenus[key];
+      if (menuItem != null) {
+        userService.openMenus[key] = menuItem.copyWith(selected: false);
+      }
     }
+
+    // 检查菜单是否已经打开
     if (userService.openMenus.values.contains(children)) {
+      // 使用深拷贝创建一个新对象
       String newObjectStr = jsonEncode(children);
       children = ChildrenMenu.fromJson(jsonDecode(newObjectStr));
     }
-    children.tag = tag;
-    children.selected = true;
-    userService.openMenus[tag] = children;
+
+    // 使用Freezed的copyWith方法创建新对象并添加到openMenus
+    final updatedChildren = children.copyWith(tag: tag, selected: true);
+    userService.openMenus[tag] = updatedChildren;
+
     await Get.toNamed(
-      '${menu.path}/${children.path}',
+      '${menu.path}/${updatedChildren.path}',
       id: 1,
       arguments: tag,
       parameters: {'tag': tag},

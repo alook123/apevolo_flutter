@@ -19,7 +19,6 @@ class ShellTagController extends GetxController {
 
   Future<void> onClearMenus() async {
     userService.openMenus.clear();
-
     update();
   }
 
@@ -28,23 +27,40 @@ class ShellTagController extends GetxController {
     MenuBuild? menu,
   }) async {
     if (children.path == null) return;
-    children.tag ??= const Uuid().v4();
 
-    for (var element in userService.openMenus.values) {
-      element.selected = false;
+    // 使用 Freezed 的 copyWith 方法创建新的 ChildrenMenu 对象，设置 tag
+    final tag = children.tag ?? const Uuid().v4();
+    var updatedChildren = children.copyWith(tag: tag);
+
+    // 将所有已打开菜单的选中状态设为 false
+    final keys = userService.openMenus.keys.toList();
+    for (var key in keys) {
+      final element = userService.openMenus[key];
+      if (element != null) {
+        userService.openMenus[key] = element.copyWith(selected: false);
+      }
     }
-    children.selected = true;
+
+    // 更新当前菜单为选中状态
+    updatedChildren = updatedChildren.copyWith(selected: true);
+
+    // 如果没有提供菜单，则查找包含此子菜单的菜单
     menu ??= shellMenuController.userService.menus.singleWhere(
       (element) => element.children!
-          .any((child) => child.component == children.component),
+          .any((child) => child.component == updatedChildren.component),
     );
+
+    // 更新openMenus中的菜单项
+    if (tag != null) {
+      userService.openMenus[tag] = updatedChildren;
+    }
 
     update();
     Get.toNamed(
-      '${menu.path}/${children.path}',
+      '${menu.path}/${updatedChildren.path}',
       id: 1,
-      arguments: children.tag,
-      parameters: {'tag': children.tag!},
+      arguments: tag,
+      parameters: {'tag': tag},
     );
   }
 }
