@@ -36,38 +36,59 @@ class ApeVoloBackgroundView extends GetView<ApeVoloBackgroundController> {
     return AnimatedBuilder(
       animation: controller.animationController,
       builder: (context, child) {
-        return CustomPaint(
-          painter: ApeVoloBackgroundPainter(
-            primaryColor: primaryColor.withOpacity(isDarkMode ? 0.3 : 0.2),
-            secondaryColor: secondaryColor.withOpacity(isDarkMode ? 0.3 : 0.2),
-            tertiaryColor:
-                tertiaryColorValue.withOpacity(isDarkMode ? 0.25 : 0.15),
-            backgroundColor: backgroundColor,
-            isDarkMode: isDarkMode,
-            animationValue: controller.animationController.value,
-            floatingValue: controller.floatingAnimation.value,
-            rotationValue: controller.rotationAnimation.value,
-            letterBasePositions: controller.letterBasePositions,
-            positionsInitialized: controller.positionsInitialized,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  backgroundColor,
-                  backgroundColor.withOpacity(0.9),
-                  Theme.of(context)
-                      .colorScheme
-                      .surfaceVariant
-                      .withOpacity(isDarkMode ? 0.7 : 0.6),
-                ],
-                stops: const [0.0, 0.5, 1.0],
-              ),
-            ),
-          ),
-        );
+        // 使用一个独立的响应式构建器处理响应式状态更新
+        return GetBuilder<ApeVoloBackgroundController>(
+            id: 'background_positions',
+            builder: (_) {
+              // 当背景第一次绘制完成后，标记位置已初始化
+              if (!controller.positionsInitialized.value &&
+                  controller.letterBasePositions.value.isNotEmpty &&
+                  controller.circleBasePositions.value.isNotEmpty &&
+                  controller.rectangleBasePositions.value.isNotEmpty) {
+                controller.positionsInitialized.value = true;
+              }
+
+              return CustomPaint(
+                painter: ApeVoloBackgroundPainter(
+                  primaryColor:
+                      primaryColor.withOpacity(isDarkMode ? 0.3 : 0.2),
+                  secondaryColor:
+                      secondaryColor.withOpacity(isDarkMode ? 0.3 : 0.2),
+                  tertiaryColor:
+                      tertiaryColorValue.withOpacity(isDarkMode ? 0.25 : 0.15),
+                  backgroundColor: backgroundColor,
+                  isDarkMode: isDarkMode,
+                  animationValue: controller.animationController.value,
+                  floatingValue: controller.floatingAnimation.value,
+                  rotationValue: controller.rotationAnimation.value,
+                  letterBasePositions: controller.letterBasePositions.value,
+                  circleBasePositions: controller.circleBasePositions.value,
+                  rectangleBasePositions:
+                      controller.rectangleBasePositions.value,
+                  positionsInitialized: controller.positionsInitialized.value,
+                  circleMovement: controller.circleAmplitude,
+                  rectangleMovement: controller.rectangleAmplitude,
+                  letterMovement: controller.letterAmplitude,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        backgroundColor,
+                        backgroundColor.withOpacity(0.9),
+                        Theme.of(context)
+                            .colorScheme
+                            .surfaceVariant
+                            .withOpacity(isDarkMode ? 0.7 : 0.6),
+                      ],
+                      stops: const [0.0, 0.5, 1.0],
+                    ),
+                  ),
+                ),
+              );
+            });
       },
     );
   }
@@ -83,7 +104,12 @@ class ApeVoloBackgroundPainter extends CustomPainter {
   final double floatingValue; // 浮动值
   final double rotationValue; // 旋转角度
   final Map<int, Map<String, double>> letterBasePositions;
+  final Map<int, Map<String, double>> circleBasePositions;
+  final Map<int, Map<String, double>> rectangleBasePositions;
   final bool positionsInitialized;
+  final CircleMovementAmplitude circleMovement;
+  final RectangleMovementAmplitude rectangleMovement;
+  final LetterMovementAmplitude letterMovement;
 
   ApeVoloBackgroundPainter({
     required this.primaryColor,
@@ -95,7 +121,12 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     required this.floatingValue,
     required this.rotationValue,
     required this.letterBasePositions,
+    required this.circleBasePositions,
+    required this.rectangleBasePositions,
     required this.positionsInitialized,
+    required this.circleMovement,
+    required this.rectangleMovement,
+    required this.letterMovement,
   });
 
   @override
@@ -119,15 +150,54 @@ class ApeVoloBackgroundPainter extends CustomPainter {
 
   void _drawFloatingCircles(Canvas canvas, Size size, math.Random random) {
     final circleCount = 12;
+    final safeMargin = size.width * 0.1;
+    final availableWidth = size.width - safeMargin * 2;
+    final availableHeight = size.height - safeMargin * 2;
+
+    // 初始化圆形的位置信息，如果尚未初始化
+    if (!positionsInitialized || circleBasePositions.isEmpty) {
+      for (int i = 0; i < circleCount; i++) {
+        // 为每个圆形创建一个确定性随机数生成器
+        final circleRandom = math.Random(123 + i * 5);
+
+        // 生成基础位置，在整个应用生命周期内保持不变
+        circleBasePositions[i] = {
+          'baseX': safeMargin + circleRandom.nextDouble() * availableWidth,
+          'baseY': safeMargin + circleRandom.nextDouble() * availableHeight,
+          'seed1': circleRandom.nextDouble() * 10,
+          'seed2': circleRandom.nextDouble() * 10,
+          'seed3': circleRandom.nextDouble() * 10,
+          'baseRadius': 20.0 + circleRandom.nextDouble() * 60.0,
+        };
+      }
+    }
 
     for (int i = 0; i < circleCount; i++) {
-      final randomX = random.nextDouble() * size.width;
-      final randomY = random.nextDouble() * size.height;
-      final randomRadius = 20.0 + random.nextDouble() * 60.0;
+      if (!circleBasePositions.containsKey(i)) continue;
 
-      final floatOffsetX = math.sin((animationValue * 2 * math.pi) + i) * 20.0;
-      final floatOffsetY =
-          math.cos((animationValue * 2 * math.pi) + i * 1.5) * 20.0;
+      // 使用已初始化的位置信息
+      final baseX = circleBasePositions[i]!['baseX']!;
+      final baseY = circleBasePositions[i]!['baseY']!;
+      final seed1 = circleBasePositions[i]!['seed1']!;
+      final seed2 = circleBasePositions[i]!['seed2']!;
+      final seed3 = circleBasePositions[i]!.containsKey('seed3')
+          ? circleBasePositions[i]!['seed3']!
+          : 0.0;
+      final baseRadius = circleBasePositions[i]!['baseRadius']!;
+
+      // 从控制器的配置获取动画幅度
+      final circleMovement = this.circleMovement;
+
+      // 使用与字母类似的多频率动画
+      final lowFreqX = math.sin((animationValue * 0.6 * math.pi) + seed1) *
+          (availableWidth * circleMovement.lowFreqX);
+      final lowFreqY = math.cos((animationValue * 0.4 * math.pi) + seed2) *
+          (availableHeight * circleMovement.lowFreqY);
+
+      final midFreqX = math.sin((animationValue * 1.2 * math.pi) + seed3) *
+          (availableWidth * circleMovement.midFreqX);
+      final midFreqY = math.cos((animationValue * 1.4 * math.pi) + seed1) *
+          (availableHeight * circleMovement.midFreqY);
 
       final color = i % 3 == 0
           ? primaryColor
@@ -140,29 +210,67 @@ class ApeVoloBackgroundPainter extends CustomPainter {
         ..color = color.withOpacity(opacity)
         ..style = PaintingStyle.fill;
 
-      canvas.drawCircle(Offset(randomX + floatOffsetX, randomY + floatOffsetY),
-          randomRadius * (0.8 + floatingValue * 0.4), paint);
+      canvas.drawCircle(
+          Offset(baseX + lowFreqX + midFreqX, baseY + lowFreqY + midFreqY),
+          baseRadius * (0.8 + floatingValue * 0.4),
+          paint);
     }
   }
 
   void _drawFloatingRectangles(Canvas canvas, Size size, math.Random random) {
     final rectCount = 8;
+    final safeMargin = size.width * 0.1;
+    final availableWidth = size.width - safeMargin * 2;
+    final availableHeight = size.height - safeMargin * 2;
+
+    // 初始化矩形的位置信息，如果尚未初始化
+    if (!positionsInitialized || rectangleBasePositions.isEmpty) {
+      for (int i = 0; i < rectCount; i++) {
+        // 为每个矩形创建一个确定性随机数生成器
+        final rectRandom = math.Random(456 + i * 7);
+
+        // 生成基础位置，在整个应用生命周期内保持不变
+        rectangleBasePositions[i] = {
+          'baseX': safeMargin + rectRandom.nextDouble() * availableWidth,
+          'baseY': safeMargin + rectRandom.nextDouble() * availableHeight,
+          'seed1': rectRandom.nextDouble() * 10,
+          'seed2': rectRandom.nextDouble() * 10,
+          'seed3': rectRandom.nextDouble() * 10,
+          'baseWidth': 40.0 + rectRandom.nextDouble() * 80.0,
+          'baseHeight': 40.0 + rectRandom.nextDouble() * 80.0,
+          'rotationFactor':
+              0.2 + rectRandom.nextDouble() * 0.2 * (i % 2 == 0 ? 1 : -1),
+        };
+      }
+    }
 
     for (int i = 0; i < rectCount; i++) {
-      final randomX = random.nextDouble() * size.width;
-      final randomY = random.nextDouble() * size.height;
+      if (!rectangleBasePositions.containsKey(i)) continue;
 
-      final width = 40.0 + random.nextDouble() * 80.0;
-      final height = 40.0 + random.nextDouble() * 80.0;
+      // 使用已初始化的位置信息
+      final baseX = rectangleBasePositions[i]!['baseX']!;
+      final baseY = rectangleBasePositions[i]!['baseY']!;
+      final seed1 = rectangleBasePositions[i]!['seed1']!;
+      final seed2 = rectangleBasePositions[i]!['seed2']!;
+      final seed3 = rectangleBasePositions[i]!.containsKey('seed3')
+          ? rectangleBasePositions[i]!['seed3']!
+          : 0.0;
+      final baseWidth = rectangleBasePositions[i]!['baseWidth']!;
+      final baseHeight = rectangleBasePositions[i]!['baseHeight']!;
+      final rotationFactor = rectangleBasePositions[i]!['rotationFactor']!;
 
-      final floatOffsetX =
-          math.cos((animationValue * 2 * math.pi) + i * 0.7) * 25.0;
-      final floatOffsetY =
-          math.sin((animationValue * 2 * math.pi) + i * 1.2) * 25.0;
+      // 使用与字母类似的多频率动画
+      final lowFreqX = math.sin((animationValue * 0.5 * math.pi) + seed1) *
+          (availableWidth * rectangleMovement.lowFreqX);
+      final lowFreqY = math.cos((animationValue * 0.3 * math.pi) + seed2) *
+          (availableHeight * rectangleMovement.lowFreqY);
 
-      final angle = rotationValue *
-          (0.2 + random.nextDouble() * 0.2) *
-          (i % 2 == 0 ? 1 : -1);
+      final midFreqX = math.cos((animationValue * 1.1 * math.pi) + seed3) *
+          (availableWidth * rectangleMovement.midFreqX);
+      final midFreqY = math.sin((animationValue * 1.5 * math.pi) + seed1) *
+          (availableHeight * rectangleMovement.midFreqY);
+
+      final angle = rotationValue * rotationFactor;
 
       final color = i % 3 == 0
           ? secondaryColor
@@ -177,13 +285,14 @@ class ApeVoloBackgroundPainter extends CustomPainter {
 
       canvas.save();
 
-      canvas.translate(randomX + floatOffsetX, randomY + floatOffsetY);
+      canvas.translate(
+          baseX + lowFreqX + midFreqX, baseY + lowFreqY + midFreqY);
       canvas.rotate(angle);
 
       final rect = Rect.fromCenter(
         center: Offset.zero,
-        width: width * (0.9 + floatingValue * 0.2),
-        height: height * (0.9 + floatingValue * 0.2),
+        width: baseWidth * (0.9 + floatingValue * 0.2),
+        height: baseHeight * (0.9 + floatingValue * 0.2),
       );
 
       canvas.drawRRect(
@@ -221,6 +330,8 @@ class ApeVoloBackgroundPainter extends CustomPainter {
     }
 
     for (int i = 0; i < letterCount; i++) {
+      if (!letterBasePositions.containsKey(i)) continue;
+
       // 使用已初始化的位置信息
       final baseX = letterBasePositions[i]!['baseX']!;
       final baseY = letterBasePositions[i]!['baseY']!;
@@ -230,19 +341,19 @@ class ApeVoloBackgroundPainter extends CustomPainter {
       final baseSize = letterBasePositions[i]!['baseSize']!;
 
       final lowFreqX = math.sin((animationValue * 0.7 * math.pi) + seed1) *
-          (availableWidth * 0.3);
+          (availableWidth * letterMovement.lowFreqX);
       final lowFreqY = math.cos((animationValue * 0.5 * math.pi) + seed2) *
-          (availableHeight * 0.3);
+          (availableHeight * letterMovement.lowFreqY);
 
       final midFreqX = math.sin((animationValue * 1.5 * math.pi) + seed3) *
-          (availableWidth * 0.1);
+          (availableWidth * letterMovement.midFreqX);
       final midFreqY = math.cos((animationValue * 1.3 * math.pi) + seed1) *
-          (availableHeight * 0.1);
+          (availableHeight * letterMovement.midFreqY);
 
       final highFreqX = math.sin((animationValue * 5.0 * math.pi) + seed2) *
-          (availableWidth * 0.02);
+          (availableWidth * letterMovement.highFreqX);
       final highFreqY = math.cos((animationValue * 4.7 * math.pi) + seed3) *
-          (availableHeight * 0.02);
+          (availableHeight * letterMovement.highFreqY);
 
       final posX = baseX + lowFreqX + midFreqX + highFreqX;
       final posY = baseY + lowFreqY + midFreqY + highFreqY;
@@ -455,5 +566,10 @@ class ApeVoloBackgroundPainter extends CustomPainter {
       oldDelegate.floatingValue != floatingValue ||
       oldDelegate.rotationValue != rotationValue ||
       oldDelegate.letterBasePositions != letterBasePositions ||
-      oldDelegate.positionsInitialized != positionsInitialized;
+      oldDelegate.circleBasePositions != circleBasePositions ||
+      oldDelegate.rectangleBasePositions != rectangleBasePositions ||
+      oldDelegate.positionsInitialized != positionsInitialized ||
+      oldDelegate.circleMovement != circleMovement ||
+      oldDelegate.rectangleMovement != rectangleMovement ||
+      oldDelegate.letterMovement != letterMovement;
 }

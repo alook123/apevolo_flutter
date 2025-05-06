@@ -1,3 +1,4 @@
+import 'package:apevolo_flutter/app/components/apevolo_background/controllers/apevolo_background_controller.dart';
 import 'package:apevolo_flutter/app/components/captcha/views/captcha_view.dart';
 import 'package:apevolo_flutter/app/components/material_background/views/material_background_view.dart';
 import 'package:apevolo_flutter/app/components/theme_mode/views/theme_mode_view.dart';
@@ -325,20 +326,82 @@ class LoginView extends GetView<LoginController> {
   }
 
   Widget _buildBackgroundSelector(BuildContext context) {
-    return Obx(
-      () => DropdownButton<BackgroundType>(
-        value: controller.backgroundType.value,
-        onChanged: (BackgroundType? newValue) {
-          if (newValue != null) {
-            controller.setBackgroundType(newValue);
-          }
-        },
-        items: BackgroundType.values.map((BackgroundType type) {
-          return DropdownMenuItem<BackgroundType>(
-            value: type,
-            child: Text(type.toString().split('.').last),
-          );
-        }).toList(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Obx(
+          () => DropdownButton<BackgroundType>(
+            value: controller.backgroundType.value,
+            onChanged: (BackgroundType? newValue) {
+              if (newValue != null) {
+                controller.setBackgroundType(newValue);
+              }
+            },
+            items: BackgroundType.values.map((BackgroundType type) {
+              return DropdownMenuItem<BackgroundType>(
+                value: type,
+                child: Text(type.toString().split('.').last),
+              );
+            }).toList(),
+          ),
+        ),
+        // 仅当选择了ApeVolo背景时显示速度控制
+        if (controller.backgroundType.value == BackgroundType.apevolo)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: _buildSpeedController(context),
+          ),
+      ],
+    );
+  }
+
+  // 添加背景动画速度控制器
+  Widget _buildSpeedController(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('动画速度控制', style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.speed_outlined),
+                  tooltip: '加速(2倍)',
+                  onPressed: () {
+                    // 获取控制器并加速动画
+                    final bgController =
+                        Get.find<ApeVoloBackgroundController>();
+                    bgController.speedUpAnimation(2.0);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.replay),
+                  tooltip: '重置到默认速度',
+                  onPressed: () {
+                    // 获取控制器并重置动画
+                    final bgController =
+                        Get.find<ApeVoloBackgroundController>();
+                    bgController.resetAnimationToDefault();
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.slow_motion_video),
+                  tooltip: '减速(2倍)',
+                  onPressed: () {
+                    // 获取控制器并减速动画
+                    final bgController =
+                        Get.find<ApeVoloBackgroundController>();
+                    bgController.slowDownAnimation(2.0);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
