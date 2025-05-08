@@ -1,56 +1,32 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'action_result_vm.g.dart';
+part 'action_result_vm.freezed.dart';
 
 /// 通用API响应结果包装类
-@JsonSerializable(genericArgumentFactories: true)
-class ActionResultVm<T> {
-  /// 是否成功
-  final bool? success;
+@Freezed(genericArgumentFactories: true)
+abstract class ActionResultVm<T> with _$ActionResultVm<T> {
+  const factory ActionResultVm({
+    /// 是否成功
+    bool? success,
 
-  /// 消息
-  final String? message;
+    /// 消息
+    String? message,
 
-  /// 错误代码
-  final int? code;
+    /// 错误代码
+    int? code,
 
-  /// 返回数据
-  final T? result;
+    /// 返回数据
+    T? result,
 
-  /// 时间戳
-  final int? timestamp;
-
-  ActionResultVm({
-    this.success,
-    this.message,
-    this.code,
-    this.result,
-    this.timestamp,
-  });
+    /// 时间戳
+    int? timestamp,
+  }) = _ActionResultVm;
 
   factory ActionResultVm.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
   ) =>
       _$ActionResultVmFromJson(json, fromJsonT);
-
-  Map<String, dynamic> toJson(Object? Function(T value) toJsonT) =>
-      _$ActionResultVmToJson(this, toJsonT);
-
-  /// 提供一个复制方法，用于创建ActionResultVm对象的修改副本
-  ActionResultVm<T> copyWith({
-    bool? success,
-    String? message,
-    int? code,
-    T? result,
-    int? timestamp,
-  }) {
-    return ActionResultVm<T>(
-      success: success ?? this.success,
-      message: message ?? this.message,
-      code: code ?? this.code,
-      result: result ?? this.result,
-      timestamp: timestamp ?? this.timestamp,
-    );
-  }
 }

@@ -14,32 +14,6 @@ abstract class MenuProvider {
   /// 创建MenuProvider实例
   factory MenuProvider(Dio dio, {String baseUrl}) = _MenuProvider;
 
-  /// 构建树形菜单
-  ///
-  /// 返回用户可访问的菜单树形结构
-  @GET('/build')
-  Future<List<MenuBuild>> build();
-
-  /// 获取菜单列表
-  ///
-  /// [title] 菜单标题
-  /// [component] 组件路径
-  /// [pageIndex] 当前页码
-  /// [pageSize] 每页行数
-  @GET('/query')
-  Future<ActionResultVm<List<MenuVo>>> query({
-    @Query('Title') String? title,
-    @Query('Component') String? component,
-    @Query('PageIndex') int? pageIndex,
-    @Query('PageSize') int? pageSize,
-  });
-
-  /// 获取单个菜单详情
-  ///
-  /// [id] 菜单ID
-  @GET('/{id}')
-  Future<MenuVo> getById(@Path('id') int id);
-
   /// 新增菜单
   ///
   /// [menu] 菜单信息
@@ -50,7 +24,7 @@ abstract class MenuProvider {
   ///
   /// [menu] 菜单信息
   @PUT('/edit')
-  Future<void> update(@Body() CreateUpdateMenuDto menu);
+  Future<void> edit(@Body() CreateUpdateMenuDto menu);
 
   /// 删除菜单
   ///
@@ -58,17 +32,47 @@ abstract class MenuProvider {
   @DELETE('/delete')
   Future<ActionResultVm> delete(@Body() IdCollection ids);
 
+  /// 构建树形菜单
+  ///
+  /// 返回用户可访问的菜单树形结构
+  @GET('/build')
+  Future<List<MenuBuild>> build();
+
   /// 获取子菜单
   ///
   /// [pid] 父菜单ID
   @GET('/lazy')
-  Future<List<MenuVo>> getLazyMenus(@Query('pid') int pid);
+  Future<List<MenuVo>> lazy(@Query('pid') int pid);
+
+  /// 获取菜单列表
+  ///
+  /// [title] 菜单标题
+  /// [parentId] 父级ID
+  /// [createTime] 创建时间：开始[0]--结束[1]
+  @GET('/query')
+  Future<ActionResultVm<List<MenuVo>>> query({
+    @Query('Title') String? title,
+    @Query('ParentId') int? parentId,
+    @Query('CreateTime') List<DateTime>? createTime,
+  });
+
+  /// 导出菜单
+  ///
+  /// [title] 菜单标题
+  /// [parentId] 父级ID
+  /// [createTime] 创建时间：开始[0]--结束[1]
+  @GET('/download')
+  Future<ActionResultVm<List<MenuVo>>> download({
+    @Query('Title') String? title,
+    @Query('ParentId') int? parentId,
+    @Query('CreateTime') List<DateTime>? createTime,
+  });
 
   /// 获取同级与上级菜单
   ///
   /// [ids] 菜单ID集合
   @GET('/superior')
-  Future<List<MenuVo>> getSuperior(@Query('ids') List<int> ids);
+  Future<List<MenuVo>> getSuperiors(@Query('ids') List<int> ids);
 
   /// 获取子菜单
   ///
