@@ -1,4 +1,5 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login.dart';
+import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/token.dart';
 import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/api_client.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:dio/dio.dart';
