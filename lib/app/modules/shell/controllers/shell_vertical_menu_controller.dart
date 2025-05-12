@@ -1,14 +1,14 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/auth_provider.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/menu_provider.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/modules/auth_rest_client.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/modules/menu_rest_client.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:get/get.dart';
 
 class ShellVerticalMenuController extends GetxController {
   final UserService userService = Get.find<UserService>();
-  final AuthProvider authProvider = Get.find<AuthProvider>();
-  final MenuProvider menuProvider = Get.find<MenuProvider>();
+  final AuthRestClient authRestClient = Get.find<AuthRestClient>();
+  final MenuRestClient menuRestClient = Get.find<MenuRestClient>();
 
   ///打开过的菜单
   final RxMap<String, (ChildrenMenu children, bool selected)> openMenus =
@@ -34,7 +34,7 @@ class ShellVerticalMenuController extends GetxController {
   }
 
   Future<void> onLogout() async {
-    await authProvider.logout();
+    await authRestClient.logout();
     Get.offAndToNamed(Routes.LOGIN);
   }
 

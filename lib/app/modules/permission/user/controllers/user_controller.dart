@@ -1,14 +1,14 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/user/user_query_model.dart';
 import 'package:apevolo_flutter/app/data/models/apevolo_models/user/user_query_request_model.dart';
 import 'package:apevolo_flutter/app/modules/permission/user/controllers/user_search_controller.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/dio_service.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/user_provider.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/dio_service.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/modules/user_rest_client.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class UserController extends GetxController {
-  final UserProvider userProvider =
-      Get.put<UserProvider>(UserProvider(Get.find<DioService>().dio));
+  final UserRestClient userRestClient =
+      Get.put<UserRestClient>(UserRestClient(Get.find<DioService>().dio));
 
   final UserSearchController userSearchController =
       Get.put(UserSearchController(), tag: Get.arguments);
@@ -69,7 +69,7 @@ class UserController extends GetxController {
     request.enabled = enabled.value;
 
     // 从 UserQueryRequest 对象中提取参数，通过 URL 参数方式传递
-    await userProvider
+    await userRestClient
         .query(
       request.id,
       request.deptId,

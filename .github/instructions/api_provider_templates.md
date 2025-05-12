@@ -1,13 +1,13 @@
-# API Client 与 模型生成模板
+# API RestClient 与 模型生成模板
 
-本文档提供了在 Apevolo Flutter 项目中创建 API Client 和相关模型的标准模板和最佳实践。
+本文档提供了在 Apevolo Flutter 项目中创建 API RestClient 和相关模型的标准模板和最佳实践。
 
 ## 目录
 
 1. [工作流程](#工作流程)
 2. [命名规范](#命名规范)
 3. [模型模板](#模型模板)
-4. [Provider 模板](#provider-模板)
+4. [RestClient 模板](#api-restclient-模板)
 5. [常见请求类型](#常见请求类型)
 6. [代码生成](#代码生成)
 7. [最佳实践](#最佳实践)
@@ -35,13 +35,13 @@ models/apevolo_models/{entity_name}/{specific_model_name}.dart
 - 查询模型: `{entity_name}_query_model.dart`
 - 子模型组件: `{entity_name}_{component}_model.dart`
 
-### API Provider
+### API RestClient
 
 ```
-providers/apevolo_com/modules/{entity_name}_provider.dart
+providers/apevolo_com/modules/{entity_name}_rest_client.dart
 ```
 
-类名: `{Entity}Provider`
+类名: `{Entity}RestClient`
 
 ## 模型模板
 
@@ -195,12 +195,12 @@ class {Entity}Content {
 }
 ```
 
-## Provider 模板
+## API RestClient 模板
 
-### 基本 Provider
+### 基本 RestClient
 
 ```dart
-// filepath: /lib/app/data/providers/apevolo_com/modules/{entity_name}_provider.dart
+// filepath: /lib/app/data/providers/apevolo_com/modules/{entity_name}_rest_client.dart
 import 'package:apevolo_flutter/app/data/models/apevolo_models/common/action_result_vm.dart';
 import 'package:apevolo_flutter/app/data/models/apevolo_models/common/id_collection.dart';
 import 'package:apevolo_flutter/app/data/models/apevolo_models/{entity_name}/create_update_{entity_name}_model.dart';
@@ -209,11 +209,11 @@ import 'package:apevolo_flutter/app/data/models/apevolo_models/{entity_name}/{en
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
-part '{entity_name}_provider.g.dart';
+part '{entity_name}_rest_client.g.dart';
 
 @RestApi(baseUrl: '/api/{entity_path}')
-abstract class {Entity}Provider {
-  factory {Entity}Provider(Dio dio, {String baseUrl}) = _{Entity}Provider;
+abstract class {Entity}RestClient {
+  factory {Entity}RestClient(Dio dio, {String baseUrl}) = _{Entity}RestClient;
 
   /// 查询{entity}列表
   @GET('/query')
@@ -410,13 +410,13 @@ class UserResponseModel {
 }
 ```
 
-### 用户 Provider
+### 用户 RestClient
 
 ```dart
-// user_provider.dart
+// user_rest_client.dart
 @RestApi(baseUrl: '/api/user')
-abstract class UserProvider {
-  factory UserProvider(Dio dio, {String baseUrl}) = _UserProvider;
+abstract class UserRestClient {
+  factory UserRestClient(Dio dio, {String baseUrl}) = _UserRestClient;
 
   /// 创建用户
   @POST('/create')

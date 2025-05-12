@@ -1,7 +1,7 @@
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/error_handler.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/interceptors/auth_interceptor.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/interceptors/response_interceptor.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/services/token_service.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/error_handler.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/interceptors/auth_interceptor.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/interceptors/response_interceptor.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/services/token_service.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';

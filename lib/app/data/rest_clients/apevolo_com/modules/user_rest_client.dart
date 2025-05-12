@@ -7,11 +7,11 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'dart:io';
 
-part 'user_provider.g.dart';
+part 'user_rest_client.g.dart';
 
 @RestApi(baseUrl: '/api/user')
-abstract class UserProvider {
-  factory UserProvider(Dio dio, {String baseUrl}) = _UserProvider;
+abstract class UserRestClient {
+  factory UserRestClient(Dio dio, {String baseUrl}) = _UserRestClient;
 
   /// 创建用户
   @POST('/create')

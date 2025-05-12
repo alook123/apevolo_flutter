@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/auth_provider.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/index.dart';
 import 'package:apevolo_flutter/app/utilities/logger_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class CaptchaController extends GetxController with StateMixin {
-  final AuthProvider _provider = Get.find<AuthProvider>();
+  final AuthRestClient _provider = Get.find<AuthRestClient>();
 
   late String captchaId;
 

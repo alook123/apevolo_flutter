@@ -1,5 +1,5 @@
 import 'package:apevolo_flutter/app/controllers/auth_binding.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/dio_service.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/dio_service.dart';
 import 'package:apevolo_flutter/app/service/system_service.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:apevolo_flutter/app/theme/dart_theme.dart';

@@ -10,9 +10,9 @@ export 'base/interceptors/response_interceptor.dart';
 export 'services/token_service.dart';
 
 // API提供者导出
-export 'modules/auth_provider.dart';
-export 'modules/menu_provider.dart';
-export 'modules/user_provider.dart';
+export 'modules/auth_rest_client.dart';
+export 'modules/menu_rest_client.dart';
+export 'modules/user_rest_client.dart';
 
 /// apevolo_com API模块
 /// 

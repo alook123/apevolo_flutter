@@ -1,5 +1,5 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/auth_provider.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/modules/auth_rest_client.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:encrypt/encrypt.dart';
@@ -12,7 +12,7 @@ import 'package:apevolo_flutter/app/components/apevolo_background/views/apevolo_
 /// 负责处理所有认证相关操作：登录、注销等
 class AuthController extends GetxController {
   final UserService _userService = Get.find<UserService>();
-  final AuthProvider _authProvider = Get.find<AuthProvider>();
+  final AuthRestClient _authRestClient = Get.find<AuthRestClient>();
 
   // 控制加载状态
   final RxBool isLoggingOut = false.obs;
@@ -74,7 +74,7 @@ class AuthController extends GetxController {
       String passwordBase64 = _encrypter!.encrypt(password).base64;
 
       // 调用登录API
-      final loginResult = await _authProvider.login(
+      final loginResult = await _authRestClient.login(
         username,
         passwordBase64,
         captchaText,
@@ -133,7 +133,7 @@ class AuthController extends GetxController {
       if (_userService.loginInfo.value?.token != null) {
         try {
           // 调用后端API注销，可能需要根据具体API调整
-          await _authProvider.logout();
+          await _authRestClient.logout();
         } catch (e) {
           // 即使服务器注销失败，仍然继续清除本地数据
           if (kDebugMode) {

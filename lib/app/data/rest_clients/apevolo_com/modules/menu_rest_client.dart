@@ -6,13 +6,13 @@ import 'package:apevolo_flutter/app/data/models/apevolo_models/common/id_collect
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
-part 'menu_provider.g.dart';
+part 'menu_rest_client.g.dart';
 
-/// 菜单相关API提供者
+/// 菜单相关API客户端
 @RestApi(baseUrl: '/api/menu')
-abstract class MenuProvider {
-  /// 创建MenuProvider实例
-  factory MenuProvider(Dio dio, {String baseUrl}) = _MenuProvider;
+abstract class MenuRestClient {
+  /// 创建MenuRestClient实例
+  factory MenuRestClient(Dio dio, {String baseUrl}) = _MenuRestClient;
 
   /// 新增菜单
   ///

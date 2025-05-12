@@ -1,6 +1,6 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_login.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/error_handler.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/services/token_service.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/error_handler.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/services/token_service.dart';
 import 'package:apevolo_flutter/app/routes/app_pages.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:dio/dio.dart';

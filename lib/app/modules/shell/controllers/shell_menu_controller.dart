@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:apevolo_flutter/app/data/models/apevolo_models/menu/menu_build_model.dart';
-import 'package:apevolo_flutter/app/data/providers/apevolo_com/modules/menu_provider.dart';
+import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/modules/menu_rest_client.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:apevolo_flutter/app/utilities/logger_utils.dart';
 import 'package:flutter/foundation.dart';
@@ -10,7 +10,7 @@ import 'package:uuid/uuid.dart';
 
 class ShellMenuController extends GetxController with StateMixin {
   final UserService userService = Get.find<UserService>();
-  final MenuProvider menuProvider = Get.find<MenuProvider>();
+  final MenuRestClient menuRestClient = Get.find<MenuRestClient>();
 
   @override
   Future<void> onInit() async {
@@ -30,7 +30,7 @@ class ShellMenuController extends GetxController with StateMixin {
 
   /// 加载菜单
   Future<void> onLoadMenu() async {
-    menuProvider.build().then((value) {
+    menuRestClient.build().then((value) {
       userService.menus.value = value;
       change(userService.menus, status: RxStatus.success());
     }).onError((error, stackTrace) {
