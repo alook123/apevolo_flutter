@@ -1,109 +1,79 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'auth_user.freezed.dart';
 part 'auth_user.g.dart';
 
-@JsonSerializable()
-class AuthUser {
-  final UserDetail user;
-  final List<String> roles;
-  final List<String> dataScopes;
+@freezed
+abstract class AuthUser with _$AuthUser {
+  const factory AuthUser({
+    required UserDetail user,
+    required List<String> roles,
+    required List<String> dataScopes,
+  }) = _AuthUser;
 
-  AuthUser({
-    required this.user,
-    required this.roles,
-    required this.dataScopes,
-  });
   factory AuthUser.fromJson(Map<String, dynamic> json) =>
       _$AuthUserFromJson(json);
-  Map<String, dynamic> toJson() => _$AuthUserToJson(this);
 }
 
-@JsonSerializable()
-class UserDetail {
-  final String username;
-  final String nickName;
-  final String email;
-  final bool isAdmin;
-  final bool enabled;
-  final String password;
-  final int deptId;
-  final String phone;
-  final String avatarPath;
-  final String gender;
-  final String? passwordReSetTime;
-  final List<Role> roles;
-  final Dept dept;
-  final List<Job> jobs;
-  final int tenantId;
-  final String? tenant;
-  final int id;
-  final String createBy;
-  final String createTime;
-  final String? updateBy;
-  final String? updateTime;
+@freezed
+abstract class UserDetail with _$UserDetail {
+  const factory UserDetail({
+    required String username,
+    required String nickName,
+    required String email,
+    required bool isAdmin,
+    required bool enabled,
+    required String password,
+    required int deptId,
+    required String phone,
+    required String avatarPath,
+    required String gender,
+    String? passwordReSetTime,
+    required List<Role> roles,
+    required Dept dept,
+    required List<Job> jobs,
+    required int tenantId,
+    String? tenant,
+    required int id,
+    required String createBy,
+    required String createTime,
+    String? updateBy,
+    String? updateTime,
+  }) = _UserDetail;
 
-  UserDetail({
-    required this.username,
-    required this.nickName,
-    required this.email,
-    required this.isAdmin,
-    required this.enabled,
-    required this.password,
-    required this.deptId,
-    required this.phone,
-    required this.avatarPath,
-    required this.gender,
-    required this.passwordReSetTime,
-    required this.roles,
-    required this.dept,
-    required this.jobs,
-    required this.tenantId,
-    required this.tenant,
-    required this.id,
-    required this.createBy,
-    required this.createTime,
-    required this.updateBy,
-    required this.updateTime,
-  });
   factory UserDetail.fromJson(Map<String, dynamic> json) =>
       _$UserDetailFromJson(json);
-  Map<String, dynamic> toJson() => _$UserDetailToJson(this);
 }
 
-@JsonSerializable()
-class Role {
-  final int id;
-  final String name;
-  final String permission;
-  final int level;
-  final int dataScopeType;
+@freezed
+abstract class Role with _$Role {
+  const factory Role({
+    required int id,
+    required String name,
+    required String permission,
+    required int level,
+    required int dataScopeType,
+  }) = _Role;
 
-  Role({
-    required this.id,
-    required this.name,
-    required this.permission,
-    required this.level,
-    required this.dataScopeType,
-  });
   factory Role.fromJson(Map<String, dynamic> json) => _$RoleFromJson(json);
-  Map<String, dynamic> toJson() => _$RoleToJson(this);
 }
 
-@JsonSerializable()
-class Dept {
-  final int id;
-  final String name;
+@freezed
+abstract class Dept with _$Dept {
+  const factory Dept({
+    required int id,
+    required String name,
+  }) = _Dept;
 
-  Dept({required this.id, required this.name});
   factory Dept.fromJson(Map<String, dynamic> json) => _$DeptFromJson(json);
-  Map<String, dynamic> toJson() => _$DeptToJson(this);
 }
 
-@JsonSerializable()
-class Job {
-  final int id;
-  final String name;
+@freezed
+abstract class Job with _$Job {
+  const factory Job({
+    required int id,
+    required String name,
+  }) = _Job;
 
-  Job({required this.id, required this.name});
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
-  Map<String, dynamic> toJson() => _$JobToJson(this);
 }
