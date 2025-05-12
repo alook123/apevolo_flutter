@@ -74,7 +74,7 @@ class AuthController extends GetxController {
       String passwordBase64 = _encrypter!.encrypt(password).base64;
 
       // 调用登录API
-      final loginResult = await _authRestClient.login(
+      final AuthLogin loginResult = await _authRestClient.login(
         username,
         passwordBase64,
         captchaText,

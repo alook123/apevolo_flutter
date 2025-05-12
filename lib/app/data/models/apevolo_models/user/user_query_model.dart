@@ -1,4 +1,3 @@
-import 'package:apevolo_flutter/app/data/models/apevolo_models/model_base.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_query_model.g.dart';
@@ -6,7 +5,7 @@ part 'user_query_model.g.dart';
 /// 用户查询结果模型
 /// 用于表示分页查询用户列表的响应数据
 @JsonSerializable()
-class UserQuery extends ModelBase {
+class UserQuery {
   /// 用户列表内容
   List<Content>? content;
 
