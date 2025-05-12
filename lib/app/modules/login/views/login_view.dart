@@ -47,18 +47,12 @@ class LoginView extends GetView<LoginController> {
           Positioned.fill(
             child: Obx(() {
               switch (controller.backgroundType.value) {
-                case BackgroundType.apevolo:
-                  return ApeVoloBackgroundView(
-                    primaryColor: Theme.of(context).colorScheme.primary,
-                    secondaryColor: Theme.of(context).colorScheme.secondary,
-                    tertiaryColor: Theme.of(context).colorScheme.tertiary,
-                  );
                 case BackgroundType.material:
                   return MaterialBackgroundView(
                     primaryColor: Theme.of(context).colorScheme.primary,
                     secondaryColor: Theme.of(context).colorScheme.tertiary,
                   );
-                default:
+                case BackgroundType.apevolo:
                   return ApeVoloBackgroundView(
                     primaryColor: Theme.of(context).colorScheme.primary,
                     secondaryColor: Theme.of(context).colorScheme.secondary,

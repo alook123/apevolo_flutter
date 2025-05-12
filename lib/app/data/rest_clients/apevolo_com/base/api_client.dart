@@ -1,3 +1,4 @@
+import 'package:apevolo_flutter/app/constants/apevolo_constants.dart';
 import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/error_handler.dart';
 import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/interceptors/auth_interceptor.dart';
 import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/interceptors/response_interceptor.dart';
@@ -26,7 +27,7 @@ class ApiClient extends GetxService {
   /// 初始化Dio实例
   void _initDio() {
     final baseOptions = BaseOptions(
-      baseUrl: "http://apevolo.api.alook.life", // 保持HTTP协议
+      baseUrl: ApevoloConstants.baseURL,
       receiveDataWhenStatusError: true,
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
