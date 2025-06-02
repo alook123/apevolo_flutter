@@ -14,7 +14,8 @@ dependencies:
     pointycastle: ^3.7.4
     encrypt: ^5.0.3
     dio: ^5.8.0+1
-    get_storage: ^2.1.1
+    hive: ^2.2.3
+    hive_flutter: ^1.1.0
     darq: 2.0.0
     flutter:
         sdk: flutter

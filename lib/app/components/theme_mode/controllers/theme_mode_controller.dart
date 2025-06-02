@@ -1,7 +1,6 @@
 import 'package:apevolo_flutter/app/service/system_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 class ThemeModeController extends GetxController {
   final SystemService _systemService = Get.find<SystemService>();
@@ -9,7 +8,6 @@ class ThemeModeController extends GetxController {
   ///主题
   final RxString theme = 'system'.obs;
 
-  final GetStorage storage = GetStorage();
   @override
   void onInit() {
     super.onInit();
@@ -18,10 +16,9 @@ class ThemeModeController extends GetxController {
   @override
   Future<void> onReady() async {
     super.onReady();
+    // 根据当前实际主题模式设置
     String value = Get.isDarkMode ? 'dark' : 'light';
-
     theme.value = value;
-    _systemService.themeMode.val = value;
     update();
   }
 
@@ -31,17 +28,16 @@ class ThemeModeController extends GetxController {
   }
 
   Future<void> changeThemeMode() async {
+    // 切换主题模式
     if (Get.isDarkMode) {
-      Get.changeThemeMode(ThemeMode.light);
+      _systemService.themeMode.value = ThemeMode.light;
     } else {
-      Get.changeThemeMode(ThemeMode.dark);
+      _systemService.themeMode.value = ThemeMode.dark;
     }
 
+    // 更新本地状态
     String value = Get.isDarkMode ? 'dark' : 'light';
-
     theme.value = value;
-    _systemService.themeMode.val = value;
-
     update();
   }
 }

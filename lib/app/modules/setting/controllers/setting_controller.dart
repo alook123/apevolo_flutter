@@ -23,7 +23,8 @@ class SettingController extends GetxController {
 
   Future<void> onChangeThemeMode() async {
     Get.changeThemeMode(Get.isDarkMode ? ThemeMode.light : ThemeMode.dark);
-    systemService.themeMode.val = Get.isDarkMode ? 'light' : 'dark';
+    systemService.themeMode.value =
+        Get.isDarkMode ? ThemeMode.light : ThemeMode.dark;
     themeModeText.value = Get.isDarkMode ? '浅色' : '深色';
     update();
   }

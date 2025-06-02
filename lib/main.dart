@@ -1,5 +1,6 @@
 import 'package:apevolo_flutter/app/controllers/auth_binding.dart';
 import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/dio_service.dart';
+import 'package:apevolo_flutter/app/service/storage/hive_storage_service.dart';
 import 'package:apevolo_flutter/app/service/system_service.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:apevolo_flutter/app/theme/dart_theme.dart';
@@ -10,13 +11,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 import 'app/routes/app_pages.dart';
 
 Future<void> main() async {
-  await GetStorage.init();
-  await GetStorage.init('userData');
+  // 初始化Hive存储服务
+  final storageService = HiveStorageService();
+  await storageService.init();
+
+  // 把存储服务注册到Get依赖注入系统中
+  Get.put(storageService, permanent: true);
+
   runApp(
     GetMaterialApp(
       title: "Application",
@@ -40,8 +45,12 @@ Future<void> main() async {
 }
 
 Future<void> onInitialize() async {
-  Get.put(SystemService(), permanent: true);
-  Get.put(UserService(), permanent: true);
+  // 获取已注册的存储服务
+  final storageService = Get.find<HiveStorageService>();
+
+  // 初始化系统和用户服务
+  Get.put(SystemService(storageService), permanent: true);
+  Get.put(UserService(storageService), permanent: true);
   Get.put(DioService(), permanent: true);
 }
 
