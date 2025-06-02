@@ -32,5 +32,12 @@ abstract class Token with _$Token {
 
   /// 从JSON创建Token实例
   /// 用于将服务器返回的JSON数据转换为Token对象
-  factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
+  factory Token.fromJson(Map<String, dynamic> json) {
+    final token = _$TokenFromJson(json);
+    // 如果accessToken为null或空字符串，使用refreshToken
+    if (token.accessToken == null || token.accessToken!.isEmpty) {
+      return token.copyWith(accessToken: token.refreshToken);
+    }
+    return token;
+  }
 }

@@ -1,5 +1,7 @@
-import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/token.dart';
-import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/api_client.dart';
+import 'package:apevolo_flutter/app2/network/apevolo_com/base/api_client.dart';
+import 'package:apevolo_flutter/app2/network/apevolo_com/models/auth/token.dart'
+    show Token;
+import 'package:apevolo_flutter/app2/network/apevolo_com/modules/auth_rest_client.dart';
 import 'package:dio/dio.dart';
 
 /// DioService 类 - 基础Dio服务
@@ -21,6 +23,11 @@ class DioService {
   /// [token] 当前的访问令牌
   /// 返回新的令牌信息
   Future<Token> refreshToken(String token) async {
-    return await apiClient.tokenService.refreshToken(token);
+    try {
+      return await AuthRestClient(dio).refreshToken(token);
+    } catch (error) {
+      // 处理错误
+      throw Exception('Failed to refresh token: $error');
+    }
   }
 }
