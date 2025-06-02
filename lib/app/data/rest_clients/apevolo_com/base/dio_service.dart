@@ -1,6 +1,5 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/token.dart';
 import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/api_client.dart';
-import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response;
 
@@ -8,7 +7,6 @@ import 'package:get/get.dart' hide Response;
 ///
 /// 提供Dio实例和基础网络功能
 class DioService extends GetxService {
-  final UserService userService = Get.find<UserService>();
   late final Dio dio;
   late final ApiClient apiClient;
 
