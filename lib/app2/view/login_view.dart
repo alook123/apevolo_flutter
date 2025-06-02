@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../provider/login_provider.dart';
+import 'package:apevolo_flutter/app2/components/captcha/captcha_view.dart';
+import 'package:apevolo_flutter/app2/components/captcha/captcha_provider.dart';
 // import 'package:apevolo_flutter/app2/components/material_background/views/material_background_view.dart';
 // import 'package:apevolo_flutter/app2/components/apevolo_background/views/apevolo_background_view.dart';
 
@@ -17,6 +19,7 @@ class LoginView extends ConsumerWidget {
     final passwordController = TextEditingController(text: state.password);
     final captchaController = TextEditingController(text: state.captchaText);
     final focusNode = FocusNode();
+    final captchaState = ref.watch(captchaProvider);
 
     // // 背景类型
     // final backgroundTypeIndex = state.backgroundTypeIndex;
@@ -228,7 +231,7 @@ class LoginView extends ConsumerWidget {
                             ],
                           ),
                           const SizedBox(height: 16),
-                          if (state.captchaImage != null)
+                          if (captchaState.isShowing)
                             Row(
                               children: [
                                 Expanded(
@@ -248,19 +251,12 @@ class LoginView extends ConsumerWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 8.0),
-                                GestureDetector(
-                                  onTap: notifier.fetchCaptcha,
-                                  child: Image.memory(
-                                    Uri.parse(state.captchaImage!)
-                                        .data!
-                                        .contentAsBytes(),
-                                    width: 80,
-                                    height: 32,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
+                                // 集成Riverpod版CaptchaView
+                                const CaptchaView(),
                                 IconButton(
-                                  onPressed: notifier.fetchCaptcha,
+                                  onPressed: () => ref
+                                      .read(captchaProvider.notifier)
+                                      .fetchCaptcha(),
                                   icon: const Icon(Icons.refresh),
                                 ),
                               ],

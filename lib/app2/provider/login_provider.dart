@@ -17,9 +17,7 @@ class LoginState {
   final bool showBackgroundSelector; // 是否显示背景选择器（调试模式下）
   final int backgroundTypeIndex; // 背景类型索引
   final bool rememberPassword; // 新增
-  final String captchaText; // 新增
-  final String? captchaImage; // 新增
-  final String? captchaId; // 新增
+  final String captchaText; // 新增：验证码输入内容
 
   LoginState({
     this.username = '',
@@ -33,8 +31,6 @@ class LoginState {
     this.backgroundTypeIndex = 0,
     this.rememberPassword = false, // 新增
     this.captchaText = '', // 新增
-    this.captchaImage,
-    this.captchaId,
   });
 
   LoginState copyWith({
@@ -48,9 +44,7 @@ class LoginState {
     bool? showBackgroundSelector,
     int? backgroundTypeIndex,
     bool? rememberPassword,
-    String? captchaText,
-    String? captchaImage,
-    String? captchaId,
+    String? captchaText, // 新增
   }) {
     return LoginState(
       username: username ?? this.username,
@@ -64,9 +58,7 @@ class LoginState {
           showBackgroundSelector ?? this.showBackgroundSelector,
       backgroundTypeIndex: backgroundTypeIndex ?? this.backgroundTypeIndex,
       rememberPassword: rememberPassword ?? this.rememberPassword,
-      captchaText: captchaText ?? this.captchaText,
-      captchaImage: captchaImage ?? this.captchaImage,
-      captchaId: captchaId ?? this.captchaId,
+      captchaText: captchaText ?? this.captchaText, // 新增
     );
   }
 }
@@ -200,13 +192,10 @@ class LoginNotifier extends StateNotifier<LoginState> {
   Future<void> fetchCaptcha() async {
     try {
       // 假设authNotifier有captcha方法
-      final result = await authNotifier.authRestClient.captcha();
-      state = state.copyWith(
-        captchaImage: result['img'],
-        captchaId: result['captchaId'],
-      );
+      // 这里只保留调用，不再维护 captchaImage/captchaId
+      await authNotifier.authRestClient.captcha();
     } catch (e) {
-      state = state.copyWith(captchaImage: null, captchaId: null);
+      // 捕获异常但不再维护 captchaImage/captchaId
     }
   }
 
@@ -221,8 +210,8 @@ class LoginNotifier extends StateNotifier<LoginState> {
       final success = await authNotifier.login(
         state.username,
         state.password,
-        captchaText ?? state.captchaText,
-        captchaId ?? state.captchaId,
+        "",
+        "",
       );
       if (success) {
         _saveUsernameToHistory(state.username);
