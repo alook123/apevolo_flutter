@@ -10,8 +10,12 @@ import 'package:apevolo_flutter/app2/provider/api/auth_rest_client_provider.dart
 /// CaptchaState - 验证码的状态
 /// 包含图片数据、验证码ID、加载中、错误、是否显示等
 class CaptchaState {
+  /// 验证码图片（base64编码字符串，类型：String?）
+  final String? imgText;
+
   /// 验证码图片（内存数据，类型：Uint8List?）
-  final Uint8List? image;
+  Uint8List? get img =>
+      imgText != null ? base64.decode(imgText!.split(',').last) : null;
 
   /// 验证码ID（类型：String?）
   final String? captchaId;
@@ -27,7 +31,8 @@ class CaptchaState {
   final bool isShowing;
 
   const CaptchaState({
-    this.image,
+    // this.image,
+    this.imgText,
     this.captchaId,
     this.isLoading = false,
     this.error,
@@ -35,20 +40,22 @@ class CaptchaState {
   });
 
   /// 生成一个新的 CaptchaState，允许部分字段变更
-  /// [image] 验证码图片
+  /// [imgText] 验证码图片文本（base64编码字符串）
   /// [captchaId] 验证码ID
   /// [isLoading] 是否加载中
   /// [error] 错误信息
   /// [isShowing] 是否显示验证码
   CaptchaState copyWith({
-    Uint8List? image,
+    // Uint8List? image,
+    String? imgText,
     String? captchaId,
     bool? isLoading,
     String? error,
     bool? isShowing,
   }) {
     return CaptchaState(
-      image: image ?? this.image,
+      // image: image ?? this.image,
+      imgText: imgText ?? this.imgText,
       captchaId: captchaId ?? this.captchaId,
       isLoading: isLoading ?? this.isLoading,
       error: error,
@@ -71,11 +78,8 @@ class CaptchaNotifier extends StateNotifier<AsyncValue<CaptchaState>> {
     state = const AsyncValue.loading();
     try {
       final CaptchaResponse result = await authRestClient.captcha();
-      final Uint8List? image = result.img.isNotEmpty
-          ? base64.decode(result.img.split(',').last)
-          : null;
       state = AsyncValue.data(CaptchaState(
-        image: image,
+        imgText: result.img,
         captchaId: result.captchaId,
         isLoading: false,
         isShowing: result.showCaptcha ?? false,

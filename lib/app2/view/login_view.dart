@@ -259,7 +259,7 @@ class LoginView extends ConsumerWidget {
                                 Row(
                                   children: [
                                     const CaptchaView(),
-                                    const SizedBox(width: 16.0),
+                                    const SizedBox(width: 8.0),
                                     IconButton(
                                       onPressed: () => ref
                                           .read(captchaProvider.notifier)

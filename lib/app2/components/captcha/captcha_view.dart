@@ -8,6 +8,7 @@ class CaptchaView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(captchaProvider);
     final notifier = ref.read(captchaProvider.notifier);
+
     return state.when(
       loading: () => const CircularProgressIndicator(),
       error: (err, _) {
@@ -47,11 +48,13 @@ class CaptchaView extends ConsumerWidget {
       data: (data) {
         // 错误和 loading 状态始终显示，只有 data 且 isShowing=false 时才隐藏
         if (!data.isShowing) return const SizedBox.shrink();
-        if (data.image == null) return const Text('验证码为空！');
+        if (data.img == null) return const Text('验证码为空！');
         return GestureDetector(
           onTap: notifier.fetchCaptcha,
-          child: Image.memory(data.image!,
-              width: 80, height: 32, fit: BoxFit.contain),
+          child: Image.memory(
+            data.img!,
+            fit: BoxFit.contain,
+          ),
         );
       },
     );
