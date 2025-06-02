@@ -1,7 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apevolo_flutter/app2/network/apevolo_com/models/auth/auth_login.dart';
+import 'package:apevolo_flutter/app2/network/apevolo_com/models/menu/menu_build_model.dart';
 import '../storage/hive_storage_service.dart';
-import '../../app/data/models/apevolo_models/auth/auth_login.dart';
-import '../../app/data/models/apevolo_models/menu/menu_build_model.dart';
 
 /// 用户服务，负责用户相关数据的本地存储与读取
 ///

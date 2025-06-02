@@ -231,8 +231,13 @@ class LoginView extends ConsumerWidget {
                             ],
                           ),
                           const SizedBox(height: 16),
-                          if (captchaState.isShowing)
-                            Row(
+                          // 验证码区域（只负责输入框，图片/加载/错误交给 CaptchaView）
+                          Visibility(
+                            visible: captchaState.maybeWhen(
+                              data: (data) => data.isShowing,
+                              orElse: () => true,
+                            ),
+                            child: Row(
                               children: [
                                 Expanded(
                                   child: TextFormField(
@@ -251,16 +256,21 @@ class LoginView extends ConsumerWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 8.0),
-                                // 集成Riverpod版CaptchaView
-                                const CaptchaView(),
-                                IconButton(
-                                  onPressed: () => ref
-                                      .read(captchaProvider.notifier)
-                                      .fetchCaptcha(),
-                                  icon: const Icon(Icons.refresh),
+                                Row(
+                                  children: [
+                                    const CaptchaView(),
+                                    const SizedBox(width: 16.0),
+                                    IconButton(
+                                      onPressed: () => ref
+                                          .read(captchaProvider.notifier)
+                                          .fetchCaptcha(),
+                                      icon: const Icon(Icons.refresh),
+                                    )
+                                  ],
                                 ),
                               ],
                             ),
+                          ),
                           const SizedBox(height: 16.0),
                           if (state.error != null && state.error!.isNotEmpty)
                             Column(

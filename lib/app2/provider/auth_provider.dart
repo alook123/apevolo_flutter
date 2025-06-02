@@ -1,7 +1,7 @@
+import 'package:apevolo_flutter/app2/network/apevolo_com/modules/auth_rest_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../service/user_service.dart';
 import 'user_service_provider.dart';
-import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/modules/auth_rest_client.dart';
 import 'api/auth_rest_client_provider.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/services.dart';
