@@ -84,6 +84,34 @@ class UserService {
     await _storage.write('settings', 'username_history', history);
   }
 
+  /// 记住密码：保存或移除指定用户名的密码
+  Future<void> setRememberPassword(
+      bool remember, String username, String password) async {
+    final boxKey = 'remember_passwords';
+    Map<String, String> map = {};
+    final raw = _storage.read<Map>(boxKey, 'data');
+    if (raw != null) {
+      map = Map<String, String>.from(raw);
+    }
+    if (remember) {
+      map[username] = password;
+    } else {
+      map.remove(username);
+    }
+    await _storage.write(boxKey, 'data', map);
+  }
+
+  /// 获取记住的密码
+  String? getRememberedPassword(String username) {
+    final boxKey = 'remember_passwords';
+    final raw = _storage.read<Map>(boxKey, 'data');
+    if (raw != null) {
+      final map = Map<String, String>.from(raw);
+      return map[username];
+    }
+    return null;
+  }
+
   /// 清除所有用户相关本地数据
   Future<void> clearUserInfo() async {
     await _storage.delete(_userBoxName, 'loginInfo');

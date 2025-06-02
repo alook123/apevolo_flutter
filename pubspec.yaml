@@ -37,7 +37,7 @@ dev_dependencies:
         sdk: flutter
     retrofit_generator: ^9.1.9
     build_runner: ^2.4.15
-    json_serializable: ^6.9.0
+    json_serializable: ^6.9.5
     freezed: ^3.0.6
     build_web_compilers: ^4.1.4
     riverpod_generator: ^2.6.5

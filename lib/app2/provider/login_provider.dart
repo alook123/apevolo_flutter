@@ -16,6 +16,10 @@ class LoginState {
   final String currentSuggestion; // 当前用户名自动补全建议
   final bool showBackgroundSelector; // 是否显示背景选择器（调试模式下）
   final int backgroundTypeIndex; // 背景类型索引
+  final bool rememberPassword; // 新增
+  final String captchaText; // 新增
+  final String? captchaImage; // 新增
+  final String? captchaId; // 新增
 
   LoginState({
     this.username = '',
@@ -27,6 +31,10 @@ class LoginState {
     this.currentSuggestion = '',
     this.showBackgroundSelector = false,
     this.backgroundTypeIndex = 0,
+    this.rememberPassword = false, // 新增
+    this.captchaText = '', // 新增
+    this.captchaImage,
+    this.captchaId,
   });
 
   LoginState copyWith({
@@ -39,6 +47,10 @@ class LoginState {
     String? currentSuggestion,
     bool? showBackgroundSelector,
     int? backgroundTypeIndex,
+    bool? rememberPassword,
+    String? captchaText,
+    String? captchaImage,
+    String? captchaId,
   }) {
     return LoginState(
       username: username ?? this.username,
@@ -51,6 +63,10 @@ class LoginState {
       showBackgroundSelector:
           showBackgroundSelector ?? this.showBackgroundSelector,
       backgroundTypeIndex: backgroundTypeIndex ?? this.backgroundTypeIndex,
+      rememberPassword: rememberPassword ?? this.rememberPassword,
+      captchaText: captchaText ?? this.captchaText,
+      captchaImage: captchaImage ?? this.captchaImage,
+      captchaId: captchaId ?? this.captchaId,
     );
   }
 }
@@ -168,18 +184,51 @@ class LoginNotifier extends StateNotifier<LoginState> {
     }
   }
 
+  /// 设置记住密码
+  void setRememberPassword(bool value) {
+    state = state.copyWith(rememberPassword: value);
+    userService.setRememberPassword(value, state.username, state.password);
+  }
+
+  void loadRememberedPassword() {
+    final result = userService.getRememberedPassword(state.username);
+    if (result != null) {
+      state = state.copyWith(password: result);
+    }
+  }
+
+  Future<void> fetchCaptcha() async {
+    try {
+      // 假设authNotifier有captcha方法
+      final result = await authNotifier.authRestClient.captcha();
+      state = state.copyWith(
+        captchaImage: result['img'],
+        captchaId: result['captchaId'],
+      );
+    } catch (e) {
+      state = state.copyWith(captchaImage: null, captchaId: null);
+    }
+  }
+
+  void setCaptchaText(String value) {
+    state = state.copyWith(captchaText: value);
+  }
+
   /// 登录操作，调用 AuthProvider
-  Future<void> login({String captchaText = '', String? captchaId}) async {
+  Future<void> login({String? captchaText, String? captchaId}) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
       final success = await authNotifier.login(
         state.username,
         state.password,
-        captchaText,
-        captchaId,
+        captchaText ?? state.captchaText,
+        captchaId ?? state.captchaId,
       );
       if (success) {
         _saveUsernameToHistory(state.username);
+        if (state.rememberPassword) {
+          userService.setRememberPassword(true, state.username, state.password);
+        }
         state = state.copyWith(isLoading: false, error: null);
         // 登录成功后可清空表单、跳转页面等
       } else {

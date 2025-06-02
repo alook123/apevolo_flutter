@@ -17,7 +17,10 @@ class TokenService {
       if (token.accessToken != null) {
         web.window.sessionStorage.setItem(_accessTokenKey, token.accessToken!);
       }
-      web.window.sessionStorage.setItem(_refreshTokenKey, token.refreshToken);
+      if (token.refreshToken != null) {
+        web.window.sessionStorage
+            .setItem(_refreshTokenKey, token.refreshToken!);
+      }
     } else {
       final box = await Hive.openBox(_boxName);
       if (token.accessToken != null) {

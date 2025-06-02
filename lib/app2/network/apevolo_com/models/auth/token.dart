@@ -22,7 +22,7 @@ abstract class Token with _$Token {
 
     /// 刷新令牌
     /// 用于在访问令牌过期后获取新的访问令牌
-    @JsonKey(name: 'refresh_token') required String refreshToken,
+    @JsonKey(name: 'refresh_token') required String? refreshToken,
 
     /// 刷新令牌过期时间（秒）
     /// 指示刷新令牌的有效期
@@ -32,12 +32,16 @@ abstract class Token with _$Token {
 
   /// 从JSON创建Token实例
   /// 用于将服务器返回的JSON数据转换为Token对象
-  factory Token.fromJson(Map<String, dynamic> json) {
-    final token = _$TokenFromJson(json);
-    // 如果accessToken为null或空字符串，使用refreshToken
-    if (token.accessToken == null || token.accessToken!.isEmpty) {
-      return token.copyWith(accessToken: token.refreshToken);
-    }
-    return token;
-  }
+  factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
+
+  // /// 从JSON创建Token实例
+  // /// 用于将服务器返回的JSON数据转换为Token对象
+  // factory Token.fromJson(Map<String, dynamic> json) {
+  //   final token = _$TokenFromJson(json);
+  //   // 如果accessToken为null或空字符串，使用refreshToken
+  //   if (token.accessToken == null || token.accessToken!.isEmpty) {
+  //     return token.copyWith(accessToken: token.refreshToken);
+  //   }
+  //   return token;
+  // }
 }

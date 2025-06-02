@@ -1,5 +1,5 @@
-import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/auth_user.dart';
-import 'package:apevolo_flutter/app/data/models/apevolo_models/auth/token.dart';
+import 'package:apevolo_flutter/app2/network/apevolo_com/models/auth/auth_user.dart';
+import 'package:apevolo_flutter/app2/network/apevolo_com/models/auth/token.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_login.freezed.dart';
