@@ -6,9 +6,8 @@ class CaptchaView extends ConsumerWidget {
   const CaptchaView({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(captchaProvider);
-    final notifier = ref.read(captchaProvider.notifier);
-
+    final AsyncValue<CaptchaState> state = ref.watch(captchaProvider);
+    final CaptchaNotifier notifier = ref.read(captchaProvider.notifier);
     return state.when(
       loading: () => const CircularProgressIndicator(),
       error: (err, _) {
