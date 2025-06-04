@@ -1,54 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../provider/login_provider.dart';
 import 'package:apevolo_flutter/app2/components/captcha/captcha_view.dart';
 import 'package:apevolo_flutter/app2/components/captcha/captcha_provider.dart';
 // import 'package:apevolo_flutter/app2/components/material_background/views/material_background_view.dart';
 // import 'package:apevolo_flutter/app2/components/apevolo_background/views/apevolo_background_view.dart';
 
-class LoginView extends ConsumerStatefulWidget {
+class LoginView extends HookConsumerWidget {
   const LoginView({super.key});
 
   @override
-  ConsumerState<LoginView> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends ConsumerState<LoginView> {
-  late final TextEditingController usernameController;
-  late final TextEditingController passwordController;
-  late final TextEditingController captchaController;
-  final formKey = GlobalKey<FormState>();
-  final focusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    final state = ref.read(loginProvider);
-    usernameController = TextEditingController(text: state.username);
-    passwordController = TextEditingController(text: state.password);
-    captchaController = TextEditingController(text: state.captchaText);
-  }
-
-  @override
-  void dispose() {
-    usernameController.dispose();
-    passwordController.dispose();
-    captchaController.dispose();
-    focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(loginProvider);
     final notifier = ref.read(loginProvider.notifier);
-    // final formKey = GlobalKey<FormState>();
-    // final usernameController = TextEditingController(text: state.username);
-    // final passwordController = TextEditingController(text: state.password);
-    // final captchaController = TextEditingController(text: state.captchaText);
-    // final focusNode = FocusNode();
-    // final captchaState = ref.watch(captchaProvider);
+    final usernameController = useTextEditingController(text: state.username);
+    final passwordController = useTextEditingController(text: state.password);
+    final captchaController = useTextEditingController(text: state.captchaText);
+    final focusNode = useFocusNode();
+    final formKey = useMemoized(() => GlobalKey<FormState>());
 
     // // 背景类型
     // final backgroundTypeIndex = state.backgroundTypeIndex;
