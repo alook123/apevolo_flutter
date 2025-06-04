@@ -7,19 +7,48 @@ import 'package:apevolo_flutter/app2/components/captcha/captcha_provider.dart';
 // import 'package:apevolo_flutter/app2/components/material_background/views/material_background_view.dart';
 // import 'package:apevolo_flutter/app2/components/apevolo_background/views/apevolo_background_view.dart';
 
-class LoginView extends ConsumerWidget {
+class LoginView extends ConsumerStatefulWidget {
   const LoginView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends ConsumerState<LoginView> {
+  late final TextEditingController usernameController;
+  late final TextEditingController passwordController;
+  late final TextEditingController captchaController;
+  final formKey = GlobalKey<FormState>();
+  final focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    final state = ref.read(loginProvider);
+    usernameController = TextEditingController(text: state.username);
+    passwordController = TextEditingController(text: state.password);
+    captchaController = TextEditingController(text: state.captchaText);
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    captchaController.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(loginProvider);
     final notifier = ref.read(loginProvider.notifier);
-    final formKey = GlobalKey<FormState>();
-    final usernameController = TextEditingController(text: state.username);
-    final passwordController = TextEditingController(text: state.password);
-    final captchaController = TextEditingController(text: state.captchaText);
-    final focusNode = FocusNode();
-    final captchaState = ref.watch(captchaProvider);
+    // final formKey = GlobalKey<FormState>();
+    // final usernameController = TextEditingController(text: state.username);
+    // final passwordController = TextEditingController(text: state.password);
+    // final captchaController = TextEditingController(text: state.captchaText);
+    // final focusNode = FocusNode();
+    // final captchaState = ref.watch(captchaProvider);
 
     // // 背景类型
     // final backgroundTypeIndex = state.backgroundTypeIndex;
@@ -232,44 +261,53 @@ class LoginView extends ConsumerWidget {
                           ),
                           const SizedBox(height: 16),
                           // 验证码区域（只负责输入框，图片/加载/错误交给 CaptchaView）
-                          Visibility(
-                            visible: captchaState.maybeWhen(
-                              data: (data) => data.isShowing,
-                              orElse: () => true,
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: captchaController,
-                                    decoration: const InputDecoration(
-                                      labelText: '验证码',
-                                      prefixIcon: Icon(Icons.numbers),
+                          Consumer(
+                            builder: (context, ref, _) {
+                              final captchaVisible =
+                                  ref.watch(captchaProvider).maybeWhen(
+                                        orElse: () => true,
+                                        data: (data) => data.isShowing,
+                                      );
+                              if (!captchaVisible) {
+                                return const SizedBox.shrink();
+                              }
+                              return Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      controller: captchaController,
+                                      decoration: const InputDecoration(
+                                        labelText: '验证码',
+                                        prefixIcon: Icon(Icons.numbers),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return '请输入验证码!';
+                                        }
+                                        return null;
+                                      },
+                                      onChanged: ref
+                                          .read(loginProvider.notifier)
+                                          .setCaptchaText,
                                     ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return '请输入验证码!';
-                                      }
-                                      return null;
-                                    },
-                                    onChanged: notifier.setCaptchaText,
                                   ),
-                                ),
-                                const SizedBox(width: 8.0),
-                                Row(
-                                  children: [
-                                    const CaptchaView(),
-                                    const SizedBox(width: 8.0),
-                                    IconButton(
-                                      onPressed: () => ref
-                                          .read(captchaProvider.notifier)
-                                          .fetchCaptcha(),
-                                      icon: const Icon(Icons.refresh),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
+                                  const SizedBox(width: 8.0),
+                                  Row(
+                                    children: [
+                                      const CaptchaView(),
+                                      const SizedBox(width: 8.0),
+                                      IconButton(
+                                        onPressed: () => ref
+                                            .read(captchaProvider.notifier)
+                                            .fetchCaptcha(),
+                                        tooltip: '刷新验证码',
+                                        icon: const Icon(Icons.refresh),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                           const SizedBox(height: 16.0),
                           if (state.error != null && state.error!.isNotEmpty)
