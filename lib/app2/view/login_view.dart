@@ -1,3 +1,5 @@
+import 'package:apevolo_flutter/app2/components/theme_switch_button.dart';
+import 'package:apevolo_flutter/app2/components/theme_toggle_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -43,6 +45,8 @@ class LoginView extends HookConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          const ThemeToggleIconButton(),
+          const ThemeSwitchButton(),
           if (state.showBackgroundSelector)
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
