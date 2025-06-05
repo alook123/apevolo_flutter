@@ -5,8 +5,8 @@ targets:
                 generate_for:
                     include:
                         - lib/app/data/models/**/*.dart
-                        - lib/app2/network/apevolo_com/models/**/*.dart
-                        - lib/app2/network/apevolo_com/models/*.dart
+                        - lib/shared/network/apevolo_com/models/**/*.dart
+                        - lib/features/**/*.dart
             json_serializable:
                 options:
                     explicit_to_json: true
@@ -14,5 +14,11 @@ targets:
                 generate_for:
                     include:
                         - lib/app/data/models/**/*.dart
-                        - lib/app2/network/apevolo_com/models/**/*.dart
-                        - lib/app2/network/apevolo_com/models/*.dart
+                        - lib/shared/network/apevolo_com/models/**/*.dart
+                        - lib/shared/network/apevolo_com/models/*.dart
+                        - lib/features/**/*.dart
+            riverpod_generator:
+                generate_for:
+                    include:
+                        - lib/features/**/*.dart
+                        - lib/shared/**/*.dart
