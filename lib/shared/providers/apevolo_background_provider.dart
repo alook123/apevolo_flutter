@@ -345,4 +345,46 @@ class ApeVoloBackgroundNotifier extends _$ApeVoloBackgroundNotifier {
     _animationController?.dispose();
     _animationController = null;
   }
+
+  /// 初始化元素位置
+  void initializePositions(Size screenSize) {
+    if (state.positionsInitialized) return;
+
+    // 生成字母位置
+    final letterPositions = <int, Map<String, double>>{};
+    const letterCount = 7; // APEVOLO
+    for (int i = 0; i < letterCount; i++) {
+      letterPositions[i] = {
+        'x': (screenSize.width * (0.1 + (i / letterCount) * 0.8)).toDouble(),
+        'y': (screenSize.height * (0.2 + (i % 3) * 0.2)).toDouble(),
+      };
+    }
+
+    // 生成圆形位置
+    final circlePositions = <int, Map<String, double>>{};
+    const circleCount = 12;
+    for (int i = 0; i < circleCount; i++) {
+      circlePositions[i] = {
+        'x': (screenSize.width * math.Random(i).nextDouble()).toDouble(),
+        'y': (screenSize.height * math.Random(i + 100).nextDouble()).toDouble(),
+      };
+    }
+
+    // 生成矩形位置
+    final rectanglePositions = <int, Map<String, double>>{};
+    const rectangleCount = 8;
+    for (int i = 0; i < rectangleCount; i++) {
+      rectanglePositions[i] = {
+        'x': (screenSize.width * math.Random(i + 200).nextDouble()).toDouble(),
+        'y': (screenSize.height * math.Random(i + 300).nextDouble()).toDouble(),
+      };
+    }
+
+    state = state.copyWith(
+      letterBasePositions: letterPositions,
+      circleBasePositions: circlePositions,
+      rectangleBasePositions: rectanglePositions,
+      positionsInitialized: true,
+    );
+  }
 }

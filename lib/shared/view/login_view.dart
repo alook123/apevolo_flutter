@@ -1,3 +1,4 @@
+import 'package:apevolo_flutter/shared/components/material_background/views/material_background_view.dart';
 import 'package:apevolo_flutter/shared/components/theme_switch_button.dart';
 import 'package:apevolo_flutter/shared/components/theme_toggle_icon_button.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apevolo_flutter/features/auth/providers/login_provider.dart';
 import 'package:apevolo_flutter/features/auth/widgets/captcha_view.dart';
 import 'package:apevolo_flutter/features/auth/providers/captcha_provider.dart';
-// import 'package:apevolo_flutter/shared/components/material_background/views/material_background_view.dart';
-// import 'package:apevolo_flutter/shared/components/apevolo_background/views/apevolo_background_view.dart';
+import 'package:apevolo_flutter/shared/components/apevolo_background/views/apevolo_background_view.dart';
 
 class LoginView extends HookConsumerWidget {
   const LoginView({super.key});
@@ -39,6 +39,22 @@ class LoginView extends HookConsumerWidget {
     //   );
     // }
 
+    // 背景类型
+    final backgroundTypeIndex = state.backgroundTypeIndex;
+    Widget backgroundWidget;
+    if (backgroundTypeIndex == 1) {
+      backgroundWidget = MaterialBackgroundView(
+        primaryColor: Theme.of(context).colorScheme.primary,
+        secondaryColor: Theme.of(context).colorScheme.tertiary,
+      );
+    } else {
+      backgroundWidget = ApeVoloBackgroundView(
+        primaryColor: Theme.of(context).colorScheme.primary,
+        secondaryColor: Theme.of(context).colorScheme.secondary,
+        tertiaryColor: Theme.of(context).colorScheme.tertiary,
+      );
+    }
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Column(
@@ -68,7 +84,9 @@ class LoginView extends HookConsumerWidget {
       ),
       body: Stack(
         children: [
-          // Positioned.fill(child: backgroundWidget),
+          Positioned.fill(
+            child: backgroundWidget,
+          ),
           Center(
             child: Container(
               padding: const EdgeInsets.all(8.0),
