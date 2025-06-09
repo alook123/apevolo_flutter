@@ -23,12 +23,17 @@ class MaterialBackgroundView extends ConsumerStatefulWidget {
 
 class _MaterialBackgroundViewState extends ConsumerState<MaterialBackgroundView>
     with TickerProviderStateMixin {
+  late final MaterialBackgroundNotifier _notifier;
+
   @override
   void initState() {
     super.initState();
+    // 保存 notifier 引用以便在 dispose 中使用
+    _notifier = ref.read(materialBackgroundNotifierProvider.notifier);
+
     // 初始化动画
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(materialBackgroundNotifierProvider.notifier)
+      _notifier
         ..initializeAnimation(this)
         ..updateColors(
           primary: widget.primaryColor,
@@ -42,16 +47,16 @@ class _MaterialBackgroundViewState extends ConsumerState<MaterialBackgroundView>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.primaryColor != widget.primaryColor ||
         oldWidget.secondaryColor != widget.secondaryColor) {
-      ref.read(materialBackgroundNotifierProvider.notifier).updateColors(
-            primary: widget.primaryColor,
-            secondary: widget.secondaryColor,
-          );
+      _notifier.updateColors(
+        primary: widget.primaryColor,
+        secondary: widget.secondaryColor,
+      );
     }
   }
 
   @override
   void dispose() {
-    ref.read(materialBackgroundNotifierProvider.notifier).dispose();
+    _notifier.dispose();
     super.dispose();
   }
 

@@ -25,12 +25,17 @@ class ApeVoloBackgroundView extends ConsumerStatefulWidget {
 
 class _ApeVoloBackgroundViewState extends ConsumerState<ApeVoloBackgroundView>
     with TickerProviderStateMixin {
+  late final ApeVoloBackgroundNotifier _notifier;
+
   @override
   void initState() {
     super.initState();
+    // 保存 notifier 引用以便在 dispose 中使用
+    _notifier = ref.read(apeVoloBackgroundNotifierProvider.notifier);
+
     // 初始化动画
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(apeVoloBackgroundNotifierProvider.notifier)
+      _notifier
         ..initializeAnimation(this)
         ..updateColors(
           primary: widget.primaryColor,
@@ -46,17 +51,17 @@ class _ApeVoloBackgroundViewState extends ConsumerState<ApeVoloBackgroundView>
     if (oldWidget.primaryColor != widget.primaryColor ||
         oldWidget.secondaryColor != widget.secondaryColor ||
         oldWidget.tertiaryColor != widget.tertiaryColor) {
-      ref.read(apeVoloBackgroundNotifierProvider.notifier).updateColors(
-            primary: widget.primaryColor,
-            secondary: widget.secondaryColor,
-            tertiary: widget.tertiaryColor,
-          );
+      _notifier.updateColors(
+        primary: widget.primaryColor,
+        secondary: widget.secondaryColor,
+        tertiary: widget.tertiaryColor,
+      );
     }
   }
 
   @override
   void dispose() {
-    ref.read(apeVoloBackgroundNotifierProvider.notifier).dispose();
+    _notifier.dispose();
     super.dispose();
   }
 
@@ -90,8 +95,8 @@ class _ApeVoloBackgroundViewState extends ConsumerState<ApeVoloBackgroundView>
                 end: Alignment.bottomRight,
                 colors: [
                   backgroundColor,
-                  backgroundColor.withOpacity(0.95),
-                  backgroundColor.withOpacity(0.9),
+                  backgroundColor.withValues(alpha: 0.95),
+                  backgroundColor.withValues(alpha: 0.9),
                 ],
                 stops: const [0.0, 0.7, 1.0],
               ),
