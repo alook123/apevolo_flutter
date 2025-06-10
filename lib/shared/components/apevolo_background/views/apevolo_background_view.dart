@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 
-import '../../../providers/apevolo_background_provider.dart';
+import '../providers/apevolo_background_provider.dart';
 
 /// Apevolo字母风格的Material 3动态背景组件
 class ApeVoloBackgroundView extends ConsumerStatefulWidget {

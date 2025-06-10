@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../providers/material_background_provider.dart';
+import '../providers/material_background_provider.dart';
 
 /// Material 3 风格的动态背景组件
 class MaterialBackgroundView extends ConsumerStatefulWidget {
