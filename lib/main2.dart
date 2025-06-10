@@ -1,10 +1,9 @@
+import 'package:apevolo_flutter/features/auth/views/login_view.dart';
 import 'package:apevolo_flutter/shared/providers/theme_provider.dart';
 import 'package:apevolo_flutter/shared/storage/hive_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'shared/view/login_view.dart';
 
 Future<void> main() async {
   // 初始化Hive存储服务

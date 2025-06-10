@@ -10,7 +10,7 @@ class AboutConstants {
   static const String appIconPath = 'assets/image/logo.png';
 
   /// 应用法律信息
-  static const String appLegalese = '© 2024 Apevolo. All rights reserved.';
+  static const String appLegalese = '© 2025 Apevolo. All rights reserved.';
 
   /// 应用描述信息
   static const List<String> appDescription = [
