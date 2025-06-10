@@ -88,8 +88,11 @@ class LoginState {
 class LoginNotifier extends _$LoginNotifier {
   @override
   LoginState build() {
-    return const LoginState(
+    return LoginState(
       showBackgroundSelector: kDebugMode,
+      // Debug模式下默认填入用户名和密码
+      username: kDebugMode ? 'apevolo' : '',
+      password: kDebugMode ? '123456' : '',
     );
   }
 
@@ -149,6 +152,10 @@ class LoginNotifier extends _$LoginNotifier {
       return;
     }
 
+    if (kDebugMode) {
+      print('LoginProvider: 开始登录流程');
+    }
+
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -162,7 +169,15 @@ class LoginNotifier extends _$LoginNotifier {
         error: (error, stack) => captchaId = null,
       );
 
+      if (kDebugMode) {
+        print('LoginProvider: 验证码ID: $captchaId');
+      }
+
       final authNotifier = ref.read(authNotifierProvider.notifier);
+
+      if (kDebugMode) {
+        print('LoginProvider: 调用authNotifier.login');
+      }
 
       final success = await authNotifier.login(
         state.username,
@@ -171,18 +186,32 @@ class LoginNotifier extends _$LoginNotifier {
         captchaId,
       );
 
+      if (kDebugMode) {
+        print('LoginProvider: authNotifier.login返回结果: $success');
+      }
+
       if (success) {
+        if (kDebugMode) {
+          print('LoginProvider: 登录成功，更新状态');
+        }
         state = state.copyWith(isLoading: false, error: null);
-        // 登录成功，可以在这里触发导航或其他逻辑
+        // 登录成功，保存用户名到历史记录并触发导航回调
+        _saveUsernameToHistory(state.username);
       } else {
         // 获取auth错误信息
         final authState = ref.read(authNotifierProvider);
+        if (kDebugMode) {
+          print('LoginProvider: 登录失败，错误信息: ${authState.loginErrorText}');
+        }
         state = state.copyWith(
           isLoading: false,
           error: authState.loginErrorText ?? '登录失败',
         );
       }
     } catch (e) {
+      if (kDebugMode) {
+        print('LoginProvider: 登录过程中发生异常: $e');
+      }
       state = state.copyWith(
         isLoading: false,
         error: '登录过程中发生错误: $e',
@@ -205,5 +234,25 @@ class LoginNotifier extends _$LoginNotifier {
       isLoading: false,
       currentSuggestion: '',
     );
+  }
+
+  /// 保存用户名到历史记录
+  void _saveUsernameToHistory(String username) {
+    if (username.isEmpty) return;
+
+    final currentHistory = List<String>.from(state.usernameHistory);
+
+    // 如果用户名已存在，先移除
+    currentHistory.remove(username);
+
+    // 将用户名添加到列表开头
+    currentHistory.insert(0, username);
+
+    // 限制历史记录数量（例如最多保存10个）
+    if (currentHistory.length > 10) {
+      currentHistory.removeLast();
+    }
+
+    state = state.copyWith(usernameHistory: currentHistory);
   }
 }

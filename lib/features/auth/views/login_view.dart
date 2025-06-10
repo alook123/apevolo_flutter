@@ -1,6 +1,7 @@
 import 'package:apevolo_flutter/shared/components/material_background/views/material_background_view.dart';
 import 'package:apevolo_flutter/shared/components/theme_switch_button.dart';
 import 'package:apevolo_flutter/shared/components/theme_toggle_icon_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -22,6 +23,32 @@ class LoginView extends HookConsumerWidget {
     final captchaController = useTextEditingController(text: state.captchaText);
     final focusNode = useFocusNode();
     final formKey = useMemoized(() => GlobalKey<FormState>());
+
+    // 监听登录状态变化，处理导航
+    ref.listen(loginNotifierProvider, (previous, current) {
+      if (kDebugMode) {
+        print(
+            'LoginView: 登录状态变化 - previous?.isLoading: ${previous?.isLoading}, current.isLoading: ${current.isLoading}, current.error: ${current.error}');
+      }
+
+      // 检查是否登录成功（之前在加载中，现在不在加载且没有错误）
+      if (previous?.isLoading == true &&
+          !current.isLoading &&
+          current.error == null) {
+        if (kDebugMode) {
+          print('LoginView: 检测到登录成功，准备导航到Shell页面');
+        }
+        // 使用PostFrameCallback确保在widget构建完成后导航
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            if (kDebugMode) {
+              print('LoginView: 执行导航到Shell页面');
+            }
+            Navigator.of(context).pushReplacementNamed('/shell');
+          }
+        });
+      }
+    });
 
     // // 背景类型
     // final backgroundTypeIndex = state.backgroundTypeIndex;

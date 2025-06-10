@@ -51,11 +51,14 @@ class _ApeVoloBackgroundViewState extends ConsumerState<ApeVoloBackgroundView>
     if (oldWidget.primaryColor != widget.primaryColor ||
         oldWidget.secondaryColor != widget.secondaryColor ||
         oldWidget.tertiaryColor != widget.tertiaryColor) {
-      _notifier.updateColors(
-        primary: widget.primaryColor,
-        secondary: widget.secondaryColor,
-        tertiary: widget.tertiaryColor,
-      );
+      // 延迟执行，避免在widget构建过程中修改provider
+      Future.microtask(() {
+        _notifier.updateColors(
+          primary: widget.primaryColor,
+          secondary: widget.secondaryColor,
+          tertiary: widget.tertiaryColor,
+        );
+      });
     }
   }
 

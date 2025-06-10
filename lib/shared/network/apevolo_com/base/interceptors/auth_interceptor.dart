@@ -21,9 +21,24 @@ class AuthInterceptor extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
+    if (kDebugMode) {
+      print('AuthInterceptor: 拦截请求到 ${options.uri}');
+    }
+
     final token = await getToken();
+    if (kDebugMode) {
+      print('AuthInterceptor: 获取到token: ${token?.substring(0, 20)}...');
+    }
+
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
+      if (kDebugMode) {
+        print('AuthInterceptor: 已添加Authorization header');
+      }
+    } else {
+      if (kDebugMode) {
+        print('AuthInterceptor: token为空，未添加Authorization header');
+      }
     }
     // 在Web平台上，对于没有请求体的请求，移除sendTimeout设置
     if (kIsWeb && options.data == null) {

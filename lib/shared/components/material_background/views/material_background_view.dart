@@ -47,10 +47,13 @@ class _MaterialBackgroundViewState extends ConsumerState<MaterialBackgroundView>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.primaryColor != widget.primaryColor ||
         oldWidget.secondaryColor != widget.secondaryColor) {
-      _notifier.updateColors(
-        primary: widget.primaryColor,
-        secondary: widget.secondaryColor,
-      );
+      // 延迟执行，避免在widget构建过程中修改provider
+      Future.microtask(() {
+        _notifier.updateColors(
+          primary: widget.primaryColor,
+          secondary: widget.secondaryColor,
+        );
+      });
     }
   }
 
