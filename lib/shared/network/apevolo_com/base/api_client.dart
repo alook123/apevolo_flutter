@@ -54,9 +54,14 @@ class ApiClient {
 
   /// 初始化拦截器
   void _initInterceptors() {
-    dio.interceptors.add(LogInterceptor(responseBody: true));
+    dio.interceptors.add(LogInterceptor(requestBody: true)); // 打印请求体
+    dio.interceptors.add(LogInterceptor(requestHeader: true)); // 打印请求头
+    dio.interceptors.add(LogInterceptor(responseHeader: true)); // 打印响应头
+    dio.interceptors.add(LogInterceptor(responseBody: true)); // 打印响应体
+
     responseInterceptor = ResponseInterceptor();
     dio.interceptors.add(responseInterceptor);
+
     authInterceptor = AuthInterceptor(
       getToken: _getTokenFromStorage,
       tokenService: tokenService,
@@ -64,6 +69,7 @@ class ApiClient {
       dio: dio,
     );
     dio.interceptors.add(authInterceptor);
+
     // 可选: 添加后台转换器，用于大型JSON响应的处理
     // dio.interceptors.add(BackgroundTransformer());
   }
