@@ -1,6 +1,4 @@
-import 'package:apevolo_flutter/features/auth/views/login_view.dart';
-import 'package:apevolo_flutter/features/shell/views/shell_view.dart';
-import 'package:apevolo_flutter/features/shell/debug/menu_debug_page.dart';
+import 'package:apevolo_flutter/core/router/app_router.dart';
 import 'package:apevolo_flutter/shared/providers/theme_provider.dart';
 import 'package:apevolo_flutter/shared/storage/hive_storage_service.dart';
 import 'package:flutter/material.dart';
@@ -21,17 +19,14 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
-    return MaterialApp(
-      title: 'Riverpod Demo',
+    final router = ref.watch(appRouterProvider);
+
+    return MaterialApp.router(
+      title: 'Apevolo Flutter Demo',
       themeMode: themeMode,
       theme: ThemeData.light(), // 明亮主题
       darkTheme: ThemeData.dark(),
-      initialRoute: '/login',
-      routes: {
-        '/login': (context) => const LoginView(),
-        '/shell': (context) => const ShellView(),
-        '/debug/menu': (context) => const MenuDebugPage(),
-      },
+      routerConfig: router,
       supportedLocales: const [
         Locale('zh', 'CN'), // 添加中文支持
       ],

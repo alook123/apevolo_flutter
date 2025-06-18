@@ -7,6 +7,7 @@ import 'package:encrypt/encrypt.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:apevolo_flutter/shared/providers/user_service_provider.dart';
+import 'package:apevolo_flutter/shared/providers/token_service_provider.dart';
 import 'package:apevolo_flutter/shared/providers/api/auth_rest_client_provider.dart';
 
 part 'auth_provider.g.dart';
@@ -119,10 +120,15 @@ class AuthNotifier extends _$AuthNotifier {
             'AuthProvider: 登录API成功返回，token: ${loginResult.token.accessToken?.substring(0, 20)}...');
       }
 
+      // 保存用户信息
       await userService.saveUserInfo(loginResult);
 
+      // 同时保存token到TokenService (这对于API调用的认证很重要)
+      final tokenService = ref.read(tokenServiceProvider);
+      await tokenService.saveToken(loginResult.token);
+
       if (kDebugMode) {
-        print('AuthProvider: 用户信息已保存，登录成功');
+        print('AuthProvider: 用户信息和token已保存，登录成功');
       }
 
       state = state.copyWith(
