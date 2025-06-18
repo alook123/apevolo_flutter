@@ -10,7 +10,9 @@ Future<void> main() async {
   final storageService = HiveStorageService();
   await storageService.init();
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const ProviderScope(
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends ConsumerWidget {
@@ -22,13 +24,15 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'Apevolo Flutter Demo',
+      title: 'Apevolo Flutter',
       themeMode: themeMode,
       theme: ThemeData.light(), // 明亮主题
       darkTheme: ThemeData.dark(),
       routerConfig: router,
       supportedLocales: const [
         Locale('zh', 'CN'), // 添加中文支持
+        Locale('zh', 'TW'), // 添加繁体中文支持
+        Locale('en', 'US'), // 添加英文支持
       ],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
     );
