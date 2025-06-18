@@ -46,15 +46,15 @@ class SvgPictureView extends StatelessWidget {
     }
 
     // 确保文件路径处理逻辑清晰
-    final sanitizedFileName =
+    final String sanitizedFileName =
         fileName!.startsWith('/') ? fileName!.substring(1) : fileName!;
-    final fullPath = 'assets/svg/$sanitizedFileName.svg';
+    final String fullPath = 'assets/svg/$sanitizedFileName.svg';
 
     // 确定图标颜色：优先使用传入的颜色，其次使用主题颜色
-    final effectiveColor = color ?? Theme.of(context).iconTheme.color;
+    final Color? effectiveColor = color ?? Theme.of(context).iconTheme.color;
 
-    final effectiveHeight = height != null ? height! : 24.0;
-    final effectiveWidth = width != null ? width! : 24.0;
+    final double effectiveHeight = height != null ? height! : 24.0;
+    final double effectiveWidth = width != null ? width! : 24.0;
 
     return SvgPicture.asset(
       fullPath,
