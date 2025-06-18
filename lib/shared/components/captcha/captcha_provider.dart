@@ -91,7 +91,7 @@ class CaptchaNotifier extends _$CaptchaNotifier {
         error: null,
       );
     } catch (e) {
-      throw e; // AsyncValue 会自动处理错误状态
+      rethrow; // AsyncValue 会自动处理错误状态
     }
   }
 
