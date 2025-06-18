@@ -1,96 +1,96 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:developer' as developer;
 
 /// SVG图片显示组件
 /// 用于显示SVG格式的图标，支持错误处理和占位符
 class SvgPictureView extends StatelessWidget {
-  const SvgPictureView(
-    this.assetPath, {
-    super.key,
-    this.width = 24,
-    this.height = 24,
-    this.color,
-    this.fit = BoxFit.contain,
-  });
-
-  final String? assetPath;
-  final double width;
-  final double height;
+  final String? fileName;
+  final double? height;
+  final double? width;
   final Color? color;
   final BoxFit fit;
+  final String? semanticsLabel;
+  final bool allowDrawingOutsideViewBox;
+  final bool excludeFromSemantics;
+  final IconData defaultIcon;
+  final bool showDefaultIconWhenNull;
+
+  const SvgPictureView(
+    this.fileName, {
+    super.key,
+    this.height = 24,
+    this.width = 24,
+    this.color,
+    this.fit = BoxFit.cover,
+    this.semanticsLabel,
+    this.allowDrawingOutsideViewBox = false,
+    this.excludeFromSemantics = false,
+    this.defaultIcon = Icons.error,
+    this.showDefaultIconWhenNull = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (assetPath == null || assetPath!.isEmpty) {
-      return _buildPlaceholder(context);
+    // 当fileName为null时，返回空Container或默认图标
+    if (fileName == null) {
+      if (!showDefaultIconWhenNull) {
+        return Container(); // 不显示任何内容
+      }
+      // 显示默认图标
+      return Icon(
+        defaultIcon,
+        size: height ?? 24,
+        color: color ?? Theme.of(context).iconTheme.color,
+      );
     }
 
-    // 处理不同的图标路径格式
-    String iconPath = _getIconPath(assetPath!);
+    // 确保文件路径处理逻辑清晰
+    final sanitizedFileName =
+        fileName!.startsWith('/') ? fileName!.substring(1) : fileName!;
+    final fullPath = 'assets/svg/$sanitizedFileName.svg';
+
+    // 确定图标颜色：优先使用传入的颜色，其次使用主题颜色
+    final effectiveColor = color ?? Theme.of(context).iconTheme.color;
+
+    final effectiveHeight = height != null ? height! : 24.0;
+    final effectiveWidth = width != null ? width! : 24.0;
 
     return SvgPicture.asset(
-      iconPath,
-      width: width,
-      height: height,
-      colorFilter:
-          color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
+      fullPath,
+      height: effectiveHeight,
+      width: effectiveWidth,
+      colorFilter: effectiveColor != null
+          ? ColorFilter.mode(
+              effectiveColor,
+              BlendMode.srcIn,
+            )
+          : null,
       fit: fit,
-      placeholderBuilder: (context) => _buildPlaceholder(context),
-      errorBuilder: (context, error, stackTrace) => _buildErrorWidget(context),
-    );
-  }
-
-  /// 获取图标路径
-  String _getIconPath(String iconName) {
-    // 如果已经是完整路径，直接返回
-    if (iconName.startsWith('assets/')) {
-      return iconName;
-    }
-
-    // 根据图标名称映射到具体路径
-    final iconMappings = {
-      'dashboard': 'assets/svg/dashboard.svg',
-      'system': 'assets/svg/system.svg',
-      'user': 'assets/svg/user.svg',
-      'role': 'assets/svg/role.svg',
-      'menu': 'assets/svg/menu.svg',
-      'settings': 'assets/svg/settings.svg',
-      'permission': 'assets/svg/permission.svg',
-    };
-
-    return iconMappings[iconName] ?? 'assets/svg/default.svg';
-  }
-
-  /// 构建占位符
-  Widget _buildPlaceholder(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Icon(
-        Icons.image_outlined,
-        size: width * 0.6,
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-      ),
-    );
-  }
-
-  /// 构建错误显示组件
-  Widget _buildErrorWidget(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Icon(
-        Icons.broken_image_outlined,
-        size: width * 0.6,
-        color: Theme.of(context).colorScheme.onErrorContainer,
+      semanticsLabel:
+          semanticsLabel ?? (fileName != null ? 'SVG图标: $fileName' : null),
+      allowDrawingOutsideViewBox: allowDrawingOutsideViewBox,
+      excludeFromSemantics: excludeFromSemantics,
+      errorBuilder: (context, error, stackTrace) {
+        // 记录错误以便调试
+        developer.log(
+          'SVG加载错误: $fileName',
+          error: error,
+          stackTrace: stackTrace,
+          name: 'SvgPictureView',
+        );
+        return Icon(
+          defaultIcon,
+          color: Colors.red,
+          size: effectiveHeight,
+        );
+      },
+      placeholderBuilder: (context) => SizedBox(
+        height: effectiveHeight,
+        width: effectiveWidth,
+        child: const Center(
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
       ),
     );
   }
