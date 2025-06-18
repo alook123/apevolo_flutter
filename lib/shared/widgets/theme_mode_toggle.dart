@@ -52,13 +52,12 @@ class ThemeModeToggle extends ConsumerWidget {
   /// 根据主题模式获取对应图标
   IconData _getThemeIcon(ThemeMode themeMode) {
     switch (themeMode) {
+      case ThemeMode.system:
+        return Icons.brightness_auto;
       case ThemeMode.light:
         return Icons.light_mode;
       case ThemeMode.dark:
         return Icons.dark_mode;
-      case ThemeMode.system:
-      default:
-        return Icons.brightness_auto;
     }
   }
 }
