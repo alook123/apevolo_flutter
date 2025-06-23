@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:apevolo_flutter/shared/providers/theme_provider.dart';
 
-part 'setting_provide.g.dart';
+part 'setting_provider.g.dart';
 
 /// 设置状态数据类
 /// 包含设置相关的所有状态信息，采用不可变数据结构

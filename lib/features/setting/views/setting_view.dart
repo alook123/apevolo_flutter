@@ -9,8 +9,8 @@ class SettingView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settingState = ref.watch(settingProvider);
-    final settingNotifier = ref.read(settingProvider.notifier);
+    final settingState = ref.watch(settingNotifierProvider);
+    final settingNotifier = ref.read(settingNotifierProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
