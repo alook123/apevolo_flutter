@@ -3,9 +3,9 @@ import 'package:apevolo_flutter/shared/network/apevolo_com/base/error_handler.da
 import 'package:apevolo_flutter/shared/network/apevolo_com/base/interceptors/auth_interceptor.dart';
 import 'package:apevolo_flutter/shared/network/apevolo_com/base/interceptors/response_interceptor.dart';
 import 'package:apevolo_flutter/core/services/token_service.dart';
+import 'package:apevolo_flutter/shared/storage/shared_prefs_storage_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
 import 'package:web/web.dart' as web;
 
 /// API客户端
@@ -16,6 +16,7 @@ class ApiClient {
   late final TokenService tokenService;
   late final AuthInterceptor authInterceptor;
   late final ResponseInterceptor responseInterceptor;
+  late final SharedPrefsStorageService storageService;
 
   ApiClient() {
     _initDio();
@@ -50,6 +51,7 @@ class ApiClient {
   void _initServices() {
     errorHandler = ApiErrorHandler();
     tokenService = TokenService();
+    storageService = SharedPrefsStorageService();
   }
 
   /// 初始化拦截器
@@ -75,14 +77,13 @@ class ApiClient {
   }
 
   /// 从存储中获取访问令牌
-  /// 这个方法会从Hive存储中读取登录信息并提取token
+  /// 使用 SharedPrefsStorageService 读取登录信息并提取token
   Future<String?> _getTokenFromStorage() async {
     try {
       if (kDebugMode) {
         print('ApiClient: 开始获取token...');
       }
 
-      // 直接从Hive存储读取登录信息
       if (kIsWeb) {
         // Web平台使用sessionStorage
         final token = web.window.sessionStorage.getItem('access_token');
@@ -91,26 +92,13 @@ class ApiClient {
         }
         return token;
       } else {
-        // 其他平台使用Hive
-        final box = await Hive.openBox('userData');
-        final loginInfoData = box.get('loginInfo');
+        // 其他平台使用SharedPreferences通过TokenService
+        final accessToken = await tokenService.getAccessToken();
         if (kDebugMode) {
-          print('ApiClient: Hive中获取到loginInfo: ${loginInfoData != null}');
+          print(
+              'ApiClient: 从SharedPreferences获取到accessToken: ${accessToken?.substring(0, 20)}...');
         }
-
-        if (loginInfoData != null && loginInfoData is Map) {
-          final loginInfoMap = Map<String, dynamic>.from(loginInfoData);
-          final tokenData = loginInfoMap['token'];
-          if (tokenData != null && tokenData is Map) {
-            final tokenMap = Map<String, dynamic>.from(tokenData);
-            final accessToken = tokenMap['accessToken'] as String?;
-            if (kDebugMode) {
-              print(
-                  'ApiClient: 从Hive获取到accessToken: ${accessToken?.substring(0, 20)}...');
-            }
-            return accessToken;
-          }
-        }
+        return accessToken;
       }
     } catch (e) {
       if (kDebugMode) {

@@ -1,17 +1,23 @@
 import 'package:apevolo_flutter/core/router/router_config.dart';
 import 'package:apevolo_flutter/shared/providers/theme_provider.dart';
-import 'package:apevolo_flutter/shared/storage/hive_storage_service.dart';
+import 'package:apevolo_flutter/shared/storage/shared_prefs_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
-  // 初始化Hive存储服务
-  final storageService = HiveStorageService();
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 初始化SharedPreferences存储服务
+  final storageService = SharedPrefsStorageService();
   await storageService.init();
 
-  runApp(const ProviderScope(
-    child: MyApp(),
+  runApp(ProviderScope(
+    overrides: [
+      // 提供已初始化的存储服务实例
+      sharedPrefsStorageServiceProvider.overrideWithValue(storageService),
+    ],
+    child: const MyApp(),
   ));
 }
 

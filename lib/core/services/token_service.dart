@@ -1,15 +1,20 @@
 import 'package:apevolo_flutter/shared/network/apevolo_com/models/auth/token.dart';
-import 'package:hive/hive.dart';
+import 'package:apevolo_flutter/shared/storage/shared_prefs_storage_service.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:web/web.dart' as web;
 
 /// TokenService
 /// 负责安全地存储、读取和清理 accessToken/refreshToken 等认证信息，
-/// Web端用 sessionStorage，其他端用 Hive
+/// Web端用 sessionStorage，其他端用 SharedPreferences
 class TokenService {
-  static const _boxName = 'tokenBox';
+  static SharedPrefsStorageService? _storage;
   static const _accessTokenKey = 'access_token';
   static const _refreshTokenKey = 'refresh_token';
+
+  /// 初始化存储服务
+  static Future<void> init(SharedPrefsStorageService storage) async {
+    _storage = storage;
+  }
 
   /// 保存 token 信息
   Future<void> saveToken(Token token) async {
@@ -22,11 +27,13 @@ class TokenService {
             .setItem(_refreshTokenKey, token.refreshToken!);
       }
     } else {
-      final box = await Hive.openBox(_boxName);
+      if (_storage == null) throw Exception('TokenService not initialized');
       if (token.accessToken != null) {
-        await box.put(_accessTokenKey, token.accessToken);
+        await _storage!.setString(_accessTokenKey, token.accessToken!);
       }
-      await box.put(_refreshTokenKey, token.refreshToken);
+      if (token.refreshToken != null) {
+        await _storage!.setString(_refreshTokenKey, token.refreshToken!);
+      }
     }
   }
 
@@ -35,8 +42,8 @@ class TokenService {
     if (kIsWeb) {
       return web.window.sessionStorage.getItem(_accessTokenKey);
     } else {
-      final box = await Hive.openBox(_boxName);
-      return box.get(_accessTokenKey);
+      if (_storage == null) throw Exception('TokenService not initialized');
+      return _storage!.getString(_accessTokenKey);
     }
   }
 
@@ -45,8 +52,8 @@ class TokenService {
     if (kIsWeb) {
       return web.window.sessionStorage.getItem(_refreshTokenKey);
     } else {
-      final box = await Hive.openBox(_boxName);
-      return box.get(_refreshTokenKey);
+      if (_storage == null) throw Exception('TokenService not initialized');
+      return _storage!.getString(_refreshTokenKey);
     }
   }
 
@@ -56,9 +63,9 @@ class TokenService {
       web.window.sessionStorage.removeItem(_accessTokenKey);
       web.window.sessionStorage.removeItem(_refreshTokenKey);
     } else {
-      final box = await Hive.openBox(_boxName);
-      await box.delete(_accessTokenKey);
-      await box.delete(_refreshTokenKey);
+      if (_storage == null) throw Exception('TokenService not initialized');
+      await _storage!.remove(_accessTokenKey);
+      await _storage!.remove(_refreshTokenKey);
     }
   }
 }

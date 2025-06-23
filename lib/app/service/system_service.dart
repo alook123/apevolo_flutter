@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:get/state_manager.dart';
-import 'package:apevolo_flutter/app/service/storage/hive_storage_service.dart';
+import 'package:apevolo_flutter/shared/storage/shared_prefs_storage_service.dart';
 
 class SystemService extends GetxService {
-  final HiveStorageService _storage;
-  final String _settingsBoxName = 'settings';
+  final SharedPrefsStorageService _storage;
   final Rx<ThemeMode> themeMode = ThemeMode.system.obs;
 
   SystemService(this._storage);
@@ -18,11 +17,11 @@ class SystemService extends GetxService {
 
   Future<void> _loadThemeMode() async {
     final themeModeString =
-        _storage.read<String>(_settingsBoxName, 'themeMode') ?? 'system';
+        _storage.getString('settings.themeMode') ?? 'system';
     _applyThemeMode(themeModeString);
 
     // 设置监听
-    themeMode.listen((mode) {
+    themeMode.listen((mode) async {
       String modeString;
       switch (mode) {
         case ThemeMode.light:
@@ -35,7 +34,7 @@ class SystemService extends GetxService {
           modeString = 'system';
           break;
       }
-      _storage.write(_settingsBoxName, 'themeMode', modeString);
+      await _storage.setString('settings.themeMode', modeString);
     });
   }
 

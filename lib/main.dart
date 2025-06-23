@@ -1,6 +1,6 @@
 import 'package:apevolo_flutter/app/controllers/auth_binding.dart';
 import 'package:apevolo_flutter/app/data/rest_clients/apevolo_com/base/dio_service.dart';
-import 'package:apevolo_flutter/app/service/storage/hive_storage_service.dart';
+import 'package:apevolo_flutter/shared/storage/shared_prefs_storage_service.dart';
 import 'package:apevolo_flutter/app/service/system_service.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
 import 'package:apevolo_flutter/app/theme/dart_theme.dart';
@@ -15,8 +15,8 @@ import 'package:get/get.dart';
 import 'app/routes/app_pages.dart';
 
 Future<void> main() async {
-  // 初始化Hive存储服务
-  final storageService = HiveStorageService();
+  // 初始化SharedPreferences存储服务
+  final storageService = SharedPrefsStorageService();
   await storageService.init();
 
   // 把存储服务注册到Get依赖注入系统中
@@ -46,7 +46,7 @@ Future<void> main() async {
 
 Future<void> onInitialize() async {
   // 获取已注册的存储服务
-  final storageService = Get.find<HiveStorageService>();
+  final storageService = Get.find<SharedPrefsStorageService>();
 
   // 初始化系统和用户服务
   Get.put(SystemService(storageService), permanent: true);

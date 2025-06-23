@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/core/services/hive_storage_service.dart';
+import 'package:apevolo_flutter/shared/storage/shared_prefs_storage_service.dart';
 import 'package:flutter/material.dart';
 
 /// SystemService
@@ -8,11 +8,8 @@ import 'package:flutter/material.dart';
 ///   - 读取/保存主题模式到本地存储
 ///   - 将字符串与 ThemeMode 枚举互转
 class SystemService {
-  /// Hive 存储服务
-  final HiveStorageService _storage;
-
-  /// 系统设置存储的 box 名称
-  final String _settingsBoxName = 'settings';
+  /// 存储服务（已迁移到 SharedPreferences + JSON）
+  final SharedPrefsStorageService _storage;
 
   SystemService(this._storage);
 
@@ -21,7 +18,7 @@ class SystemService {
   /// 返回 ThemeMode（默认为 system）
   Future<ThemeMode> loadThemeMode() async {
     final themeModeString =
-        _storage.read<String>(_settingsBoxName, 'themeMode') ?? 'system';
+        _storage.getString('settings.themeMode') ?? 'system';
     return _stringToThemeMode(themeModeString);
   }
 
@@ -41,7 +38,7 @@ class SystemService {
         modeString = 'system';
         break;
     }
-    await _storage.write(_settingsBoxName, 'themeMode', modeString);
+    await _storage.setString('settings.themeMode', modeString);
   }
 
   /// 字符串转 ThemeMode 枚举

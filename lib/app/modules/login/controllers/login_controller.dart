@@ -1,6 +1,6 @@
 import 'package:apevolo_flutter/app/components/captcha/controllers/captcha_controller.dart';
 import 'package:apevolo_flutter/app/controllers/auth_controller.dart';
-import 'package:apevolo_flutter/app/service/storage/hive_storage_service.dart';
+import 'package:apevolo_flutter/shared/storage/shared_prefs_storage_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,9 +51,8 @@ class LoginController extends GetxController
   // 用于跟踪上一次的文本，判断是否是删除操作
   String _previousText = '';
 
-  final HiveStorageService _storage = Get.find<HiveStorageService>();
-  static const String _settingsBoxName = 'settings';
-  static const String _usernameHistoryKey = 'username_history';
+  final SharedPrefsStorageService _storage =
+      Get.find<SharedPrefsStorageService>();
 
   @override
   Future<void> onInit() async {
@@ -101,10 +100,9 @@ class LoginController extends GetxController
 
   // 加载用户名历史记录
   void _loadUsernameHistory() {
-    final history =
-        _storage.read<List<dynamic>>(_settingsBoxName, _usernameHistoryKey);
+    final history = _storage.getStringList('settings.username_history');
     if (history != null) {
-      usernameHistory.value = history.map((e) => e.toString()).toList();
+      usernameHistory.value = history;
     }
   }
 
@@ -124,8 +122,8 @@ class LoginController extends GetxController
     }
 
     // 保存到storage
-    _storage.write(
-        _settingsBoxName, _usernameHistoryKey, usernameHistory.toList());
+    _storage.setStringList(
+        'settings.username_history', usernameHistory.toList());
   }
 
   // 当用户名输入框内容变化时触发
