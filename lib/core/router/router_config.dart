@@ -1,36 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apevolo_flutter/features/auth/providers/auth_provider.dart';
+import 'package:apevolo_flutter/shared/widgets/error_page_view.dart';
 import 'app_routes.dart';
 import 'routes/auth_routes.dart';
 import 'routes/shell_routes.dart';
 
-/// 构建错误页面
-Widget _buildErrorPage(BuildContext context, GoRouterState state) {
-  return Scaffold(
-    appBar: AppBar(title: const Text('页面未找到')),
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, size: 64, color: Colors.red),
-          const SizedBox(height: 16),
-          Text('错误: ${state.error}'),
-          const SizedBox(height: 8),
-          Text('路径: ${state.matchedLocation}'),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () => context.go(AppRoutes.login),
-            child: const Text('返回登录'),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-/// 路由配置 Provider（Riverpod 2.0+ 新写法）
+/// 路由配置 Provider
 /// 提供全局路由配置，支持路由守卫和状态管理
 /// 自动监听认证状态变化并响应路由重定向
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -60,7 +36,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     },
 
     // 错误页面处理
-    errorBuilder: (context, state) => _buildErrorPage(context, state),
+    errorBuilder: (context, state) => ErrorPageView.router(routerState: state),
 
     // 路由配置 - 组装所有模块的路由
     routes: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apevolo_flutter/shared/widgets/error_page_view.dart';
 import '../../user/views/user_management_view.dart';
 import '../../setting/views/setting_view.dart';
 
@@ -35,7 +36,7 @@ class ShellRouter {
         return const MenuManagementView();
 
       default:
-        return UnknownPageView(tabId: tabId);
+        return ErrorPageView.tab(tabId: tabId);
     }
   }
 
@@ -319,50 +320,6 @@ class MenuManagementView extends ConsumerWidget {
             const SizedBox(height: 24),
             const Center(
               child: Text('菜单管理页面开发中...'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// 未知页面组件
-class UnknownPageView extends ConsumerWidget {
-  final String tabId;
-
-  const UnknownPageView({super.key, required this.tabId});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Theme.of(context).colorScheme.error,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '页面未找到',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '标签页: $tabId',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                // TODO: 返回首页或关闭标签页
-              },
-              child: const Text('返回首页'),
             ),
           ],
         ),
