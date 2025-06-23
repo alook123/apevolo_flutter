@@ -1,5 +1,5 @@
 import 'package:apevolo_flutter/app/constants/about_constants.dart';
-import 'package:apevolo_flutter/features/setting/provides/setting_provide.dart';
+import 'package:apevolo_flutter/features/setting/providers/setting_provider.dart';
 import 'package:apevolo_flutter/features/setting/views/language_setting_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
