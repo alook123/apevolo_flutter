@@ -9,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // 导入页面
 import 'package:apevolo_flutter/features/auth/views/login_view.dart';
 import 'package:apevolo_flutter/features/shell/views/shell_view.dart';
-import 'package:apevolo_flutter/features/shell/debug/menu_debug_page.dart';
 import 'package:apevolo_flutter/features/setting/views/setting_view.dart';
 import 'package:apevolo_flutter/features/auth/providers/auth_provider.dart';
 
@@ -19,7 +18,6 @@ class AppRoutes {
   static const String shell = '/';
   static const String users = '/permission/users';
   static const String settings = '/settings';
-  static const String debugMenu = '/debug/menu';
   static const String notFound = '/404';
 }
 
@@ -100,13 +98,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const SettingView(),
           ),
         ],
-      ),
-
-      // 调试页面（开发环境）
-      GoRoute(
-        path: AppRoutes.debugMenu,
-        name: 'debugMenu',
-        builder: (context, state) => const MenuDebugPage(),
       ),
     ],
   );
