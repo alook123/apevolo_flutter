@@ -21,7 +21,7 @@ class SettingView extends ConsumerWidget {
         children: [
           const SizedBox(height: 24),
           const Text(
-            'APEVOLO',
+            'ApeVolo',
             style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
