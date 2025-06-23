@@ -94,32 +94,17 @@ class AuthNotifier extends _$AuthNotifier {
 
     state = state.copyWith(isLoggingIn: true, loginErrorText: null);
     try {
-      if (kDebugMode) {
-        print('AuthProvider: 开始登录流程 - 用户名: $username');
-      }
-
       if (_encrypter == null) {
         await _initEncrypter();
         if (_encrypter == null) throw Exception('RSA加密器初始化失败');
       }
       String passwordBase64 = _encrypter!.encrypt(password).base64;
-
-      if (kDebugMode) {
-        print('AuthProvider: 密码已加密，调用登录API');
-      }
-
       final loginResult = await authRestClient.login(
         username,
         passwordBase64,
         captchaText,
         captchaId,
       );
-
-      if (kDebugMode) {
-        print(
-            'AuthProvider: 登录API成功返回，token: ${loginResult.token.accessToken?.substring(0, 20)}...');
-      }
-
       // 保存用户信息
       await userService.saveUserInfo(loginResult);
 
@@ -135,9 +120,6 @@ class AuthNotifier extends _$AuthNotifier {
           token: loginResult.token.accessToken, isLoggingIn: false);
       return true;
     } catch (e) {
-      if (kDebugMode) {
-        print('AuthProvider: 登录失败 - 错误: $e');
-      }
       state = state.copyWith(isLoggingIn: false, loginErrorText: e.toString());
       return false;
     }
