@@ -2,9 +2,9 @@
 /// 负责管理登录页面的所有状态和业务逻辑
 library login_provider;
 
+import 'package:apevolo_flutter/shared/components/captcha/captcha_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'captcha_provider.dart';
 import 'auth_provider.dart';
 
 part 'login_provider.g.dart';

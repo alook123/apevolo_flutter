@@ -1,3 +1,4 @@
+import 'package:apevolo_flutter/shared/components/captcha/captcha_provider.dart';
 import 'package:apevolo_flutter/shared/components/material_background/views/material_background_view.dart';
 import 'package:apevolo_flutter/shared/components/theme_switch_button.dart';
 import 'package:apevolo_flutter/shared/components/theme_toggle_icon_button.dart';
@@ -8,7 +9,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apevolo_flutter/features/auth/providers/login_provider.dart';
 import 'package:apevolo_flutter/features/auth/widgets/captcha_view.dart';
-import 'package:apevolo_flutter/features/auth/providers/captcha_provider.dart';
 import 'package:apevolo_flutter/shared/components/apevolo_background/views/apevolo_background_view.dart';
 
 class LoginView extends HookConsumerWidget {
