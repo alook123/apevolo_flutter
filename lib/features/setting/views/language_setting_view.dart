@@ -1,6 +1,6 @@
+import 'package:apevolo_flutter/features/setting/providers/setting_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apevolo_flutter/features/setting/provides/setting_provide.dart';
 
 class LanguageSettingView extends ConsumerWidget {
   const LanguageSettingView({super.key});
