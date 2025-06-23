@@ -154,7 +154,8 @@ class ShellMenuList extends ConsumerWidget {
     );
   }
 
-  void _handleChildMenuItemTap(BuildContext context, WidgetRef ref, ChildrenMenu childMenu) {
+  void _handleChildMenuItemTap(
+      BuildContext context, WidgetRef ref, ChildrenMenu childMenu) {
     final tabId = childMenu.component ?? childMenu.name ?? '';
 
     if (tabId.isNotEmpty) {

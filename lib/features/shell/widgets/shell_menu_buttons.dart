@@ -147,7 +147,7 @@ class ShellMenuButtons extends ConsumerWidget {
       // 调用注销方法
       final authNotifier = ref.read(authNotifierProvider.notifier);
       await authNotifier.logout();
-      
+
       // 关闭注销中对话框
       if (context.mounted) {
         Navigator.of(context).pop();
