@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:apevolo_flutter/core/router/app_routes.dart';
+import 'package:apevolo_flutter/core/router/constants/route_constants.dart';
 
 /// 统一的错误页面组件
 /// 可用于路由错误、页面未找到、标签页错误等场景
@@ -208,7 +208,7 @@ class ErrorPageView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ElevatedButton.icon(
-            onPressed: () => context.go(AppRoutes.login),
+            onPressed: () => context.go(AuthRoutes.login),
             icon: const Icon(Icons.home),
             label: const Text('返回登录'),
           ),

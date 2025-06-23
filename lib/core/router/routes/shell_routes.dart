@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:apevolo_flutter/features/shell/views/shell_view.dart';
 import 'package:apevolo_flutter/features/setting/views/setting_view.dart';
-import '../app_routes.dart';
+import '../constants/route_constants.dart' as constants;
 import 'user_routes.dart';
 import 'system_routes.dart';
 
@@ -10,7 +10,7 @@ class ShellRoutes {
   static List<RouteBase> routes = [
     // 主 Shell 页面（包含侧边栏等）
     GoRoute(
-      path: AppRoutes.shell,
+      path: constants.CommonRoutes.shell,
       name: 'shell',
       builder: (context, state) => const ShellView(),
       routes: [
