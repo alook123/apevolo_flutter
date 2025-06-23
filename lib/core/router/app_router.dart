@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apevolo_flutter/features/auth/views/login_view.dart';
 import 'package:apevolo_flutter/features/shell/views/shell_view.dart';
 import 'package:apevolo_flutter/features/shell/debug/menu_debug_page.dart';
+import 'package:apevolo_flutter/features/setting/views/setting_view.dart';
 import 'package:apevolo_flutter/features/auth/providers/auth_provider.dart';
 
 /// 路由路径常量
@@ -96,7 +97,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'settings',
             name: 'settings',
-            builder: (context, state) => const SettingsPage(),
+            builder: (context, state) => const SettingView(),
           ),
         ],
       ),
@@ -121,23 +122,6 @@ class UsersPage extends StatelessWidget {
       body: Center(
         child: Text(
           '用户管理页面\n（待从 GetX 模块迁移）',
-          style: TextStyle(fontSize: 18),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-}
-
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text(
-          '设置页面\n（待从 GetX 模块迁移）',
           style: TextStyle(fontSize: 18),
           textAlign: TextAlign.center,
         ),

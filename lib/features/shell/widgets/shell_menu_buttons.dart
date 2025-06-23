@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/widgets/theme_mode_toggle.dart';
+import '../../../features/auth/providers/auth_provider.dart';
+import '../providers/shell_provider.dart';
 
 /// Shell菜单按钮组件
 /// 包含个人中心、消息、主题切换、设置等按钮
@@ -57,7 +59,7 @@ class ShellMenuButtons extends ConsumerWidget {
                   title: const Text('注销'),
                   onTap: () {
                     Navigator.pop(context);
-                    _showLogoutConfirmDialog(context);
+                    _showLogoutConfirmDialog(context, ref);
                   },
                 ),
               ),
@@ -80,7 +82,8 @@ class ShellMenuButtons extends ConsumerWidget {
         // 设置按钮
         IconButton(
           onPressed: () {
-            // TODO: 导航到设置页面
+            // 在 Shell 内打开设置页面作为标签页
+            ref.read(shellMenuProvider.notifier).addTab('settings');
           },
           tooltip: '设置',
           icon: const Icon(Icons.settings),
@@ -90,7 +93,7 @@ class ShellMenuButtons extends ConsumerWidget {
   }
 
   /// 显示注销确认对话框
-  void _showLogoutConfirmDialog(BuildContext context) {
+  void _showLogoutConfirmDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -107,7 +110,7 @@ class ShellMenuButtons extends ConsumerWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _performLogout(context);
+                _performLogout(context, ref);
               },
               child: const Text('确认'),
             ),
@@ -118,7 +121,7 @@ class ShellMenuButtons extends ConsumerWidget {
   }
 
   /// 执行注销操作
-  void _performLogout(BuildContext context) {
+  void _performLogout(BuildContext context, WidgetRef ref) async {
     // 显示注销中的对话框
     showDialog(
       context: context,
@@ -140,11 +143,25 @@ class ShellMenuButtons extends ConsumerWidget {
       },
     );
 
-    // 模拟注销延迟
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pop(); // 关闭注销中对话框
-      // TODO: 清除用户数据并导航到登录页面
-      Navigator.of(context).pushReplacementNamed('/login');
-    });
+    try {
+      // 调用注销方法
+      final authNotifier = ref.read(authNotifierProvider.notifier);
+      await authNotifier.logout();
+      
+      // 关闭注销中对话框
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        // go_router 会自动根据认证状态重定向到登录页
+      }
+    } catch (e) {
+      // 关闭注销中对话框
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        // 显示错误消息
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('注销失败: $e')),
+        );
+      }
+    }
   }
 }

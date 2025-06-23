@@ -102,7 +102,7 @@ class ShellMenuList extends ConsumerWidget {
         style: Theme.of(context).textTheme.bodyMedium,
       ),
       onTap: () {
-        _handleMenuItemTap(ref, menu.name ?? '');
+        _handleMenuItemTap(context, ref, menu.name ?? '');
       },
     );
   }
@@ -124,7 +124,7 @@ class ShellMenuList extends ConsumerWidget {
             ),
       ),
       onTap: () {
-        _handleChildMenuItemTap(ref, childMenu);
+        _handleChildMenuItemTap(context, ref, childMenu);
       },
     );
   }
@@ -146,7 +146,7 @@ class ShellMenuList extends ConsumerWidget {
             if (menu.children?.isNotEmpty ?? false) {
               ref.read(shellProvider.notifier).toggleMenu();
             } else {
-              _handleMenuItemTap(ref, menu.name ?? '');
+              _handleMenuItemTap(context, ref, menu.name ?? '');
             }
           },
         ),
@@ -154,7 +154,7 @@ class ShellMenuList extends ConsumerWidget {
     );
   }
 
-  void _handleChildMenuItemTap(WidgetRef ref, ChildrenMenu childMenu) {
+  void _handleChildMenuItemTap(BuildContext context, WidgetRef ref, ChildrenMenu childMenu) {
     final tabId = childMenu.component ?? childMenu.name ?? '';
 
     if (tabId.isNotEmpty) {
@@ -162,7 +162,8 @@ class ShellMenuList extends ConsumerWidget {
     }
   }
 
-  void _handleMenuItemTap(WidgetRef ref, String menuId) {
+  void _handleMenuItemTap(BuildContext context, WidgetRef ref, String menuId) {
+    // 所有菜单项都使用标签页处理，包括设置
     if (menuId.isNotEmpty) {
       ref.read(shellMenuProvider.notifier).addTab(menuId);
     }

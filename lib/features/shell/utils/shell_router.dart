@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../user/views/user_management_view.dart';
+import '../../setting/views/setting_view.dart';
 
 /// Shell路由管理器
 /// 负责根据菜单ID渲染对应的页面内容
@@ -21,7 +22,8 @@ class ShellRouter {
       case 'settings':
       case 'system':
       case '系统设置':
-        return const SystemSettingsView();
+      case '设置':
+        return const SettingView();
 
       case 'permission':
       case 'role':
@@ -48,7 +50,8 @@ class ShellRouter {
         return '仪表盘';
       case 'settings':
       case 'system':
-        return '系统设置';
+      case '设置':
+        return '设置';
       case 'permission':
       case 'role':
         return '权限管理';
