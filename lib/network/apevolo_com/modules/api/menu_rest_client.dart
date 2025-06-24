@@ -1,8 +1,8 @@
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/common/action_result_vm.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/common/id_collection.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/menu/create_update_menu_dto.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/menu/menu_build_model.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/menu/menu_model.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/common/action_result_vm.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/common/id_collection.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/menu/create_update_menu_dto.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/menu/menu_build_model.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/menu/menu_model.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 

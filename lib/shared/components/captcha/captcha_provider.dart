@@ -3,7 +3,7 @@ library captcha_provider;
 
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/auth/captcha_response.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/auth/captcha_response.dart';
 import 'package:apevolo_flutter/shared/providers/api/auth_rest_client_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

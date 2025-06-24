@@ -1,7 +1,7 @@
-import 'package:apevolo_flutter/shared/network/apevolo_com/base/api_client.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/auth/token.dart'
+import 'package:apevolo_flutter/network/apevolo_com/base/api_client.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/auth/token.dart'
     show Token;
-import 'package:apevolo_flutter/shared/network/apevolo_com/modules/auth_rest_client.dart';
+import 'package:apevolo_flutter/network/apevolo_com/modules/auth_rest_client.dart';
 import 'package:dio/dio.dart';
 
 /// DioService 类 - 基础Dio服务

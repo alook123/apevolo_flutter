@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/shared/network/apevolo_com/base/error_handler.dart';
+import 'package:apevolo_flutter/network/apevolo_com/base/error_handler.dart';
 import 'package:apevolo_flutter/core/services/token_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';

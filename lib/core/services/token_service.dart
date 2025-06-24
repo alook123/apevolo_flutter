@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/auth/token.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/auth/token.dart';
 import 'package:apevolo_flutter/shared/storage/shared_prefs_storage_service.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:web/web.dart' as web;

@@ -1,7 +1,7 @@
 import 'package:apevolo_flutter/core/constants/apevolo_constants.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/base/error_handler.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/base/interceptors/auth_interceptor.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/base/interceptors/response_interceptor.dart';
+import 'package:apevolo_flutter/network/apevolo_com/base/error_handler.dart';
+import 'package:apevolo_flutter/network/apevolo_com/base/interceptors/auth_interceptor.dart';
+import 'package:apevolo_flutter/network/apevolo_com/base/interceptors/response_interceptor.dart';
 import 'package:apevolo_flutter/core/services/token_service.dart';
 import 'package:apevolo_flutter/shared/storage/shared_prefs_storage_service.dart';
 import 'package:dio/dio.dart';

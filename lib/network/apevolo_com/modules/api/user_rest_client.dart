@@ -1,8 +1,8 @@
 import 'package:apevolo_flutter/app/data/models/apevolo_models/common/action_result_vm.dart';
 import 'package:apevolo_flutter/app/data/models/apevolo_models/common/id_collection.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/user/create_update_user_model.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/user/user_query_model.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/user/user_response_model.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/user/create_update_user_model.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/user/user_query_model.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/user/user_response_model.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'dart:io';

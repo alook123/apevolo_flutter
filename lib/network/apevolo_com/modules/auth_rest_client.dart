@@ -1,6 +1,6 @@
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/auth/auth_login.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/auth/captcha_response.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/auth/token.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/auth/auth_login.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/auth/captcha_response.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/auth/token.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 

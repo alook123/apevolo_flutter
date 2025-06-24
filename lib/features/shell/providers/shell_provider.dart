@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../shared/network/apevolo_com/models/menu/menu_build_model.dart';
+import '../../../network/apevolo_com/models/menu/menu_build_model.dart';
 import '../../../shared/providers/api/menu_rest_client_provider.dart';
 import '../models/shell_state.dart';
 

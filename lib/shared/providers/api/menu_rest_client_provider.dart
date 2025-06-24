@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/shared/network/apevolo_com/modules/api/menu_rest_client.dart';
+import 'package:apevolo_flutter/network/apevolo_com/modules/api/menu_rest_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../dio_service_provider.dart';

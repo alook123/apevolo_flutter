@@ -1,4 +1,4 @@
-import '../../../shared/network/apevolo_com/models/menu/menu_build_model.dart';
+import '../../../network/apevolo_com/models/menu/menu_build_model.dart';
 
 /// Shell 页面的整体状态
 class ShellState {

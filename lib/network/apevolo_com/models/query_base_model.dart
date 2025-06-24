@@ -1,4 +1,4 @@
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/model_base.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/model_base.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'query_base_model.g.dart';

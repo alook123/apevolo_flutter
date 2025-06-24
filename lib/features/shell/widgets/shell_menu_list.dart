@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/network/apevolo_com/models/menu/menu_build_model.dart';
+import '../../../network/apevolo_com/models/menu/menu_build_model.dart';
 import '../../../shared/widgets/svg_picture_view.dart';
 import '../providers/shell_provider.dart';
 

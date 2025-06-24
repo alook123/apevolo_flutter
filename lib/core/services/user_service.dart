@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/auth/auth_login.dart';
-import 'package:apevolo_flutter/shared/network/apevolo_com/models/menu/menu_build_model.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/auth/auth_login.dart';
+import 'package:apevolo_flutter/network/apevolo_com/models/menu/menu_build_model.dart';
 import 'package:apevolo_flutter/shared/storage/shared_prefs_storage_service.dart';
 
 /// 用户服务，负责用户相关数据的本地存储与读取
