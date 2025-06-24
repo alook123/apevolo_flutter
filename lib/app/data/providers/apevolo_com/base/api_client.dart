@@ -3,6 +3,7 @@ import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/interceptors
 import 'package:apevolo_flutter/app/data/providers/apevolo_com/base/interceptors/response_interceptor.dart';
 import 'package:apevolo_flutter/app/data/providers/apevolo_com/services/token_service.dart';
 import 'package:apevolo_flutter/app/service/user_service.dart';
+import 'package:apevolo_flutter/core/constants/apevolo_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -26,7 +27,7 @@ class ApiClient extends GetxService {
   /// 初始化Dio实例
   void _initDio() {
     final baseOptions = BaseOptions(
-      baseUrl: "http://apevolo.api.alook.life", // 保持HTTP协议
+      baseUrl: ApevoloConstants.baseURL,
       receiveDataWhenStatusError: true,
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 60),
