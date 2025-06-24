@@ -7,7 +7,7 @@ import 'storage_service_interface.dart';
 class StorageException implements Exception {
   final String message;
   StorageException(this.message);
-  
+
   @override
   String toString() => 'StorageException: $message';
 }
@@ -15,7 +15,6 @@ class StorageException implements Exception {
 /// SharedPreferences 存储服务
 ///
 /// 使用 JSON 序列化，支持所有 Freezed 模型的存储和读取
-/// 无需编写 Adapter 代码，与现有 Freezed 模型完美兼容
 class SharedPrefsStorageService implements StorageServiceInterface {
   late SharedPreferences _prefs;
   bool _isInitialized = false;
@@ -29,7 +28,8 @@ class SharedPrefsStorageService implements StorageServiceInterface {
   /// 确保存储服务已初始化
   void _ensureInitialized() {
     if (!_isInitialized) {
-      throw StorageException('SharedPrefsStorageService not initialized. Call init() first.');
+      throw StorageException(
+          'SharedPrefsStorageService not initialized. Call init() first.');
     }
   }
 
@@ -193,6 +193,13 @@ class SharedPrefsStorageService implements StorageServiceInterface {
 }
 
 /// Riverpod Provider
-final sharedPrefsStorageServiceProvider = Provider<SharedPrefsStorageService>((ref) {
-  throw UnimplementedError('SharedPrefsStorageService must be initialized manually in main.dart');
+final sharedPrefsStorageServiceProvider =
+    Provider<SharedPrefsStorageService>((ref) {
+  return SharedPrefsStorageService()
+    ..init().then((_) {
+      // 初始化完成后可以执行其他操作
+    }).catchError((error) {
+      throw StorageException(
+          'Failed to initialize SharedPrefsStorageService: $error');
+    });
 });
