@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate API Client",
+            "type": "shell",
+            "command": "openapi-generator-cli generate -i openapi.yaml -g dart -o ./generated",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
